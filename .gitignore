@@ -2,13 +2,13 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
+/DDA_Bullethell/Library/
+/DDA_Bullethell/Temp/
+/DDA_Bullethell/Obj/
+/DDA_Bullethell/Build/
+/DDA_Bullethell/Builds/
+/DDA_Bullethell/Logs/
+/DDA_Bullethell/UserSettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
