@@ -29,6 +29,9 @@ public class PlayerShooting : MonoBehaviour
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
         rb.velocity = direction * projectileSpeed;
 
-        Destroy(projectile, 4.0f); // Destroy the projectile after 5 seconds
+        Projectile projectileScript = projectile.GetComponent<Projectile>();
+        projectileScript.targetTag = "Enemy"; // Set the target tag
+
+        Destroy(projectile, 4.0f); // Destroy the projectile after 4 seconds
     }
 }

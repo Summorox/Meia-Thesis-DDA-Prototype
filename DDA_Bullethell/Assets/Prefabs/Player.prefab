@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 1006286323406381851}
   - component: {fileID: 8602900434839374306}
   - component: {fileID: 4397100167006793614}
+  - component: {fileID: 8252827603147838688}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -153,6 +154,19 @@ MonoBehaviour:
   parryCooldown: 0.2
   deflectedProjectileSpeed: 10
   parryEffect: {fileID: 2210681829972278406, guid: f11f88e5582f286459f7ebe76baca8a4, type: 3}
+--- !u!114 &8252827603147838688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6889814400746404644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525cf16a136216b4db7feeb769a009e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!1 &8280749273460985521
 GameObject:
   m_ObjectHideFlags: 0

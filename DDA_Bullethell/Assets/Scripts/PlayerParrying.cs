@@ -8,7 +8,7 @@ public class PlayerParrying : MonoBehaviour
     public float parryCooldown; // Cooldown duration in seconds
     public float deflectedProjectileSpeed; // Speed of deflected projectile
 
-    private bool isParrying = false;
+    public bool isParrying = false;
     private float parryTimer = 0f;
     private float cooldownTimer = 0f;
 
@@ -74,12 +74,17 @@ public class PlayerParrying : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (isParrying && collider.gameObject.CompareTag("EnemyProjectile"))
+        if (isParrying && collider.gameObject.CompareTag("Projectile"))
         {
             Debug.Log("Collision Detected.");
+            Projectile projectile = collider.gameObject.GetComponent<Projectile>();
+            if(projectile.targetTag == "Player")
+            {
+                // Parry successful, deflect the projectile
+                DeflectProjectile(collider.gameObject);
+            }
 
-            // Parry successful, deflect the projectile
-            DeflectProjectile(collider.gameObject);
+       
         }
     }
 
@@ -96,7 +101,8 @@ public class PlayerParrying : MonoBehaviour
         }
 
         // Change the projectile's tag or layer so it can damage enemies
-        projectile.tag = "PlayerProjectile";
+        Projectile proj = projectile.GetComponent<Projectile>();
+        proj.targetTag = "Enemy";
 
         // Add additional effects like sound or visual feedback here
     }
