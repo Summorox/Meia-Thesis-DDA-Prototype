@@ -153,6 +153,7 @@ MonoBehaviour:
   parryDuration: 1
   parryCooldown: 0.2
   deflectedProjectileSpeed: 10
+  isParrying: 0
   parryEffect: {fileID: 2210681829972278406, guid: f11f88e5582f286459f7ebe76baca8a4, type: 3}
 --- !u!114 &8252827603147838688
 MonoBehaviour:
@@ -167,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  currentHealth: 0
+  healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
 --- !u!1 &8280749273460985521
 GameObject:
   m_ObjectHideFlags: 0
