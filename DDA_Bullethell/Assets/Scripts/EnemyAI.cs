@@ -21,6 +21,7 @@ public class EnemyAI : Agent
     public GameObject playerPrefab; // Reference to the player prefab
     private GameObject currentPlayerInstance; // Current instance of the player
     public Vector3 playerSpawnPosition = new Vector3(0, 0, 0); // Fixed local position for player spawn
+    private Rigidbody2D rb;
 
 
     private bool HitPlayer = false;
@@ -40,13 +41,10 @@ public class EnemyAI : Agent
 
         healthComponent = GetComponent<Health>();
 
-        healthComponent.OnTakeDamage += () => TookDamage = true;
-        healthComponent.OnDeath += () => TookDamage = true;
+        rb = GetComponent<Rigidbody2D>();
 
-        if (playerPrefab != null)
-        {
-            currentPlayerInstance = InstantiatePlayer();
-        }
+        healthComponent.OnTakeDamage += () => TookDamage = true;
+        healthComponent.OnDeath += () => Died = true;
 
     }
 
@@ -56,11 +54,13 @@ public class EnemyAI : Agent
         // Destroy existing player instance if it exists
         if (currentPlayerInstance != null)
         {
-            Destroy(currentPlayerInstance);
+            currentPlayerInstance.GetComponent<Health>().Reset();
         }
 
         // Instantiate a new player instance
         currentPlayerInstance = InstantiatePlayer();
+
+        currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
 
         // Reset the position of the enemy agent
         this.transform.localPosition = GetRandomStartPosition();
@@ -107,13 +107,15 @@ public class EnemyAI : Agent
         float moveX = actions.ContinuousActions[0];
         float moveY = actions.ContinuousActions[1];
         Vector2 direction = new Vector2(moveX, moveY).normalized;
-        transform.localPosition += (Vector3)direction * moveSpeed * Time.deltaTime;
+
+        Vector2 newPosition = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(newPosition);
 
         // Rotation
         float rotationChange = actions.ContinuousActions[2] * rotationSpeed * Time.deltaTime;
-        Quaternion currentRotation = transform.rotation;
-        Quaternion incrementalRotation = Quaternion.Euler(0, 0, rotationChange);
-        transform.rotation = currentRotation * incrementalRotation;
+        float newRotation = rb.rotation + rotationChange;
+        rb.MoveRotation(newRotation);
+      
 
         // Shooting
         bool shoot = actions.DiscreteActions[0] == 1;
@@ -128,23 +130,26 @@ public class EnemyAI : Agent
 
         if (HitPlayer)
         {
-            AddReward(0.2f); // Reward for hitting the player
+            Debug.Log("Hit Player");
+            AddReward(0.25f); // Reward for hitting the player
         }
 
         if (KilledPlayer)
         {
             AddReward(1.0f); // Large reward for killing the player
+            Debug.Log("Killed Player 2");
             EndEpisode();
         }
 
         if (TookDamage)
         {
-            AddReward(-0.3f); // Penalty for taking damage
+            AddReward(-0.25f); // Penalty for taking damage
         }
 
         if (CollidedWithObject)
         {
-            AddReward(-0.1f); // Penalty for collision
+            Debug.Log("Collided");
+            AddReward(-0.25f); // Penalty for collision
         }
 
         if (Died)
@@ -182,6 +187,8 @@ public class EnemyAI : Agent
         TookDamage = false;
         CollidedWithObject = false;
         Died = false;
+
+        AddReward(-0.01f * Time.deltaTime);
 
     }
 
@@ -234,7 +241,6 @@ public class EnemyAI : Agent
                 Destroy(bullet, 2.0f); // Destroy the projectile after 2 seconds
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
-            bullet.GetComponent<Projectile>().OnKillPlayer += () => KilledPlayer = true;
         }
     }
 

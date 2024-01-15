@@ -14,21 +14,15 @@ public class HealthBar : MonoBehaviour
 
     void Update()
     {
-        if(entity == null)
-        {
-            slider.value = 0;
-            Destroy(slider);
-        }
-        else
-        {
-            slider.value = healthComponent.currentHealth;
-            // Update the position of the health bar
-            slider.transform.position = entity.position + offset;
-            slider.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
-            slider.maxValue = healthComponent.maxHealth;
-            UpdateColor();
-        }  
+         slider.value = healthComponent.currentHealth;
+         // Update the position of the health bar
+         slider.transform.position = entity.position + offset;
+         slider.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+         slider.maxValue = healthComponent.maxHealth;
+         UpdateColor();
+        
 
     }
     void UpdateColor()

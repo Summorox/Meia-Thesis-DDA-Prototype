@@ -9,7 +9,6 @@ public class Projectile : MonoBehaviour
     public string targetTag; // Tag of the target it can damage
 
     public event Action OnHitPlayer;
-    public event Action OnKillPlayer;
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
@@ -28,10 +27,6 @@ public class Projectile : MonoBehaviour
                     {
                         OnHitPlayer?.Invoke();
                         health.TakeDamage(damage);
-                        if(health.currentHealth <= 0) { 
-                
-                            OnKillPlayer?.Invoke();
-                        }
                     }
                     Destroy(gameObject); // Destroy the projectile on hit.
                 }
