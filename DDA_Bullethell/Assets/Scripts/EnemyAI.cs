@@ -15,10 +15,13 @@ public class EnemyAI : Agent
     public float rotationSpeed;
 
 
-    [SerializeField] private Transform playerTransform;
     private float shootingTimer;
     private Health healthComponent;
-    private GameObject trainingEnvironment;
+
+    public GameObject playerPrefab; // Reference to the player prefab
+    private GameObject currentPlayerInstance; // Current instance of the player
+    public Vector3 playerSpawnPosition = new Vector3(0, 0, 0); // Fixed local position for player spawn
+
 
     private bool HitPlayer = false;
     private bool KilledPlayer = false;
@@ -37,15 +40,28 @@ public class EnemyAI : Agent
 
         healthComponent = GetComponent<Health>();
 
-        trainingEnvironment = transform.parent.gameObject; // For a parent object
-
         healthComponent.OnTakeDamage += () => TookDamage = true;
         healthComponent.OnDeath += () => TookDamage = true;
+
+        if (playerPrefab != null)
+        {
+            currentPlayerInstance = InstantiatePlayer();
+        }
 
     }
 
     public override void OnEpisodeBegin()
     {
+
+        // Destroy existing player instance if it exists
+        if (currentPlayerInstance != null)
+        {
+            Destroy(currentPlayerInstance);
+        }
+
+        // Instantiate a new player instance
+        currentPlayerInstance = InstantiatePlayer();
+
         // Reset the position of the enemy agent
         this.transform.localPosition = GetRandomStartPosition();
 
@@ -56,14 +72,15 @@ public class EnemyAI : Agent
 
     }
 
+
     public override void CollectObservations(VectorSensor sensor)
     {
         //Own position
         sensor.AddObservation(transform.localPosition);
         // Relative Position to Player
-        if (playerTransform != null)
+        if (currentPlayerInstance != null)
         {
-            Vector3 directionToPlayer = playerTransform.localPosition - this.transform.localPosition;
+            Vector3 directionToPlayer = currentPlayerInstance.GetComponent<Transform>().localPosition - this.transform.localPosition;
             sensor.AddObservation(directionToPlayer.normalized); // Normalized direction
             sensor.AddObservation(directionToPlayer.magnitude); // Distance to player
         }
@@ -166,6 +183,12 @@ public class EnemyAI : Agent
         CollidedWithObject = false;
         Died = false;
 
+    }
+
+    private GameObject InstantiatePlayer()
+    {
+        // Instantiate player at a fixed position relative to the training environment
+        return Instantiate(playerPrefab, transform.parent.TransformPoint(playerSpawnPosition), Quaternion.identity, transform.parent);
     }
 
     private Vector3 GetRandomStartPosition()

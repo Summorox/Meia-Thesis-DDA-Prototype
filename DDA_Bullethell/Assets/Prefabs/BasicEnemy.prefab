@@ -343,10 +343,11 @@ MonoBehaviour:
   bulletPrefab: {fileID: 4965641866268975501, guid: 9de29a806fd54ec4bbb06310f94d1a46, type: 3}
   bulletSpawnPoint: {fileID: 2608470975179428774}
   bulletSpeed: 10
-  shootingInterval: 1
+  shootingInterval: 0.5
   moveSpeed: 3
-  rotationSpeed: 60
-  playerTransform: {fileID: 7471600386052648206, guid: 61250775034d1de42a1777aa937d87fd, type: 3}
+  rotationSpeed: 120
+  playerPrefab: {fileID: 6889814400746404644, guid: 61250775034d1de42a1777aa937d87fd, type: 3}
+  playerSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &2348214289405476089
 MonoBehaviour:
   m_ObjectHideFlags: 0
