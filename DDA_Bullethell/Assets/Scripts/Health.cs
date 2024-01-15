@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,11 @@ public class Health : MonoBehaviour
     public int maxHealth = 100;
     public int currentHealth;
     private HealthBar healthBar;
-    public GameObject healthBarPrefab; 
+    public GameObject healthBarPrefab;
+
+    public event Action OnTakeDamage; // Event triggered when taking damage
+    public event Action OnDeath; // Event triggered on Death
+
 
 
     void Start()
@@ -28,6 +33,8 @@ public class Health : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        OnTakeDamage?.Invoke(); // Trigger the OnTakeDamage event
+
         if (currentHealth <= 0)
         {
             Die();
@@ -36,7 +43,7 @@ public class Health : MonoBehaviour
 
     private void Die()
     {
-        // Handle death here. This could mean disabling the enemy, or ending the game for the player.
+        OnDeath?.Invoke();
         Destroy(gameObject); // For now, just destroy the object.
     }
 }

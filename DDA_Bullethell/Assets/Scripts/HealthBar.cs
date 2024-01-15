@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class HealthBar : MonoBehaviour
 {
-    public Slider slider;
+    public UnityEngine.UI.Slider slider;
     public Health healthComponent;
     public Transform entity; // The entity to which this health bar belongs
     public Vector3 offset;
@@ -13,8 +14,13 @@ public class HealthBar : MonoBehaviour
 
     void Update()
     {
-
-        if (entity != null) { 
+        if(entity == null)
+        {
+            slider.value = 0;
+            Destroy(slider);
+        }
+        else
+        {
             slider.value = healthComponent.currentHealth;
             // Update the position of the health bar
             slider.transform.position = entity.position + offset;
@@ -22,18 +28,18 @@ public class HealthBar : MonoBehaviour
 
             slider.maxValue = healthComponent.maxHealth;
             UpdateColor();
-        }
+        }  
 
     }
     void UpdateColor()
     {
         float healthPercent = (float)healthComponent.currentHealth / healthComponent.maxHealth;
-        Image fillImage = slider.fillRect.GetComponent<Image>();
+        UnityEngine.UI.Image fillImage = slider.fillRect.GetComponent<UnityEngine.UI.Image>();
         if (healthPercent > 0.5f)
             fillImage.color = Color.green; // Healthy
         else if (healthPercent > 0.25f)
             fillImage.color = Color.yellow; // Warning
-        else
+        else if (healthPercent > 0f)
             fillImage.color = Color.red; // Critical
     }
 
