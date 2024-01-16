@@ -4,23 +4,23 @@ using Unity.MLAgents;
 using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class EnemyAI : Agent
 {
     public GameObject bulletPrefab;
     public Transform bulletSpawnPoint;
     public float bulletSpeed;
-    public float shootingInterval = 2f;
+    public float shootingInterval;
     public float moveSpeed;
     public float rotationSpeed;
+    public bool training=false;
+    public GameObject currentPlayerInstance; // Reference to the player prefab
 
 
     private float shootingTimer;
     private Health healthComponent;
-
-    public GameObject playerPrefab; // Reference to the player prefab
-    private GameObject currentPlayerInstance; // Current instance of the player
-    public Vector3 playerSpawnPosition = new Vector3(0, 0, 0); // Fixed local position for player spawn
+  
     private Rigidbody2D rb;
 
 
@@ -38,11 +38,14 @@ public class EnemyAI : Agent
 
         // Initialize variables or settings specific to the agent
         shootingTimer = shootingInterval;
+        currentPlayerInstance.GetComponent<PlayerMovement>().training = this.training;
+        currentPlayerInstance.GetComponent<PlayerShooting>().training = this.training;
+        currentPlayerInstance.GetComponent<Health>().training = this.training;
+        currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
 
         healthComponent = GetComponent<Health>();
-
+        healthComponent.training = this.training;
         rb = GetComponent<Rigidbody2D>();
-
         healthComponent.OnTakeDamage += () => TookDamage = true;
         healthComponent.OnDeath += () => Died = true;
 
@@ -51,22 +54,29 @@ public class EnemyAI : Agent
     public override void OnEpisodeBegin()
     {
 
-        // Destroy existing player instance if it exists
-        if (currentPlayerInstance != null)
-        {
-            currentPlayerInstance.GetComponent<Health>().Reset();
-        }
-
+        //Player
         // Instantiate a new player instance
-        currentPlayerInstance = InstantiatePlayer();
+        currentPlayerInstance.transform.localPosition = GetRandomStartPosition();
 
-        currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
+        // Reset orientation
+        currentPlayerInstance.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
 
+        currentPlayerInstance.GetComponent<PlayerMovement>().dead = false;
+        currentPlayerInstance.GetComponent<PlayerShooting>().dead = false;
+        currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = true;
+
+        this.KilledPlayer = false;
+
+
+        //Enemy
         // Reset the position of the enemy agent
         this.transform.localPosition = GetRandomStartPosition();
 
         // Reset orientation
         this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+
+        this.GetComponent<PolygonCollider2D>().enabled = true;
+        this.Died = false;
 
         healthComponent.currentHealth = healthComponent.maxHealth;
 
@@ -103,6 +113,46 @@ public class EnemyAI : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        if (training)
+        {
+            if (HitPlayer)
+            {
+                Debug.Log("Hit Player");
+                AddReward(0.3f); // Reward for hitting the player
+            }
+
+            if (KilledPlayer)
+            {
+                AddReward(1.0f); // Large reward for killing the player
+                Debug.Log("Killed Player 2");
+                currentPlayerInstance.GetComponent<PlayerMovement>().dead = true;
+                currentPlayerInstance.GetComponent<PlayerShooting>().dead = true;
+                currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = false;
+                EndEpisode();
+            }
+
+            if (TookDamage)
+            {
+                AddReward(-0.2f); // Penalty for taking damage
+            }
+
+            if (CollidedWithObject)
+            {
+                Debug.Log("Collided");
+                AddReward(-0.1f); // Penalty for collision
+            }
+
+            if (Died)
+            {
+                AddReward(-0.5f); // Penalty for dying
+                this.GetComponent<PolygonCollider2D>().enabled = false;
+                EndEpisode();
+            }
+            if (this.Died)
+            {
+                return;
+            }
+        }
         // Movement
         float moveX = actions.ContinuousActions[0];
         float moveY = actions.ContinuousActions[1];
@@ -128,35 +178,6 @@ public class EnemyAI : Agent
             }
         }
 
-        if (HitPlayer)
-        {
-            Debug.Log("Hit Player");
-            AddReward(0.25f); // Reward for hitting the player
-        }
-
-        if (KilledPlayer)
-        {
-            AddReward(1.0f); // Large reward for killing the player
-            Debug.Log("Killed Player 2");
-            EndEpisode();
-        }
-
-        if (TookDamage)
-        {
-            AddReward(-0.25f); // Penalty for taking damage
-        }
-
-        if (CollidedWithObject)
-        {
-            Debug.Log("Collided");
-            AddReward(-0.25f); // Penalty for collision
-        }
-
-        if (Died)
-        {
-            AddReward(-0.5f); // Penalty for dying
-            EndEpisode();
-        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -178,24 +199,17 @@ public class EnemyAI : Agent
         Debug.Log(continuousActionsOut[2]);
         Debug.Log(discreteActionsOut[0]);
     }
+    
     public void Update()
     {
         shootingTimer -= Time.deltaTime;
 
         HitPlayer = false;
-        KilledPlayer = false;
         TookDamage = false;
         CollidedWithObject = false;
-        Died = false;
 
-        AddReward(-0.01f * Time.deltaTime);
+        //AddReward(-0.05f * Time.deltaTime);
 
-    }
-
-    private GameObject InstantiatePlayer()
-    {
-        // Instantiate player at a fixed position relative to the training environment
-        return Instantiate(playerPrefab, transform.parent.TransformPoint(playerSpawnPosition), Quaternion.identity, transform.parent);
     }
 
     private Vector3 GetRandomStartPosition()
@@ -207,7 +221,7 @@ public class EnemyAI : Agent
         while (!positionFound)
         {
             // Generate a random local position within a defined range
-            startPosition = new Vector3(Random.Range(-9, 9), Random.Range(0, 7), 0);
+            startPosition = new Vector3(Random.Range(-10, 10), Random.Range(-4, 6), 0);
 
             // Check if the position collides with anything
             if (Physics2D.OverlapCircle(startPosition, 0.1f) == null)
@@ -241,6 +255,7 @@ public class EnemyAI : Agent
                 Destroy(bullet, 2.0f); // Destroy the projectile after 2 seconds
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
+            AddReward(-0.01f);
         }
     }
 

@@ -123,8 +123,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4965641866268975501, guid: 9de29a806fd54ec4bbb06310f94d1a46, type: 3}
-  fireRate: 5
+  fireRate: 3
   projectileSpeed: 10
+  training: 0
+  dead: 0
 --- !u!114 &8602900434839374306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +140,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  training: 0
+  dead: 0
 --- !u!114 &4397100167006793614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,6 +174,7 @@ MonoBehaviour:
   maxHealth: 90
   currentHealth: 0
   healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
+  training: 0
 --- !u!1 &8280749273460985521
 GameObject:
   m_ObjectHideFlags: 0

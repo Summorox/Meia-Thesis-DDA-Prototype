@@ -9,6 +9,7 @@ public class Health : MonoBehaviour
     public int currentHealth;
     private GameObject healthBarInstance;
     public GameObject healthBarPrefab;
+    public bool training = false;
 
     public event Action OnTakeDamage; // Event triggered when taking damage
     public event Action OnDeath; // Event triggered on Death
@@ -43,17 +44,24 @@ public class Health : MonoBehaviour
     public void Die()
     {
         OnDeath?.Invoke();
+        if (!training)
+        {
+            
+            Destroy(gameObject); // For now, just destroy the object.
+            Destroy(healthBarInstance); // Destroy the health bar object
 
-        Destroy(healthBarInstance); // Destroy the health bar object
-
-        Destroy(gameObject); // For now, just destroy the object.
+        }
     }
 
     public void Reset()
     {
 
-        Destroy(healthBarInstance); // Destroy the health bar object
+        if (!training)
+        {
 
-        Destroy(gameObject); // For now, just destroy the object.
+            Destroy(gameObject); // For now, just destroy the object.
+            Destroy(healthBarInstance); // Destroy the health bar object
+
+        }
     }
 }
