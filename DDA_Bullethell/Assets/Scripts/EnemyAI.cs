@@ -117,14 +117,12 @@ public class EnemyAI : Agent
         {
             if (HitPlayer)
             {
-                Debug.Log("Hit Player");
                 AddReward(0.3f); // Reward for hitting the player
             }
 
             if (KilledPlayer)
             {
                 AddReward(1.0f); // Large reward for killing the player
-                Debug.Log("Killed Player 2");
                 currentPlayerInstance.GetComponent<PlayerMovement>().dead = true;
                 currentPlayerInstance.GetComponent<PlayerShooting>().dead = true;
                 currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = false;
@@ -138,7 +136,6 @@ public class EnemyAI : Agent
 
             if (CollidedWithObject)
             {
-                Debug.Log("Collided");
                 AddReward(-0.1f); // Penalty for collision
             }
 
@@ -196,8 +193,6 @@ public class EnemyAI : Agent
         // Shooting: Map space key to shooting
         discreteActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
 
-        Debug.Log(continuousActionsOut[2]);
-        Debug.Log(discreteActionsOut[0]);
     }
     
     public void Update()
@@ -207,8 +202,6 @@ public class EnemyAI : Agent
         HitPlayer = false;
         TookDamage = false;
         CollidedWithObject = false;
-
-        //AddReward(-0.05f * Time.deltaTime);
 
     }
 
