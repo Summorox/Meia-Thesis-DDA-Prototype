@@ -11,6 +11,10 @@ public class Health : MonoBehaviour
     public GameObject healthBarPrefab;
     public bool training = false;
 
+    private SpriteRenderer spriteRenderer;
+    public Color flashColor = Color.red;
+    public float flashDuration = 0.2f;
+
     public event Action OnTakeDamage; // Event triggered when taking damage
     public event Action OnDeath; // Event triggered on Death
 
@@ -18,7 +22,9 @@ public class Health : MonoBehaviour
 
     void Start()
     {
-        if(healthBarPrefab != null)
+        currentHealth = maxHealth;
+        spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
+        if (healthBarPrefab != null)
         {
             // Instantiate health bar and set it up
             healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
@@ -26,7 +32,6 @@ public class Health : MonoBehaviour
             healthBarInstance.GetComponent<HealthBar>().offset = new Vector3(0, 1, 0); // Adjust the offset as needed
             healthBarInstance.GetComponent<HealthBar>().healthComponent = this;
         }
-        currentHealth = maxHealth;
 
     }
 
@@ -34,11 +39,19 @@ public class Health : MonoBehaviour
     {
         currentHealth -= damage;
         OnTakeDamage?.Invoke(); // Trigger the OnTakeDamage event
-
+        StartCoroutine(FlashDamageEffect());
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+
+    IEnumerator FlashDamageEffect()
+    {
+        Color originalColor = spriteRenderer.color;
+        spriteRenderer.color = flashColor;
+        yield return new WaitForSeconds(flashDuration);
+        spriteRenderer.color = originalColor;
     }
 
     public void Die()
@@ -46,7 +59,6 @@ public class Health : MonoBehaviour
         OnDeath?.Invoke();
         if (!training)
         {
-            
             Destroy(gameObject); // For now, just destroy the object.
             Destroy(healthBarInstance); // Destroy the health bar object
 

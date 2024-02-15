@@ -7,12 +7,15 @@ public class PlayerParrying : MonoBehaviour
     public float parryDuration; // Duration of parry window in seconds
     public float parryCooldown; // Cooldown duration in seconds
     public float deflectedProjectileSpeed; // Speed of deflected projectile
+    public ParticleSystem deflectionIndicator;
+
 
     public bool isParrying = false;
     private float parryTimer = 0f;
     private float cooldownTimer = 0f;
 
     public ParticleSystem parryEffect;
+
 
     void Update()
     {
@@ -77,7 +80,6 @@ public class PlayerParrying : MonoBehaviour
     {
         if (isParrying && collider.gameObject.CompareTag("Projectile"))
         {
-            Debug.Log("Collision Detected.");
             Projectile projectile = collider.gameObject.GetComponent<Projectile>();
             if(projectile.targetTag == "Player")
             {
@@ -91,8 +93,27 @@ public class PlayerParrying : MonoBehaviour
 
     void DeflectProjectile(GameObject projectile)
     {
-        // Determine direction from player to projectile
+
+        // Determine the direction from the player to the projectile
         Vector2 directionToProjectile = (projectile.transform.position - transform.position).normalized;
+
+        // Calculate the X rotation so that the cone is emitted towards the deflected projectile
+        float angleX = Mathf.Atan2(directionToProjectile.y, directionToProjectile.x) * Mathf.Rad2Deg;
+
+        // Since we want the particle system to emit in the direction of the deflected projectile,
+        Quaternion rotation = Quaternion.Euler(angleX, 90, -90);
+
+        // Instantiate the particle system with the calculated orientation
+        ParticleSystem deflectEffect = Instantiate(deflectionIndicator, projectile.transform.position, rotation);
+
+        if (deflectEffect != null)
+        {
+            deflectEffect.Play();
+            Debug.Log("Deflect effect played with corrected orientation.");
+        }
+
+        Destroy(deflectEffect, 0.5f);
+
 
         // Apply the new velocity to the projectile
         Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
@@ -104,6 +125,18 @@ public class PlayerParrying : MonoBehaviour
         // Change the projectile's tag or layer so it can damage enemies
         Projectile proj = projectile.GetComponent<Projectile>();
         proj.targetTag = "Enemy";
+
+        SpriteRenderer projectileSprite = projectile.GetComponent<SpriteRenderer>();
+        if (projectileSprite != null)
+        {
+            projectileSprite.color = Color.blue;
+        }
+        TrailRenderer bulletTrail = projectile.GetComponent<Projectile>().bulletTrail;
+        if(bulletTrail != null)
+        {
+            bulletTrail.startColor = Color.blue;
+            bulletTrail.endColor = new Color(0, 0, 1, 0); // Fade to transparent
+        }
 
         // Add additional effects like sound or visual feedback here
     }

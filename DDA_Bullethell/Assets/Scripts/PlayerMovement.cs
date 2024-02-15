@@ -14,17 +14,50 @@ public class PlayerMovement : MonoBehaviour
     private float timer;
     private Vector2 movement;
 
+    public float dashDistance = 5f;
+    public float dashCooldown = 1f;
+    private bool isDashing;
+    private float dashCooldownTimer;
+    public LayerMask obstacleLayerMask;
+
+    [SerializeField] private GameObject afterimagePrefab;
+    [SerializeField] private float afterimageLifetime = 0.5f;
+    [SerializeField] private float afterimageSpawnInterval = 0.001f;
+    private float afterimageSpawnTimer;
+
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        timer = changeTime;
-        ChooseNewDirection();
+        if (training)
+        {
+            timer = changeTime;
+            ChooseNewDirection();
+        }
+    }
+
+    void Update()
+    {
+        TryDash();
+        if (dashCooldownTimer > 0)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
+        if (isDashing)
+        {
+            afterimageSpawnTimer -= Time.deltaTime;
+            if (afterimageSpawnTimer <= 0)
+            {
+                SpawnAfterimage();
+                afterimageSpawnTimer = afterimageSpawnInterval;
+            }
+        }
+
     }
 
     void FixedUpdate()
     {
-        if (this.dead)
+        if (this.dead && isDashing)
         {
             return;
         }
@@ -46,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
             // Create movement vector
             movement = new Vector2(horizontalInput, verticalInput);
         }
-       
+
         // Optional: Adjust diagonal movement speed
         // if (movement.magnitude > 1)
         //     movement.Normalize(); // or use custom scaling
@@ -60,6 +93,66 @@ public class PlayerMovement : MonoBehaviour
             float angle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
         }
+    }
+
+    private void TryDash()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0 && !isDashing)
+        {
+            Vector2 dashDirection = movement.normalized; // Ensure direction is normalized
+            StartCoroutine(Dash(dashDirection));
+        }
+    }
+
+    IEnumerator Dash(Vector2 direction)
+    {
+        isDashing = true;
+        afterimageSpawnTimer = 0;
+        float elapsedTime = 0;
+        float dashDuration = 0.1f; 
+
+        Vector2 startPosition = rb.position;
+        Vector2 endPosition = startPosition + direction * dashDistance;
+
+        dashCooldownTimer = dashCooldown; // Start cooldown immediately upon dashing
+
+        RaycastHit2D hit = Physics2D.Linecast(startPosition, endPosition, obstacleLayerMask);
+        if (hit.collider != null)
+        {
+            // Adjust endPosition if there's an obstacle
+            endPosition = hit.point - (direction * 0.1f);
+        }
+
+        while (elapsedTime < dashDuration)
+        {
+            rb.position = Vector2.Lerp(startPosition, endPosition, elapsedTime / dashDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        isDashing = false;
+    }
+    private void SpawnAfterimage()
+    {
+        GameObject afterimage = Instantiate(afterimagePrefab, transform.position, transform.rotation);
+        StartCoroutine(FadeAfterimage(afterimage));
+    }
+
+    IEnumerator FadeAfterimage(GameObject afterimage)
+    {
+        SpriteRenderer spriteRenderer = afterimage.GetComponent<SpriteRenderer>();
+        Color initialColor = spriteRenderer.color;
+        float elapsedTime = 0;
+
+        while (elapsedTime < afterimageLifetime)
+        {
+            float alpha = Mathf.Lerp(initialColor.a, 0, elapsedTime / afterimageLifetime);
+            spriteRenderer.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(afterimage);
     }
 
     private void ChooseNewDirection()

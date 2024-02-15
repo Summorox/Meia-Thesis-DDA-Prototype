@@ -88,6 +88,12 @@ public class PlayerShooting : MonoBehaviour
         Projectile projectileScript = projectile.GetComponent<Projectile>();
         projectileScript.targetTag = "Enemy"; // Set the target tag
 
-        Destroy(projectile, 4.0f); // Destroy the projectile after 4 seconds
+        SpriteRenderer projectileSprite = projectile.GetComponent<SpriteRenderer>();
+        if (projectileSprite != null)
+        {
+            projectileSprite.color = Color.blue;
+        }
+
+        Destroy(projectile, 12.0f); // Destroy the projectile after 4 seconds
     }
 }

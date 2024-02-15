@@ -245,7 +245,7 @@ public class EnemyAI : Agent
             {
                 rb.velocity = bulletSpawnPoint.up * bulletSpeed;
 
-                Destroy(bullet, 2.0f); // Destroy the projectile after 2 seconds
+                Destroy(bullet, 12.0f); // Destroy the projectile after 2 seconds
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
             AddReward(-0.01f);
