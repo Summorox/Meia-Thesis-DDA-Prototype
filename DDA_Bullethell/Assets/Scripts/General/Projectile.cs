@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
         // Check if the collided object has the correct tag
-        if (hitInfo.gameObject.CompareTag(targetTag))
+        if (hitInfo.gameObject.CompareTag(targetTag) || hitInfo.gameObject.CompareTag("Hazard") )
         {
             Debug.Log("Hit: " + hitInfo.gameObject.name);
             if (hitInfo.gameObject.CompareTag("Player"))
@@ -39,7 +39,7 @@ public class Projectile : MonoBehaviour
                 }
 
             }
-            else 
+            else if (hitInfo.gameObject.CompareTag("Enemy") || hitInfo.gameObject.CompareTag("Hazard"))
             {
                 Health health = hitInfo.GetComponent<Health>();
                 if (health != null)
@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
 
 
         }
-        if (hitInfo.gameObject.CompareTag("Wall") || hitInfo.gameObject.CompareTag("Hazard"))
+        if (hitInfo.gameObject.CompareTag("Wall"))
         {
             Destroy(gameObject);
         }
@@ -74,7 +74,7 @@ public class Projectile : MonoBehaviour
             trail.startColor = Color.red;
             trail.endColor = new Color(1, 0, 0, 0); // Fade to transparent
         }
-        else if (targetTag == "Enemy")
+        else if (targetTag == "Enemy" || targetTag =="Hazard")
         {
             // Player shoots, so make the trail blue
             trail.startColor = Color.blue;
