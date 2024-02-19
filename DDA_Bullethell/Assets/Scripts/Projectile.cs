@@ -52,7 +52,7 @@ public class Projectile : MonoBehaviour
 
 
         }
-        if (hitInfo.gameObject.CompareTag("Wall"))
+        if (hitInfo.gameObject.CompareTag("Wall") || hitInfo.gameObject.CompareTag("Hazard"))
         {
             Destroy(gameObject);
         }
