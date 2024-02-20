@@ -180,6 +180,7 @@ GameObject:
   - component: {fileID: 512897747439902485}
   - component: {fileID: 2452244696242829836}
   - component: {fileID: 599601697221929070}
+  - component: {fileID: 2083940128093729177}
   m_Layer: 0
   m_Name: Mine
   m_TagString: Hazard
@@ -270,3 +271,21 @@ MonoBehaviour:
   explosionRadius: 5
   explosionForce: 500
   damage: 50
+--- !u!114 &2083940128093729177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205239852523578279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525cf16a136216b4db7feeb769a009e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 100
+  healthBarPrefab: {fileID: 0}
+  training: 0
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.2
