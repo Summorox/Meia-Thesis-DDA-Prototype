@@ -15,6 +15,7 @@ public class EnemyAI : Agent
     public float moveSpeed;
     public float rotationSpeed;
     public bool training=false;
+    public bool tutorial = false;
     public GameObject currentPlayerInstance; // Reference to the player prefab
 
 
@@ -53,28 +54,32 @@ public class EnemyAI : Agent
 
     public override void OnEpisodeBegin()
     {
+        if (!tutorial)
+        {
+            //Player
+            // Instantiate a new player instance
+            currentPlayerInstance.transform.localPosition = GetRandomStartPosition();
 
+            // Reset orientation
+            currentPlayerInstance.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());     
+
+
+            //Enemy
+            // Reset the position of the enemy agent
+            this.transform.localPosition = GetRandomStartPosition();
+
+            // Reset orientation
+            this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+
+        }
         //Player
-        // Instantiate a new player instance
-        currentPlayerInstance.transform.localPosition = GetRandomStartPosition();
-
-        // Reset orientation
-        currentPlayerInstance.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
-
         currentPlayerInstance.GetComponent<PlayerMovement>().dead = false;
         currentPlayerInstance.GetComponent<PlayerShooting>().dead = false;
         currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = true;
 
-        this.KilledPlayer = false;
-
 
         //Enemy
-        // Reset the position of the enemy agent
-        this.transform.localPosition = GetRandomStartPosition();
-
-        // Reset orientation
-        this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
-
+        this.KilledPlayer = false;
         this.GetComponent<PolygonCollider2D>().enabled = true;
         this.Died = false;
 
