@@ -22,7 +22,6 @@ public class Projectile : MonoBehaviour
         // Check if the collided object has the correct tag
         if (hitInfo.gameObject.CompareTag(targetTag) || hitInfo.gameObject.CompareTag("Hazard") )
         {
-            Debug.Log("Hit: " + hitInfo.gameObject.name);
             if (hitInfo.gameObject.CompareTag("Player"))
             {
                 PlayerParrying parrying = hitInfo.gameObject.GetComponent<PlayerParrying>();

@@ -64,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
         if (training)
         {
             timer -= Time.fixedDeltaTime;
-            Debug.Log("Test");
             if (timer <= 0)
             {
                 ChooseNewDirection();

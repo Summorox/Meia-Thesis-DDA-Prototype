@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System;
 using Unity.MLAgents;
 using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.PlayerSettings;
 
 public class LevelManager : Agent
 {
@@ -28,12 +24,15 @@ public class LevelManager : Agent
     private int currentEnemies = 0;
     private int currentHazards = 0;
 
-    public int currentDifficultyValue = 5;
-    public int difficultyIncrease = 5;
+    public int currentDifficultyValue;
+    public int difficultyIncrease;
+
+    public int maxWaves;
 
     private int waveCounter = 0;
 
-    private int aliveEnemies = 0;
+    private bool gameStarted = false;
+
 
     public override void Initialize()
     {
@@ -70,69 +69,71 @@ public class LevelManager : Agent
         {
             Instantiate(playerPrefab, playerStartPos, Quaternion.identity, levelParent);
         }
-        if (waveCounter == 5)
+        if (waveCounter < maxWaves)
         {
-            SceneManager.LoadScene("Main Menu");
-        }
-        ClearLevel();
-        int totalDifficulty = 0;
-        // Reset counts
-        currentEnemies = 0;
-        currentHazards = 0;
+            ClearLevel();
+            int totalDifficulty = 0;
+            // Reset counts
+            currentEnemies = 0;
+            currentHazards = 0;
 
 
-        // Generate hazards
-        while (totalDifficulty < currentDifficultyValue)
-        {
-            for (int x = minX; x <= maxX; x++)
+            // Generate hazards
+            while (totalDifficulty < currentDifficultyValue)
             {
-                for (int y = minY; y <= maxY; y++)
+                for (int x = minX; x <= maxX; x++)
                 {
-                    Vector2 pos = new Vector2(x, y);
-                    if(totalDifficulty >= currentDifficultyValue)
+                    for (int y = minY; y <= maxY; y++)
                     {
-                        break;
-                    }
-                    if (!Physics2D.OverlapCircle(pos, 3f))
-                    {
-                        if (pos != playerStartPos) // Avoid placing hazards on the player start position
+                        Vector2 pos = new Vector2(x, y);
+                        if (totalDifficulty >= currentDifficultyValue)
                         {
-                            bool placeHazard = Random.value > 0.95f && currentHazards < maxHazards;
-                            bool placeEnemy = !placeHazard && Random.value > 0.95f && currentEnemies < maxEnemies;
+                            break;
+                        }
+                        if (!Physics2D.OverlapCircle(pos, 3f))
+                        {
+                            if (pos != playerStartPos) // Avoid placing hazards on the player start position
+                            {
+                                bool placeHazard = UnityEngine.Random.value > 0.95f && currentHazards < maxHazards;
+                                bool placeEnemy = !placeHazard && UnityEngine.Random.value > 0.95f && currentEnemies < maxEnemies;
 
-                            if (placeHazard)
-                            {
-                                int hazardIndex = Random.Range(0, hazardPrefabs.Length);
-                                GameObject hazard=Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
-                                currentHazards++;
-                                totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
-                            }
-                            else if (placeEnemy)
-                            {
-                                int enemyIndex = Random.Range(0, enemyPrefabs.Length);
-                                GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
-                                currentEnemies++;
-                                aliveEnemies++;
-                                enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
-                                totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
+                                if (placeHazard)
+                                {
+                                    int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
+                                    GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                                    currentHazards++;
+                                    totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
+                                }
+                                else if (placeEnemy)
+                                {
+                                    int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+                                    GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                                    currentEnemies++;
+                                    totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
+                                }
                             }
                         }
                     }
                 }
             }
+            // If by the end of the loop no enemy has been placed, forcefully place one at a random position
+            if (currentEnemies == 0)
+            {
+                Vector2 randomPos = playerStartPos;
+                while (randomPos == playerStartPos || Physics2D.OverlapCircle(randomPos, 0.5f))
+                {
+                    randomPos = GetRandomStartPosition();
+                }
+                int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+                Instantiate(enemyPrefabs[enemyIndex], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+            }
+            gameStarted = true;
+        }
+        else
+        {
+            SceneManager.LoadScene("Main Menu");
         }
 
-        // If by the end of the loop no enemy has been placed, forcefully place one at a random position
-        if (currentEnemies == 0)
-        {
-            Vector2 randomPos = playerStartPos;
-            while (randomPos == playerStartPos || Physics2D.OverlapCircle(randomPos, 0.5f))
-            {
-                randomPos = GetRandomStartPosition();
-            }
-            int enemyIndex = Random.Range(0, enemyPrefabs.Length);
-            Instantiate(enemyPrefabs[enemyIndex], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
-        }
 
     }
 
@@ -154,14 +155,23 @@ public class LevelManager : Agent
         }
     }
 
-    void HandleEnemyDeath()
+    void LateUpdate()
     {
-        Debug.Log("Enemy Death");
-        aliveEnemies--;
-        if (aliveEnemies <= 0)
+        if (CountEnemyInstances() <= 0 && gameStarted)
         {
+            gameStarted = false;
             StartNewLevel();
         }
+    }
+
+    private int CountEnemyInstances()
+    {
+        int enemyCount = 0;
+        // Assuming all enemies are tagged as "Enemy"
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemyCount = enemies.Length;
+
+        return enemyCount;
     }
 
     private void StartNewLevel()
@@ -180,7 +190,7 @@ public class LevelManager : Agent
         while (!positionFound)
         {
             // Generate a random local position within a defined range
-            startPosition = new Vector3(Random.Range(-10, 10), Random.Range(-4, 6), 0);
+            startPosition = new Vector3(UnityEngine.Random.Range(-10, 10), UnityEngine.Random.Range(-4, 6), 0);
 
             // Check if the position collides with anything
             if (Physics2D.OverlapCircle(startPosition, 0.1f) == null)
@@ -195,6 +205,6 @@ public class LevelManager : Agent
     private float GetRandomStartRotation()
     {
         // Generate a random rotation in degrees
-        return Random.Range(0f, 360f);
+        return UnityEngine.Random.Range(0f, 360f);
     }
 }

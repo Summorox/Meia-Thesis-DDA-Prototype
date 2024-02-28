@@ -38,10 +38,8 @@ public class MovingObstacle : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Test collide");
         if (collision.gameObject.CompareTag("Wall"))
         {
-            Debug.Log("Test collide2");
             // If colliding with a wall, switch direction immediately
             target = target == startPoint ? endPoint : startPoint;
         }

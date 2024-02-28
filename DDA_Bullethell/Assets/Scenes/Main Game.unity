@@ -491,8 +491,9 @@ MonoBehaviour:
   maxY: 9
   maxEnemies: 5
   maxHazards: 5
-  currentDifficultyValue: 5
-  difficultyIncrease: 5
+  currentDifficultyValue: 3
+  difficultyIncrease: 3
+  maxWaves: 5
 --- !u!114 &997535750
 MonoBehaviour:
   m_ObjectHideFlags: 0
