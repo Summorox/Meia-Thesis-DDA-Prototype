@@ -41,11 +41,15 @@ public class Projectile : MonoBehaviour
             }
             else if (hitInfo.gameObject.CompareTag("Enemy") || hitInfo.gameObject.CompareTag("Hazard"))
             {
-                Health health = hitInfo.GetComponent<Health>();
-                if (health != null)
+                if(hitInfo.GetComponent<Health>() != null)
                 {
-                    health.TakeDamage(damage);
+                    Health health = hitInfo.GetComponent<Health>();
+                    if (health != null)
+                    {
+                        health.TakeDamage(damage);
+                    }
                 }
+               
                 Destroy(gameObject); // Destroy the projectile on hit.
             }
 

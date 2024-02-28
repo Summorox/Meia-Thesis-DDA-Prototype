@@ -213,6 +213,7 @@ GameObject:
   - component: {fileID: 1161861069338615070}
   - component: {fileID: 2392501322933377132}
   - component: {fileID: 4114373327534697656}
+  - component: {fileID: 5180876580601693838}
   m_Layer: 6
   m_Name: BasicEnemy
   m_TagString: Enemy
@@ -348,7 +349,6 @@ MonoBehaviour:
   moveSpeed: 3
   rotationSpeed: 150
   training: 0
-  currentPlayerInstance: {fileID: 0}
 --- !u!114 &2348214289405476089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -365,6 +365,8 @@ MonoBehaviour:
   currentHealth: 0
   healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
   training: 0
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.2
 --- !u!114 &1161861069338615070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,3 +438,16 @@ MonoBehaviour:
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &5180876580601693838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363638488950980769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d443cfb3039674459c38b881652123d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  difficultyValue: 2

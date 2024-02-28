@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 8043091720199647838}
   - component: {fileID: 8302533652674325135}
   - component: {fileID: 234720537214810500}
+  - component: {fileID: 7340650764257189511}
   m_Layer: 0
   m_Name: Obstacle
-  m_TagString: Wall
+  m_TagString: Hazard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -112,6 +113,19 @@ MonoBehaviour:
   moveDistance: 10
   speed: 3
   moveDirection: {x: 0, y: 1}
+--- !u!114 &7340650764257189511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7099020014177455085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d443cfb3039674459c38b881652123d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  difficultyValue: 1
 --- !u!1 &8215226972276501100
 GameObject:
   m_ObjectHideFlags: 0

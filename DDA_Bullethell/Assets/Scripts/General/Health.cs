@@ -17,7 +17,7 @@ public class Health : MonoBehaviour
 
     public event Action OnTakeDamage; // Event triggered when taking damage
     public event Action OnDeath; // Event triggered on Death
-
+    public event Action OnEnemyDeath;
 
 
     void Start()
@@ -57,6 +57,10 @@ public class Health : MonoBehaviour
     public void Die()
     {
         OnDeath?.Invoke();
+        if (gameObject.CompareTag("Enemy")) // Ensure this is an enemy dying
+        {
+            OnEnemyDeath?.Invoke();
+        }
         if (!training)
         {
             Destroy(gameObject); // For now, just destroy the object.
