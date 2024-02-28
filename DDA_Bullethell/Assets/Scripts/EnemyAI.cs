@@ -15,14 +15,14 @@ public class EnemyAI : Agent
     public float moveSpeed;
     public float rotationSpeed;
     public bool training=false;
-    public bool tutorial = false;
-    public GameObject currentPlayerInstance; // Reference to the player prefab
 
 
     private float shootingTimer;
     private Health healthComponent;
   
     private Rigidbody2D rb;
+
+    private GameObject currentPlayerInstance;
 
 
     private bool HitPlayer = false;
@@ -38,10 +38,11 @@ public class EnemyAI : Agent
         base.Initialize(); // Always call the base to initialize the Agent
 
         // Initialize variables or settings specific to the agent
+
+        // Find and set the currentPlayerInstance to the player in the scene
+        currentPlayerInstance = GameObject.FindWithTag("Player");
+
         shootingTimer = shootingInterval;
-        currentPlayerInstance.GetComponent<PlayerMovement>().training = this.training;
-        currentPlayerInstance.GetComponent<PlayerShooting>().training = this.training;
-        currentPlayerInstance.GetComponent<Health>().training = this.training;
         currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
 
         healthComponent = GetComponent<Health>();
@@ -54,29 +55,6 @@ public class EnemyAI : Agent
 
     public override void OnEpisodeBegin()
     {
-        if (!tutorial)
-        {
-            //Player
-            // Instantiate a new player instance
-            currentPlayerInstance.transform.localPosition = GetRandomStartPosition();
-
-            // Reset orientation
-            currentPlayerInstance.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());     
-
-
-            //Enemy
-            // Reset the position of the enemy agent
-            this.transform.localPosition = GetRandomStartPosition();
-
-            // Reset orientation
-            this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
-
-        }
-        //Player
-        currentPlayerInstance.GetComponent<PlayerMovement>().dead = false;
-        currentPlayerInstance.GetComponent<PlayerShooting>().dead = false;
-        currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = true;
-
 
         //Enemy
         this.KilledPlayer = false;
@@ -208,33 +186,6 @@ public class EnemyAI : Agent
         TookDamage = false;
         CollidedWithObject = false;
 
-    }
-
-    private Vector3 GetRandomStartPosition()
-    {
-        Vector3 startPosition = Vector3.zero;
-
-        bool positionFound = false;
-
-        while (!positionFound)
-        {
-            // Generate a random local position within a defined range
-            startPosition = new Vector3(Random.Range(-10, 10), Random.Range(-4, 6), 0);
-
-            // Check if the position collides with anything
-            if (Physics2D.OverlapCircle(startPosition, 0.1f) == null)
-            {
-                positionFound = true;
-            }
-        }
-
-        return startPosition;
-    }
-
-    private float GetRandomStartRotation()
-    {
-        // Generate a random rotation in degrees
-        return Random.Range(0f, 360f);
     }
 
 
