@@ -123,8 +123,7 @@ public class LevelManager : Agent
                 {
                     randomPos = GetRandomStartPosition();
                 }
-                int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                Instantiate(enemyPrefabs[enemyIndex], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
             }
             gameStarted = true;
         }

@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 0.13207549, g: 0.12148453, b: 0.12148453, a: 1}
+  m_Color: {r: 0.13333334, g: 0.10980393, b: 0.10980393, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -187,13 +187,15 @@ MonoBehaviour:
   - Player
   - Wall
   - Enemy
+  - Hazard
+  - Projectile
   m_RaysPerDirection: 4
   m_MaxRayDegrees: 45
   m_SphereCastRadius: 0.4
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967291
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
