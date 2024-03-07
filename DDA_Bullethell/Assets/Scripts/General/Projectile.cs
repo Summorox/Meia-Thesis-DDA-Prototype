@@ -85,4 +85,6 @@ public class Projectile : MonoBehaviour
         }
         this.bulletTrail = trail;
     }
+
+
 }

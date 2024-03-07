@@ -1,25 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents;
-using Unity.MLAgents.Sensors;
 using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class EnemyAI : Agent
+public class AdvancedEnemyAI : Agent
 {
     public GameObject bulletPrefab;
-    public Transform bulletSpawnPoint;
+    public Transform[] bulletSpawnPoints;
     public float bulletSpeed;
     public float shootingInterval;
     public float moveSpeed;
     public float rotationSpeed;
-    public bool training=false;
+    public bool training = false;
 
 
     private float shootingTimer;
     private Health healthComponent;
-  
+
     private Rigidbody2D rb;
 
     private GameObject currentPlayerInstance;
@@ -145,7 +144,7 @@ public class EnemyAI : Agent
         float rotationChange = actions.ContinuousActions[2] * rotationSpeed * Time.deltaTime;
         float newRotation = rb.rotation + rotationChange;
         rb.MoveRotation(newRotation);
-      
+
 
         // Shooting
         bool shoot = actions.DiscreteActions[0] == 1;
@@ -154,7 +153,7 @@ public class EnemyAI : Agent
             if (shootingTimer <= 0f)
             {
                 Shoot();
-                shootingTimer = shootingInterval;
+                shootingTimer = shootingInterval; // Reset the shooting timer
             }
         }
 
@@ -162,7 +161,7 @@ public class EnemyAI : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-    
+
         var continuousActionsOut = actionsOut.ContinuousActions;
         var discreteActionsOut = actionsOut.DiscreteActions;
 
@@ -177,7 +176,7 @@ public class EnemyAI : Agent
         discreteActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0;
 
     }
-    
+
     public void Update()
     {
         shootingTimer -= Time.deltaTime;
@@ -188,23 +187,39 @@ public class EnemyAI : Agent
 
     }
 
-
     private void Shoot()
     {
-        if (bulletPrefab != null && bulletSpawnPoint != null)
+        foreach (Transform spawnPoint in bulletSpawnPoints)
         {
-            GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+            StartCoroutine(ShootBurstFromPoint(spawnPoint));
+        }
+        shootingTimer = shootingInterval; // Reset shooting timer
+    }
+
+
+    private IEnumerator ShootBurstFromPoint(Transform spawnPoint)
+    {
+        int shots = 3; // Number of shots in a burst
+        float delayBetweenShots = 0.2f; // Delay between each shot in the burst
+
+        for (int i = 0; i < shots; i++)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
             Projectile projectileScript = bullet.GetComponent<Projectile>();
-            projectileScript.targetTag = "Player"; // Set the target tag
+            projectileScript.targetTag = "Player";
             if (rb != null)
             {
-                rb.velocity = bulletSpawnPoint.up * bulletSpeed;
-
-                Destroy(bullet, 12.0f); // Destroy the projectile after 2 seconds
+                rb.velocity = spawnPoint.up * bulletSpeed;
+                Destroy(bullet, 12.0f); // Adjust the lifetime of the bullet if necessary
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
-            AddReward(-0.01f);
+            AddReward(-0.01f); // Adjust reward as necessary
+
+            if (i < shots - 1)
+            {
+                yield return new WaitForSeconds(delayBetweenShots);
+            }
         }
     }
 

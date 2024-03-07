@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 1546061803006564041}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7089857, w: 0.7052229}
-  m_LocalPosition: {x: 0.019655792, y: 0.11006201, z: 0}
-  m_LocalScale: {x: 0.60000014, y: 0.60000014, z: 0.6}
+  m_LocalPosition: {x: -0.042, y: 0.21, z: 0}
+  m_LocalScale: {x: 1.3724757, y: 0.8970982, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2608470975179428774}
@@ -112,8 +112,8 @@ Transform:
   m_GameObject: {fileID: 3118693107380973820}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.32, y: -0.003, z: 0}
-  m_LocalScale: {x: 1.06, y: 1, z: 1}
+  m_LocalPosition: {x: 0.29, y: 0, z: 0}
+  m_LocalScale: {x: 1.0646138, y: 0.739429, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7223652269397995042}
@@ -187,9 +187,7 @@ MonoBehaviour:
   - Player
   - Wall
   - Enemy
-  - Hazard
-  - Projectile
-  m_RaysPerDirection: 3
+  m_RaysPerDirection: 4
   m_MaxRayDegrees: 45
   m_SphereCastRadius: 0.4
   m_RayLength: 30
@@ -209,15 +207,15 @@ GameObject:
   m_Component:
   - component: {fileID: 7129582607112762413}
   - component: {fileID: 4480584262962290918}
-  - component: {fileID: 6247662175534347095}
-  - component: {fileID: 3957265586347106710}
   - component: {fileID: 2348214289405476089}
   - component: {fileID: 1161861069338615070}
-  - component: {fileID: 2392501322933377132}
-  - component: {fileID: 4114373327534697656}
   - component: {fileID: 5180876580601693838}
+  - component: {fileID: 656797086338514726}
+  - component: {fileID: 5857667099672773560}
+  - component: {fileID: 528013969948648307}
+  - component: {fileID: 8226068602835315211}
   m_Layer: 6
-  m_Name: BasicEnemy
+  m_Name: IntermediateEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -231,9 +229,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7363638488950980769}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.706, w: 0.70821184}
-  m_LocalPosition: {x: -0.18, y: 2.04, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7060014, w: 0.7082105}
+  m_LocalPosition: {x: -0.18, y: 2.114, z: 0}
+  m_LocalScale: {x: 0.65639997, y: 0.6478172, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7223652269397995042}
@@ -266,7 +264,97 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &6247662175534347095
+--- !u!114 &2348214289405476089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363638488950980769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 525cf16a136216b4db7feeb769a009e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 150
+  currentHealth: 0
+  healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
+  training: 0
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.2
+--- !u!114 &1161861069338615070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363638488950980769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BrainParameters:
+    VectorObservationSize: 12
+    NumStackedVectorObservations: 1
+    m_ActionSpec:
+      m_NumContinuousActions: 3
+      BranchSizes: 02000000
+    VectorActionSize: 
+    VectorActionDescriptions: []
+    VectorActionSpaceType: 0
+    hasUpgradedBrainParametersWithActionSpec: 1
+  m_Model: {fileID: 5022602860645237092, guid: 3faea228c4727bb4a8fb8202e109bd51, type: 3}
+  m_InferenceDevice: 1
+  m_BehaviorType: 1
+  m_BehaviorName: IntermediateEnemyAI
+  TeamId: 0
+  m_UseChildSensors: 1
+  m_UseChildActuators: 1
+  m_ObservableAttributeHandling: 0
+--- !u!114 &5180876580601693838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363638488950980769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d443cfb3039674459c38b881652123d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  difficultyValue: 2
+--- !u!114 &656797086338514726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7363638488950980769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags:
+  - Enemy
+  - Player
+  - Wall
+  - Hazard
+  - Projectile
+  m_RaysPerDirection: 0
+  m_MaxRayDegrees: 70
+  m_SphereCastRadius: 0.5
+  m_RayLength: 20
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 1
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!60 &5857667099672773560
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -310,25 +398,24 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.024067376, y: 0.41011965}
-      - {x: -0.34983355, y: 0.4069402}
-      - {x: -0.452454, y: 0.36666322}
-      - {x: -0.5444277, y: 0.2679794}
-      - {x: -0.58267474, y: 0.117242664}
-      - {x: -0.5098152, y: -0.08687705}
-      - {x: -0.39595488, y: -0.17877299}
-      - {x: -0.26972774, y: -0.19039114}
-      - {x: -0.26588178, y: -0.24040106}
-      - {x: 0.01548617, y: -0.38119283}
-      - {x: 0.29727843, y: -0.23973133}
-      - {x: 0.29472426, y: -0.19301799}
-      - {x: 0.44502255, y: -0.17118867}
-      - {x: 0.5582172, y: -0.08646951}
-      - {x: 0.62989163, y: 0.12734282}
-      - {x: 0.5597343, y: 0.32267484}
-      - {x: 0.3949721, y: 0.4114834}
+    - - {x: 0.7302898, y: 0.7096705}
+      - {x: 0.5014243, y: 0.8929824}
+      - {x: -0.014571156, y: 0.9173301}
+      - {x: -0.57934815, y: 0.8862295}
+      - {x: -0.8290787, y: 0.6606264}
+      - {x: -0.95105654, y: 0.30901697}
+      - {x: -0.8995022, y: -0.1178249}
+      - {x: -0.7173024, y: -0.41203815}
+      - {x: -0.4462025, y: -0.47672358}
+      - {x: -0.01891417, y: -0.699137}
+      - {x: 0.28711924, y: -0.53221685}
+      - {x: 0.34522566, y: -0.5287321}
+      - {x: 0.65329766, y: -0.41822487}
+      - {x: 0.75087184, y: -0.21251589}
+      - {x: 0.8607301, y: -0.007640861}
+      - {x: 0.8768575, y: 0.33131596}
   m_UseDelaunayMesh: 0
---- !u!114 &3957265586347106710
+--- !u!114 &528013969948648307
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -337,7 +424,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7363638488950980769}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc6a9e63f9c052a498f210a7ad0c9f0c, type: 3}
+  m_Script: {fileID: 11500000, guid: a3f786097b89dc943a768e76855d5c02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentParameters:
@@ -346,60 +433,12 @@ MonoBehaviour:
   MaxStep: 5000
   bulletPrefab: {fileID: 4965641866268975501, guid: 9de29a806fd54ec4bbb06310f94d1a46, type: 3}
   bulletSpawnPoint: {fileID: 2608470975179428774}
-  bulletSpeed: 12
-  shootingInterval: 0.75
-  moveSpeed: 3
-  rotationSpeed: 150
+  bulletSpeed: 10
+  shootingInterval: 2
+  moveSpeed: 5
+  rotationSpeed: 165
   training: 0
---- !u!114 &2348214289405476089
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7363638488950980769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 525cf16a136216b4db7feeb769a009e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
-  healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
-  training: 0
-  flashColor: {r: 1, g: 0, b: 0, a: 1}
-  flashDuration: 0.2
---- !u!114 &1161861069338615070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7363638488950980769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BrainParameters:
-    VectorObservationSize: 12
-    NumStackedVectorObservations: 1
-    m_ActionSpec:
-      m_NumContinuousActions: 3
-      BranchSizes: 02000000
-    VectorActionSize: 
-    VectorActionDescriptions: []
-    VectorActionSpaceType: 0
-    hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 3faea228c4727bb4a8fb8202e109bd51, type: 3}
-  m_InferenceDevice: 1
-  m_BehaviorType: 0
-  m_BehaviorName: BasicEnemyAI
-  TeamId: 0
-  m_UseChildSensors: 1
-  m_UseChildActuators: 1
-  m_ObservableAttributeHandling: 0
---- !u!114 &2392501322933377132
+--- !u!114 &8226068602835315211
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -413,45 +452,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   TakeActionsBetweenDecisions: 1
---- !u!114 &4114373327534697656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7363638488950980769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SensorName: RayPerceptionSensor
-  m_DetectableTags:
-  - Wall
-  - Enemy
-  - Player
-  - Hazard
-  - Projectile
-  m_RaysPerDirection: 0
-  m_MaxRayDegrees: 70
-  m_SphereCastRadius: 0.5
-  m_RayLength: 30
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967291
-  m_ObservationStacks: 1
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &5180876580601693838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7363638488950980769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d443cfb3039674459c38b881652123d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  difficultyValue: 2
