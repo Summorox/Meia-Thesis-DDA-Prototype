@@ -40,7 +40,10 @@ public class BasicEnemyAI : Agent
         // Initialize variables or settings specific to the agent
 
         // Find and set the currentPlayerInstance to the player in the scene
-        currentPlayerInstance = GameObject.FindWithTag("Player");
+        var environmentParent = transform.parent; 
+
+        // Find the player within this local environment
+        currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
 
         shootingTimer = shootingInterval;
         currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
@@ -83,6 +86,13 @@ public class BasicEnemyAI : Agent
             sensor.AddObservation(Vector3.zero); // Direction
             sensor.AddObservation(0f); // Distance
         }
+        //Player's movement direction
+        Vector2 playerVelocity = currentPlayerInstance.GetComponent<Rigidbody2D>().velocity;
+        sensor.AddObservation(playerVelocity.normalized);
+        sensor.AddObservation(playerVelocity.magnitude);
+
+        // Player's State
+        sensor.AddObservation(currentPlayerInstance.GetComponent<Health>().currentHealth / currentPlayerInstance.GetComponent<Health>().maxHealth); // Normalized health
 
         // Enemy's Own State
         sensor.AddObservation(healthComponent.currentHealth / healthComponent.maxHealth); // Normalized health
@@ -92,6 +102,7 @@ public class BasicEnemyAI : Agent
 
         // Orientation or Rotation
         sensor.AddObservation(transform.rotation.eulerAngles / 360.0f); // Normalized rotation
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -100,12 +111,14 @@ public class BasicEnemyAI : Agent
         {
             if (HitPlayer)
             {
-                AddReward(0.3f); // Reward for hitting the player
+                Debug.Log("Hit Player");
+                AddReward(0.5f); // Reward for hitting the player
             }
 
             if (KilledPlayer)
             {
-                AddReward(1.0f); // Large reward for killing the player
+                Debug.Log("Killed Player");
+                AddReward(4.0f); // Large reward for killing the player
                 currentPlayerInstance.GetComponent<PlayerMovement>().dead = true;
                 currentPlayerInstance.GetComponent<PlayerShooting>().dead = true;
                 currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = false;
@@ -128,7 +141,7 @@ public class BasicEnemyAI : Agent
                 this.GetComponent<PolygonCollider2D>().enabled = false;
                 EndEpisode();
             }
-            if (this.Died)
+            if (this.Died || this.KilledPlayer)
             {
                 return;
             }
@@ -156,6 +169,10 @@ public class BasicEnemyAI : Agent
                 Shoot();
                 shootingTimer = shootingInterval;
             }
+        }
+        if(!HitPlayer || !KilledPlayer)
+        {
+            AddReward(-0.01f * Time.fixedDeltaTime);
         }
 
     }
@@ -204,14 +221,31 @@ public class BasicEnemyAI : Agent
                 Destroy(bullet, 12.0f); // Destroy the projectile after 2 seconds
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
-            AddReward(-0.01f);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log(collision.gameObject.tag);
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
+        {
+            CollidedWithObject = true;
+        }
 
-        CollidedWithObject = true;
+ 
+
+
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Debug.Log(collision.gameObject.tag);
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
+        {
+            // Apply a continuous penalty for staying in collision
+            CollidedWithObject = true;
+        }
+
 
     }
 }

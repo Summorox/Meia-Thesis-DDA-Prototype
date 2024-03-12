@@ -1,0 +1,12 @@
+Test 01: Focus on shooting static target (Random start rotation and position for enemy and player)
+Test 02: Same as Test 01, with rewards alteration 
+	Lessened hit player reward to 0.125
+Test 03: Shooting Moving Target
+	Increased collision penalties due to bug
+Test 04: Shooting Moving Target
+	Rebalance Collision
+	added new observations (Player's movement direction and player's health)
+	Fixed some dead training behaviour
+Test 05: Shooting Moving Target with pauses
+	Lowered collision penalty even further
+	Increased Player Health and updated hit/kill values.

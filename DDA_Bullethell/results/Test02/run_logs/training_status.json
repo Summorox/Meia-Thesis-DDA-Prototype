@@ -2,31 +2,40 @@
     "BasicEnemyAI": {
         "checkpoints": [
             {
-                "steps": 499964,
-                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499964.onnx",
-                "reward": 3.2016869744785676,
-                "creation_time": 1705341065.2801688,
+                "steps": 499992,
+                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499992.onnx",
+                "reward": null,
+                "creation_time": 1710169349.742992,
                 "auxillary_file_paths": [
-                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499964.pt"
+                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499992.pt"
                 ]
             },
             {
-                "steps": 500009,
-                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-500009.onnx",
-                "reward": 3.222929274448843,
-                "creation_time": 1705341065.3651233,
+                "steps": 999960,
+                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-999960.onnx",
+                "reward": null,
+                "creation_time": 1710170686.0299556,
                 "auxillary_file_paths": [
-                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-500009.pt"
+                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-999960.pt"
+                ]
+            },
+            {
+                "steps": 1000344,
+                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.onnx",
+                "reward": null,
+                "creation_time": 1710170686.2668214,
+                "auxillary_file_paths": [
+                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 500009,
+            "steps": 1000344,
             "file_path": "results\\Test02\\BasicEnemyAI.onnx",
-            "reward": 3.222929274448843,
-            "creation_time": 1705341065.3651233,
+            "reward": null,
+            "creation_time": 1710170686.2668214,
             "auxillary_file_paths": [
-                "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-500009.pt"
+                "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.pt"
             ]
         }
     },

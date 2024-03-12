@@ -437,7 +437,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 2608470975179428774}
   bulletSpeed: 10
   shootingInterval: 2
-  moveSpeed: 5
+  moveSpeed: 4
   rotationSpeed: 165
   training: 0
 --- !u!114 &8226068602835315211

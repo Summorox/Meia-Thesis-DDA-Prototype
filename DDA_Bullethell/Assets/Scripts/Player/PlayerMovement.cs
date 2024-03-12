@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float dashDistance = 5f;
     public float dashCooldown = 1f;
-    private bool isDashing;
+    public bool isDashing;
     private float dashCooldownTimer;
     public LayerMask obstacleLayerMask;
 
@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (this.dead && isDashing)
+        if (this.dead || isDashing)
         {
             return;
         }
@@ -78,10 +78,6 @@ public class PlayerMovement : MonoBehaviour
             // Create movement vector
             movement = new Vector2(horizontalInput, verticalInput);
         }
-
-        // Optional: Adjust diagonal movement speed
-        // if (movement.magnitude > 1)
-        //     movement.Normalize(); // or use custom scaling
 
         // Apply movement
         rb.velocity = movement * speed;
@@ -156,7 +152,32 @@ public class PlayerMovement : MonoBehaviour
 
     private void ChooseNewDirection()
     {
+        if (UnityEngine.Random.value > 0.5f) // 50% chance
+        {
+            StartCoroutine(RestThenChangeDirection());
+        }
+        else
+        {
+            ChangeDirectionNow();
+        }
+    }
+
+    private void ChangeDirectionNow()
+    {
         float randomAngle = UnityEngine.Random.Range(0, 360) * Mathf.Deg2Rad;
         movement = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
+    }
+
+    IEnumerator RestThenChangeDirection()
+    {
+        // Set the movement to zero for resting
+        movement = Vector2.zero;
+        rb.velocity = Vector2.zero;
+
+        // Wait for 0.5 to 3 seconds
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f, 3f));
+
+        // Now change direction
+        ChangeDirectionNow();
     }
 }

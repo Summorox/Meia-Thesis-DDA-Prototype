@@ -7,7 +7,7 @@ behaviors:
       buffer_size: 10240
       learning_rate: 0.0003
       beta: 0.004
-      epsilon: 0.2
+      epsilon: 0.4
       lambd: 0.95
       num_epoch: 4
       shared_critic: false
@@ -15,31 +15,31 @@ behaviors:
       beta_schedule: linear
       epsilon_schedule: linear
     network_settings:
-      normalize: false
-      hidden_units: 256
-      num_layers: 3
+      normalize: true
+      hidden_units: 512
+      num_layers: 5
       vis_encode_type: simple
       memory: null
       goal_conditioning_type: hyper
       deterministic: false
     reward_signals:
       extrinsic:
-        gamma: 0.99
+        gamma: 0.98
         strength: 1.0
         network_settings:
-          normalize: false
-          hidden_units: 256
-          num_layers: 3
+          normalize: true
+          hidden_units: 512
+          num_layers: 5
           vis_encode_type: simple
           memory: null
           goal_conditioning_type: hyper
           deterministic: false
-    init_path: results\Test03\BasicEnemyAI\checkpoint.pt
+    init_path: null
     keep_checkpoints: 5
     checkpoint_interval: 500000
-    max_steps: 500000
-    time_horizon: 128
-    summary_freq: 50000
+    max_steps: 1500000
+    time_horizon: 64
+    summary_freq: 25000
     threaded: false
     self_play: null
     behavioral_cloning: null
@@ -64,7 +64,7 @@ engine_settings:
 environment_parameters: null
 checkpoint_settings:
   run_id: Test04
-  initialize_from: Test03
+  initialize_from: null
   load_model: false
   resume: false
   force: false
