@@ -39,12 +39,12 @@ public class SpikeBallMovement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
         {
             ChangeDirection();
             return; // Skip the rest of the method if it's a wall collision
         }
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Player"))
         {
             // Push back and hurt the player or enemy
             Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
