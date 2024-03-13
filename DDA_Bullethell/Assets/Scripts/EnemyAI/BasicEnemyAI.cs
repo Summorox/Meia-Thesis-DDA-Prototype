@@ -31,6 +31,11 @@ public class BasicEnemyAI : Agent
     private bool CollidedWithObject = false;
     private bool Died = false;
 
+    private float minX =-14, maxX=14;
+    private float minY=-9, maxY=9;
+
+    private Transform environmentParent;
+
 
 
     public override void Initialize()
@@ -40,7 +45,7 @@ public class BasicEnemyAI : Agent
         // Initialize variables or settings specific to the agent
 
         // Find and set the currentPlayerInstance to the player in the scene
-        var environmentParent = transform.parent; 
+        environmentParent = transform.parent;
 
         // Find the player within this local environment
         currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
@@ -56,15 +61,22 @@ public class BasicEnemyAI : Agent
 
     }
 
+
     public override void OnEpisodeBegin()
     {
 
         //Enemy
         this.KilledPlayer = false;
         this.GetComponent<PolygonCollider2D>().enabled = true;
+        this.GetComponent<Health>().enabled = true;
         this.Died = false;
 
         healthComponent.currentHealth = healthComponent.maxHealth;
+
+        this.transform.localPosition = GetRandomStartPosition();
+
+        // Reset orientation
+        this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
 
     }
 
@@ -76,20 +88,23 @@ public class BasicEnemyAI : Agent
         // Relative Position to Player
         if (currentPlayerInstance != null)
         {
-            Vector3 directionToPlayer = currentPlayerInstance.GetComponent<Transform>().localPosition - this.transform.localPosition;
+            Vector3 directionToPlayer = currentPlayerInstance.transform.localPosition - transform.localPosition;
             sensor.AddObservation(directionToPlayer.normalized); // Normalized direction
             sensor.AddObservation(directionToPlayer.magnitude); // Distance to player
+
+            // Player's movement direction
+            Vector2 playerVelocity = currentPlayerInstance.GetComponent<Rigidbody2D>().velocity;
+            sensor.AddObservation(playerVelocity.normalized);
+            sensor.AddObservation(playerVelocity.magnitude);
         }
         else
         {
             // If the player is not found, add zeros
             sensor.AddObservation(Vector3.zero); // Direction
             sensor.AddObservation(0f); // Distance
+            sensor.AddObservation(Vector2.zero); // Player's movement direction normalized
+            sensor.AddObservation(0f); // Player's movement magnitude
         }
-        //Player's movement direction
-        Vector2 playerVelocity = currentPlayerInstance.GetComponent<Rigidbody2D>().velocity;
-        sensor.AddObservation(playerVelocity.normalized);
-        sensor.AddObservation(playerVelocity.magnitude);
 
         // Player's State
         sensor.AddObservation(currentPlayerInstance.GetComponent<Health>().currentHealth / currentPlayerInstance.GetComponent<Health>().maxHealth); // Normalized health
@@ -103,6 +118,19 @@ public class BasicEnemyAI : Agent
         // Orientation or Rotation
         sensor.AddObservation(transform.rotation.eulerAngles / 360.0f); // Normalized rotation
 
+        // Enemy's rotation relative to the player
+        if (currentPlayerInstance != null)
+        {
+            Vector3 enemyForward = bulletSpawnPoint.up; // Using bulletSpawnPoint's up as forward direction
+            Vector3 toPlayerDirection = (currentPlayerInstance.transform.position - transform.position).normalized;
+            float relativeRotationAngle = Vector3.SignedAngle(enemyForward, toPlayerDirection, Vector3.forward) / 180.0f; // Normalize to range [-1, 1]
+            sensor.AddObservation(relativeRotationAngle);
+        }
+        else
+        {
+            sensor.AddObservation(0f); // Default observation when player not found
+        }
+
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -111,13 +139,10 @@ public class BasicEnemyAI : Agent
         {
             if (HitPlayer)
             {
-                Debug.Log("Hit Player");
-                AddReward(0.5f); // Reward for hitting the player
+                AddReward(1.0f); // Reward for hitting the player
             }
-
             if (KilledPlayer)
             {
-                Debug.Log("Killed Player");
                 AddReward(4.0f); // Large reward for killing the player
                 currentPlayerInstance.GetComponent<PlayerMovement>().dead = true;
                 currentPlayerInstance.GetComponent<PlayerShooting>().dead = true;
@@ -127,24 +152,33 @@ public class BasicEnemyAI : Agent
 
             if (TookDamage)
             {
-                AddReward(-0.2f); // Penalty for taking damage
+                AddReward(-0.5f); // Penalty for taking damage
             }
 
             if (CollidedWithObject)
             {
-                AddReward(-0.1f); // Penalty for collision
+                AddReward(-0.3f); // Penalty for collision
             }
 
             if (Died)
             {
-                AddReward(-0.5f); // Penalty for dying
+                AddReward(-2.0f); // Penalty for dying
                 this.GetComponent<PolygonCollider2D>().enabled = false;
+                this.GetComponent<Health>().enabled = false;
                 EndEpisode();
             }
-            if (this.Died || this.KilledPlayer)
+            if (this.KilledPlayer)
             {
                 return;
             }
+            if (!HitPlayer || !KilledPlayer)
+            {
+                AddReward(-0.01f * Time.fixedDeltaTime);
+            }
+        }
+        if (Died)
+        {
+            return;
         }
         // Movement
         float moveX = actions.ContinuousActions[0];
@@ -169,10 +203,6 @@ public class BasicEnemyAI : Agent
                 Shoot();
                 shootingTimer = shootingInterval;
             }
-        }
-        if(!HitPlayer || !KilledPlayer)
-        {
-            AddReward(-0.01f * Time.fixedDeltaTime);
         }
 
     }
@@ -226,7 +256,6 @@ public class BasicEnemyAI : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
         {
             CollidedWithObject = true;
@@ -239,7 +268,6 @@ public class BasicEnemyAI : Agent
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
         {
             // Apply a continuous penalty for staying in collision
@@ -247,5 +275,34 @@ public class BasicEnemyAI : Agent
         }
 
 
+    }
+
+    private Vector3 GetRandomStartPosition()
+    {
+        Vector3 startPosition = Vector3.zero;
+
+        bool positionFound = false;
+
+        while (!positionFound)
+        {
+            float x = UnityEngine.Random.Range(minX, maxX);
+            float y = UnityEngine.Random.Range(minY, maxY);
+            // Generate a random local position within a defined range
+            startPosition = new Vector3(x, y, 0);
+
+            // Check if the position collides with anything
+            if (Physics2D.OverlapCircle(startPosition, 0.5f) == null)
+            {
+                positionFound = true;
+            }
+        }
+
+        return startPosition;
+    }
+
+    private float GetRandomStartRotation()
+    {
+        // Generate a random rotation in degrees
+        return UnityEngine.Random.Range(0f, 360f);
     }
 }

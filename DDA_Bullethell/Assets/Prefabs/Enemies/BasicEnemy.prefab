@@ -190,8 +190,8 @@ MonoBehaviour:
   - Hazard
   - Projectile
   m_RaysPerDirection: 3
-  m_MaxRayDegrees: 25.4
-  m_SphereCastRadius: 0.2
+  m_MaxRayDegrees: 30
+  m_SphereCastRadius: 0.1
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
@@ -391,9 +391,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: f67832b6dfd99884ea41fdde483b3062, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 8ec5842d3a44c7641afa3fe36cb0ea28, type: 3}
   m_InferenceDevice: 1
-  m_BehaviorType: 0
+  m_BehaviorType: 2
   m_BehaviorName: BasicEnemyAI
   TeamId: 0
   m_UseChildSensors: 1

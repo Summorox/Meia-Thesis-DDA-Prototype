@@ -12,12 +12,11 @@ public class LevelManager : Agent
     public GameObject[] enemyPrefabs;
     public GameObject[] hazardPrefabs;
     public GameObject playerPrefab;
-    public Transform levelParent;
-    public bool training = false;
-    public int minX = -18, maxX = 8;
-    public int minY = -8, maxY = 8;
 
-    private Vector2 playerStartPos = new Vector2(0, 0);
+    public bool training = false;
+    private float minX = -14, maxX = 14;
+    private float minY = -9, maxY = 9;
+    public Transform LevelParent;
 
     // Max counts
     public int maxEnemies;
@@ -38,6 +37,8 @@ public class LevelManager : Agent
 
     public TextMeshProUGUI waveText;
 
+    private bool playerDeath = false;
+
 
     public override void Initialize()
     {
@@ -45,34 +46,46 @@ public class LevelManager : Agent
 
         //playerPrefab.GetComponent<PlayerMovement>().training = this.training;
         //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
-        playerPrefab.GetComponent<Health>().training = this.training;
+        //playerPrefab.GetComponent<Health>().training = this.training;
 
     }
+
+    
 
     public override void OnEpisodeBegin()
     {
+        playerDeath = false;
+        if (training)
+        {
+            ClearLevel();
+            waveCounter = 0;
+            //Player
+            // Instantiate a new player instance
+            playerPrefab.transform.localPosition = GetRandomStartPosition();
 
-        //Player
-        // Instantiate a new player instance
-        playerPrefab.transform.localPosition = GetRandomStartPosition();
+            // Reset orientation
+            playerPrefab.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
 
-        // Reset orientation
-        playerPrefab.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+            //Player
+            playerPrefab.GetComponent<PlayerMovement>().dead = false;
+            playerPrefab.GetComponent<PlayerShooting>().dead = false;
+            playerPrefab.GetComponent<BoxCollider2D>().enabled = true;
 
-        //Player
-        playerPrefab.GetComponent<PlayerMovement>().dead = false;
-        playerPrefab.GetComponent<PlayerShooting>().dead = false;
-        playerPrefab.GetComponent<BoxCollider2D>().enabled = true;
-
-        //GenerateLevel(currentDifficultyValue);
+            playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
+        }
+       
+        GenerateLevel(currentDifficultyValue);
 
     }
+
+    
 
     private void GenerateLevel(int DifficultyValue)
     {
         if (!training && waveCounter==0)
-        {
-            Instantiate(playerPrefab, playerStartPos, Quaternion.identity, levelParent);
+        {         
+            GameObject player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
+            player.GetComponent<Health>().OnDeath+= () => playerDeath = true;
         }
         ClearLevel();
         Debug.Log(waveCounter);
@@ -95,20 +108,20 @@ public class LevelManager : Agent
                 if (!Physics2D.OverlapCircle(pos, 3f))
                 {
                     float randomChance = UnityEngine.Random.value;
-                    bool placeHazard = randomChance > 0.65f && currentHazards < maxHazards;
+                    bool placeHazard = randomChance > 0.60f && currentHazards < maxHazards;
                     bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
 
                     if (placeHazard)
                     {
                         int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
-                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentHazards++;
                         totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
                      }
                      else if (placeEnemy)
                      {
                         int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
                      }
@@ -118,37 +131,47 @@ public class LevelManager : Agent
             // If by the end of the loop no enemy has been placed, forcefully place one at a random position
             if (currentEnemies == 0)
             {
-                Vector2 randomPos = playerStartPos;
-                while (randomPos == playerStartPos || Physics2D.OverlapCircle(randomPos, 0.5f))
+                Vector2 randomPos = Vector2.zero;
+                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 0.5f))
                 {
                     randomPos = GetRandomStartPosition();
                 }
-                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), levelParent);
+                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
             }
             gameStarted = true;
         }
         else
         {
-            Debug.Log("Test");
-            StartCoroutine(LoadMainMenu());
+            if (!training)
+            {
+                StartCoroutine(LoadMainMenu("Congratulations!"));
+            }
+            else
+            {
+                EndEpisode();
+            }
         }
 
 
     }
 
-    private void ClearLevel()
+
+    void ClearLevel()
     {
-        foreach (Transform child in levelParent)
+        foreach (Transform child in LevelParent)
         {
-            if (child.CompareTag("Hazard"))
+            // Check if the child is tagged as a "Hazard" or any other tag you use for entities
+            if (child.CompareTag("Hazard") || child.CompareTag("Enemy"))
             {
-                if (child.GetComponent<Health>() != null)
+                // Optionally check for a Health component and call Die method
+                Health healthComponent = child.GetComponent<Health>();
+                if (healthComponent != null)
                 {
-                    child.GetComponent<Health>().Die();
+                    healthComponent.Die(); // If you want to trigger any death effects
                 }
                 else
                 {
-                    Destroy(child.gameObject);
+                    Destroy(child.gameObject); // Directly destroy the GameObject if no special handling is needed
                 }
             }
         }
@@ -156,10 +179,19 @@ public class LevelManager : Agent
 
     void LateUpdate()
     {
-        if (CountEnemyInstances() <= 0 && gameStarted)
+        if (!training && CountEnemyInstances() <= 0 && gameStarted)
         {
             gameStarted = false;
             StartCoroutine(StartNewLevel(2));
+        }
+        if(playerDeath) {
+            if(training){
+                EndEpisode();
+            }
+            else
+            {
+                LoadMainMenu("You Lost!");
+            }
         }
     }
 
@@ -173,10 +205,10 @@ public class LevelManager : Agent
         return enemyCount;
     }
 
-    IEnumerator LoadMainMenu()
+    IEnumerator LoadMainMenu(String message)
     {
         // Display the congratulations message
-        waveText.text = "Congratulations!";
+        waveText.text = message;
         // Wait for a specified time
         yield return new WaitForSeconds(2); // Adjust the delay as needed
                                             // Load the Main Menu scene
@@ -202,7 +234,11 @@ public class LevelManager : Agent
         while (!positionFound)
         {
             // Generate a random local position within a defined range
-            startPosition = new Vector3(UnityEngine.Random.Range(minX, maxX), UnityEngine.Random.Range(minY, maxY), 0);
+
+            float x = UnityEngine.Random.Range(minX, maxX);
+            float y = UnityEngine.Random.Range(minY, maxY);
+
+            startPosition = LevelParent.position + new Vector3(x, y, 0);
 
             // Check if the position collides with anything
             if (Physics2D.OverlapCircle(startPosition, 0.5f) == null)

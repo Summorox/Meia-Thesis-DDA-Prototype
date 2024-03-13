@@ -1,0 +1,56 @@
+{
+    "BasicEnemyAI": {
+        "checkpoints": [
+            {
+                "steps": 499996,
+                "file_path": "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-499996.onnx",
+                "reward": -8.93717191195455,
+                "creation_time": 1710274047.6706889,
+                "auxillary_file_paths": [
+                    "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-499996.pt"
+                ]
+            },
+            {
+                "steps": 999950,
+                "file_path": "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-999950.onnx",
+                "reward": -7.60083036733541,
+                "creation_time": 1710275412.7855647,
+                "auxillary_file_paths": [
+                    "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-999950.pt"
+                ]
+            },
+            {
+                "steps": 1499963,
+                "file_path": "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-1499963.onnx",
+                "reward": -7.569848668215604,
+                "creation_time": 1710276831.2036312,
+                "auxillary_file_paths": [
+                    "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-1499963.pt"
+                ]
+            },
+            {
+                "steps": 1500014,
+                "file_path": "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-1500014.onnx",
+                "reward": -7.433932586494139,
+                "creation_time": 1710276831.4039936,
+                "auxillary_file_paths": [
+                    "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-1500014.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1500014,
+            "file_path": "results\\Test06\\BasicEnemyAI.onnx",
+            "reward": -7.433932586494139,
+            "creation_time": 1710276831.4039936,
+            "auxillary_file_paths": [
+                "results\\Test06\\BasicEnemyAI\\BasicEnemyAI-1500014.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

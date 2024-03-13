@@ -1,0 +1,29 @@
+{
+    "BasicEnemyAI": {
+        "checkpoints": [
+            {
+                "steps": 2112,
+                "file_path": "results\\Test07\\BasicEnemyAI\\BasicEnemyAI-2112.onnx",
+                "reward": -334.7027425505221,
+                "creation_time": 1710284444.2753375,
+                "auxillary_file_paths": [
+                    "results\\Test07\\BasicEnemyAI\\BasicEnemyAI-2112.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2112,
+            "file_path": "results\\Test07\\BasicEnemyAI.onnx",
+            "reward": -334.7027425505221,
+            "creation_time": 1710284444.2753375,
+            "auxillary_file_paths": [
+                "results\\Test07\\BasicEnemyAI\\BasicEnemyAI-2112.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

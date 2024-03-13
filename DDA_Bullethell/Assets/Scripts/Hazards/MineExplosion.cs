@@ -27,8 +27,9 @@ public class MineExplosion : MonoBehaviour
     private void detonate()
     {
         // Trigger explosion effect
-        Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        ParticleSystem explosionEffectInstance = Instantiate(explosionEffect, transform.position, Quaternion.identity);
 
+        Destroy(explosionEffectInstance, 1f);
         // Find all colliders within the explosion radius
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
         foreach (var hit in colliders)
@@ -49,5 +50,6 @@ public class MineExplosion : MonoBehaviour
 
         // Destroy the mine object
         Destroy(gameObject);
+        
     }
 }
