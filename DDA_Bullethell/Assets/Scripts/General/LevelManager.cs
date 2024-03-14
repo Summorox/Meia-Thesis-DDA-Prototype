@@ -43,11 +43,13 @@ public class LevelManager : Agent
     public override void Initialize()
     {
         base.Initialize(); // Always call the base to initialize the Agent
-
-        //playerPrefab.GetComponent<PlayerMovement>().training = this.training;
-        //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
-        //playerPrefab.GetComponent<Health>().training = this.training;
-
+        if (training)
+        {
+            playerPrefab.GetComponent<PlayerMovement>().training = this.training;
+            //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
+            playerPrefab.GetComponent<Health>().training = this.training;
+            playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
+        }
     }
 
     
@@ -61,10 +63,12 @@ public class LevelManager : Agent
             waveCounter = 0;
             //Player
             // Instantiate a new player instance
-            playerPrefab.transform.localPosition = GetRandomStartPosition();
+            playerPrefab.transform.position = GetRandomStartPosition();
 
             // Reset orientation
             playerPrefab.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+
+            playerPrefab.transform.parent = LevelParent;
 
             //Player
             playerPrefab.GetComponent<PlayerMovement>().dead = false;
@@ -73,8 +77,8 @@ public class LevelManager : Agent
 
             playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
         }
-       
         GenerateLevel(currentDifficultyValue);
+        
 
     }
 
@@ -86,6 +90,8 @@ public class LevelManager : Agent
         {         
             GameObject player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
             player.GetComponent<Health>().OnDeath+= () => playerDeath = true;
+            player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
+            Debug.Log("player spawned");
         }
         ClearLevel();
         Debug.Log(waveCounter);
@@ -124,7 +130,7 @@ public class LevelManager : Agent
                         GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
-                     }
+                    }
                     
                 }
             }
@@ -136,7 +142,8 @@ public class LevelManager : Agent
                 {
                     randomPos = GetRandomStartPosition();
                 }
-                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+                Instantiate(enemyPrefabs[enemyIndex], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
             }
             gameStarted = true;
         }
@@ -158,23 +165,23 @@ public class LevelManager : Agent
 
     void ClearLevel()
     {
+
         foreach (Transform child in LevelParent)
         {
-            // Check if the child is tagged as a "Hazard" or any other tag you use for entities
-            if (child.CompareTag("Hazard") || child.CompareTag("Enemy"))
-            {
-                // Optionally check for a Health component and call Die method
-                Health healthComponent = child.GetComponent<Health>();
-                if (healthComponent != null)
+            if (child.CompareTag("Hazard") || (child.CompareTag("Enemy")))
                 {
-                    healthComponent.Die(); // If you want to trigger any death effects
-                }
-                else
+                Debug.Log($"Destroying {child.name} with tag {child.tag}");
+                if (child.GetComponent<Health>() != null)
                 {
-                    Destroy(child.gameObject); // Directly destroy the GameObject if no special handling is needed
+                    Debug.Log($"Attempting to destroy health bar of {child.name}");
+                    child.GetComponent<Health>().Die();
                 }
+                Destroy(child.gameObject); // Destroy directly for simplicity in this example
             }
         }
+
+
+
     }
 
     void LateUpdate()
@@ -184,8 +191,9 @@ public class LevelManager : Agent
             gameStarted = false;
             StartCoroutine(StartNewLevel(2));
         }
-        if(playerDeath) {
+        if(playerPrefab.GetComponent<Health>().currentHealth <= 0 || playerDeath) {
             if(training){
+                Debug.Log("Player Death");
                 EndEpisode();
             }
             else
@@ -198,9 +206,14 @@ public class LevelManager : Agent
     private int CountEnemyInstances()
     {
         int enemyCount = 0;
-        // Assuming all enemies are tagged as "Enemy"
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        enemyCount = enemies.Length;
+        // Find all children with the tag "Enemy" within the given environment
+        foreach (Transform child in LevelParent)
+        {
+            if (child.CompareTag("Enemy"))
+            {
+                enemyCount++;
+            }
+        }
 
         return enemyCount;
     }

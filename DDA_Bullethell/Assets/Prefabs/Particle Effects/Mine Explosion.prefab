@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 5111028024301018396}
   - component: {fileID: 4240600552655288062}
   - component: {fileID: 1272407325304205100}
+  - component: {fileID: -7994058641344933736}
   m_Layer: 0
   m_Name: Mine Explosion
-  m_TagString: Untagged
+  m_TagString: Hazard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4906,3 +4907,15 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &-7994058641344933736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8789996502251016520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d39ea7432219e4f96eb14af7db6571, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

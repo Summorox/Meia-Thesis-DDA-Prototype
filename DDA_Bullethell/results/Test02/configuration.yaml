@@ -1,21 +1,21 @@
 default_settings: null
 behaviors:
-  BasicEnemyAI:
+  IntermediateEnemyAI:
     trainer_type: ppo
     hyperparameters:
       batch_size: 1024
-      buffer_size: 10240
-      learning_rate: 0.0005
+      buffer_size: 20480
+      learning_rate: 0.0003
       beta: 0.004
-      epsilon: 0.2
+      epsilon: 0.3
       lambd: 0.95
-      num_epoch: 6
+      num_epoch: 5
       shared_critic: false
       learning_rate_schedule: linear
       beta_schedule: linear
       epsilon_schedule: linear
     network_settings:
-      normalize: false
+      normalize: true
       hidden_units: 512
       num_layers: 5
       vis_encode_type: simple
@@ -24,21 +24,21 @@ behaviors:
       deterministic: false
     reward_signals:
       extrinsic:
-        gamma: 0.99
+        gamma: 0.98
         strength: 1.0
         network_settings:
-          normalize: false
-          hidden_units: 1024
-          num_layers: 6
+          normalize: true
+          hidden_units: 512
+          num_layers: 5
           vis_encode_type: simple
           memory: null
           goal_conditioning_type: hyper
           deterministic: false
-    init_path: null
+    init_path: results\Test01\IntermediateEnemyAI\checkpoint.pt
     keep_checkpoints: 5
     checkpoint_interval: 500000
-    max_steps: 1000000
-    time_horizon: 64
+    max_steps: 1500000
+    time_horizon: 32
     summary_freq: 25000
     threaded: false
     self_play: null
@@ -64,7 +64,7 @@ engine_settings:
 environment_parameters: null
 checkpoint_settings:
   run_id: Test02
-  initialize_from: null
+  initialize_from: Test01
   load_model: false
   resume: false
   force: false

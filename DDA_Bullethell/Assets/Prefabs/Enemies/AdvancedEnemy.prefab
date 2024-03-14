@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: EnemySensor1
+  m_SensorName: AdvancedEnemySensor1
   m_DetectableTags:
   - Player
   - Wall
@@ -193,7 +193,7 @@ MonoBehaviour:
   - Projectile
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
-  m_SphereCastRadius: 0.4
+  m_SphereCastRadius: 0.2
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
@@ -298,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: EnemySensor2
+  m_SensorName: AdvancedEnemySensor2
   m_DetectableTags:
   - Player
   - Wall
@@ -307,7 +307,7 @@ MonoBehaviour:
   - Projectile
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
-  m_SphereCastRadius: 0.4
+  m_SphereCastRadius: 0.2
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
+    VectorObservationSize: 17
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 3
@@ -422,9 +422,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 3faea228c4727bb4a8fb8202e109bd51, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 1
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: AdvancedEnemyAI
   TeamId: 0
   m_UseChildSensors: 1
@@ -455,7 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: BackSensor
+  m_SensorName: BackAdvancedSensor
   m_DetectableTags:
   - Enemy
   - Player
@@ -563,7 +563,7 @@ MonoBehaviour:
   - {fileID: 6115908855286334618}
   bulletSpeed: 10
   shootingInterval: 3
-  moveSpeed: 5
+  moveSpeed: 4
   rotationSpeed: 180
   training: 0
 --- !u!114 &258884539900706557
@@ -677,7 +677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: EnemySensor3
+  m_SensorName: AdvancedEnemySensor3
   m_DetectableTags:
   - Player
   - Wall
@@ -686,7 +686,7 @@ MonoBehaviour:
   - Projectile
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
-  m_SphereCastRadius: 0.4
+  m_SphereCastRadius: 0.2
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2

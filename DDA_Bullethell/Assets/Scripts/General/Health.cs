@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -28,6 +29,7 @@ public class Health : MonoBehaviour
         {
             // Instantiate health bar and set it up
             healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
+            healthBarInstance.transform.SetParent(transform, false);
             healthBarInstance.GetComponent<HealthBar>().entity = this.transform;
             healthBarInstance.GetComponent<HealthBar>().offset = new Vector3(0, 1, 0); // Adjust the offset as needed
             healthBarInstance.GetComponent<HealthBar>().healthComponent = this;
@@ -63,8 +65,9 @@ public class Health : MonoBehaviour
         }
         if (!training)
         {
-            Destroy(gameObject); // For now, just destroy the object.
+            Destroy(gameObject); // Destroy the object.
             Destroy(healthBarInstance); // Destroy the health bar object
+            Debug.Log($"Health bar destroied");
 
         }
     }
@@ -75,8 +78,9 @@ public class Health : MonoBehaviour
         if (!training)
         {
 
-            Destroy(gameObject); // For now, just destroy the object.
+            Destroy(gameObject); // Destroy the object.
             Destroy(healthBarInstance); // Destroy the health bar object
+            Debug.Log($"Health bar destroied");
 
         }
     }

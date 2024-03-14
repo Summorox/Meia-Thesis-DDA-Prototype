@@ -810,7 +810,7 @@ MonoBehaviour:
   - {fileID: 107853853823870668}
   bulletSpeed: 10
   shootingInterval: 3
-  moveSpeed: 5
+  moveSpeed: 3
   rotationSpeed: 180
   training: 0
 --- !u!114 &3142974533439353278

@@ -45,19 +45,21 @@ public class BasicEnemyAI : Agent
         // Initialize variables or settings specific to the agent
 
         // Find and set the currentPlayerInstance to the player in the scene
-        environmentParent = transform.parent;
+        this.environmentParent = transform.parent;
 
         // Find the player within this local environment
-        currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
+        this.currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
 
-        shootingTimer = shootingInterval;
-        currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
+        this.shootingTimer = shootingInterval;
+        this.currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
 
-        healthComponent = GetComponent<Health>();
-        healthComponent.training = this.training;
-        rb = GetComponent<Rigidbody2D>();
-        healthComponent.OnTakeDamage += () => TookDamage = true;
-        healthComponent.OnDeath += () => Died = true;
+        this.healthComponent = GetComponent<Health>();
+        this.healthComponent.training = this.training;
+        this.rb = GetComponent<Rigidbody2D>();
+        this.healthComponent.OnTakeDamage += () => TookDamage = true;
+        this.healthComponent.OnDeath += () => Died = true;
+
+        Debug.Log("Test");
 
     }
 
@@ -70,13 +72,18 @@ public class BasicEnemyAI : Agent
         this.GetComponent<PolygonCollider2D>().enabled = true;
         this.GetComponent<Health>().enabled = true;
         this.Died = false;
-
-        healthComponent.currentHealth = healthComponent.maxHealth;
+        this.healthComponent.currentHealth = this.healthComponent.maxHealth;
 
         this.transform.localPosition = GetRandomStartPosition();
 
         // Reset orientation
         this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+        if (training)
+        {
+            currentPlayerInstance.GetComponent<PlayerMovement>().dead = false;
+            currentPlayerInstance.GetComponent<PlayerShooting>().dead = false;
+            currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = true;
+        }
 
     }
 
@@ -157,7 +164,7 @@ public class BasicEnemyAI : Agent
 
             if (CollidedWithObject)
             {
-                AddReward(-0.3f); // Penalty for collision
+                AddReward(-0.5f); // Penalty for collision
             }
 
             if (Died)
@@ -173,7 +180,7 @@ public class BasicEnemyAI : Agent
             }
             if (!HitPlayer || !KilledPlayer)
             {
-                AddReward(-0.01f * Time.fixedDeltaTime);
+                AddReward(-0.02f * Time.fixedDeltaTime);
             }
         }
         if (Died)
@@ -248,7 +255,7 @@ public class BasicEnemyAI : Agent
             {
                 rb.velocity = bulletSpawnPoint.up * bulletSpeed;
 
-                Destroy(bullet, 12.0f); // Destroy the projectile after 2 seconds
+                Destroy(bullet, 12.0f); // Destroy the projectile after 12 seconds
             }
             bullet.GetComponent<Projectile>().OnHitPlayer += () => HitPlayer = true;
         }
@@ -256,7 +263,7 @@ public class BasicEnemyAI : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
         {
             CollidedWithObject = true;
         }
@@ -268,7 +275,7 @@ public class BasicEnemyAI : Agent
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
         {
             // Apply a continuous penalty for staying in collision
             CollidedWithObject = true;

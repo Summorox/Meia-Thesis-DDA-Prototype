@@ -1,41 +1,50 @@
 {
-    "BasicEnemyAI": {
+    "IntermediateEnemyAI": {
         "checkpoints": [
             {
-                "steps": 499992,
-                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499992.onnx",
-                "reward": null,
-                "creation_time": 1710169349.742992,
+                "steps": 499983,
+                "file_path": "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-499983.onnx",
+                "reward": 30.483071459850795,
+                "creation_time": 1710436884.471663,
                 "auxillary_file_paths": [
-                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-499992.pt"
+                    "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-499983.pt"
                 ]
             },
             {
-                "steps": 999960,
-                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-999960.onnx",
-                "reward": null,
-                "creation_time": 1710170686.0299556,
+                "steps": 999972,
+                "file_path": "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-999972.onnx",
+                "reward": 33.47493413472321,
+                "creation_time": 1710438335.719247,
                 "auxillary_file_paths": [
-                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-999960.pt"
+                    "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-999972.pt"
                 ]
             },
             {
-                "steps": 1000344,
-                "file_path": "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.onnx",
-                "reward": null,
-                "creation_time": 1710170686.2668214,
+                "steps": 1499989,
+                "file_path": "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-1499989.onnx",
+                "reward": 36.53560706698581,
+                "creation_time": 1710439842.2388663,
                 "auxillary_file_paths": [
-                    "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.pt"
+                    "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-1499989.pt"
+                ]
+            },
+            {
+                "steps": 1500021,
+                "file_path": "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-1500021.onnx",
+                "reward": 36.53560706698581,
+                "creation_time": 1710439842.456181,
+                "auxillary_file_paths": [
+                    "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-1500021.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 1000344,
-            "file_path": "results\\Test02\\BasicEnemyAI.onnx",
-            "reward": null,
-            "creation_time": 1710170686.2668214,
+            "steps": 1500021,
+            "file_path": "results\\Test02\\IntermediateEnemyAI.onnx",
+            "reward": 36.53560706698581,
+            "creation_time": 1710439842.456181,
             "auxillary_file_paths": [
-                "results\\Test02\\BasicEnemyAI\\BasicEnemyAI-1000344.pt"
+                "results\\Test02\\IntermediateEnemyAI\\IntermediateEnemyAI-1500021.pt"
             ]
         }
     },

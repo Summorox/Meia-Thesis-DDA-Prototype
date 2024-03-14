@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public bool training = false;
     public bool dead = false;
 
-    private float changeTime = 1.5f; // Time interval to change direction
+    private float changeTime = 7f; // Time interval to change direction
     private float timer;
     private Vector2 movement;
 

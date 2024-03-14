@@ -1,0 +1,47 @@
+{
+    "BasicEnemyAI": {
+        "checkpoints": [
+            {
+                "steps": 499936,
+                "file_path": "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-499936.onnx",
+                "reward": 128.91333322909972,
+                "creation_time": 1710165660.3431969,
+                "auxillary_file_paths": [
+                    "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-499936.pt"
+                ]
+            },
+            {
+                "steps": 999968,
+                "file_path": "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-999968.onnx",
+                "reward": 208.63500299894562,
+                "creation_time": 1710167003.8198216,
+                "auxillary_file_paths": [
+                    "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-999968.pt"
+                ]
+            },
+            {
+                "steps": 1000608,
+                "file_path": "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-1000608.onnx",
+                "reward": 208.63500299894562,
+                "creation_time": 1710167004.0676808,
+                "auxillary_file_paths": [
+                    "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-1000608.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1000608,
+            "file_path": "results\\Test01\\BasicEnemyAI.onnx",
+            "reward": 208.63500299894562,
+            "creation_time": 1710167004.0676808,
+            "auxillary_file_paths": [
+                "results\\Test01\\BasicEnemyAI\\BasicEnemyAI-1000608.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

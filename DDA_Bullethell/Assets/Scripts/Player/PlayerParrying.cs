@@ -109,10 +109,7 @@ public class PlayerParrying : MonoBehaviour
         if (deflectEffect != null)
         {
             deflectEffect.Play();
-            Debug.Log("Deflect effect played with corrected orientation.");
         }
-
-        Destroy(deflectEffect, 0.5f);
 
 
         // Apply the new velocity to the projectile

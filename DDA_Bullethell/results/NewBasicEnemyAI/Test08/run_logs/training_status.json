@@ -1,0 +1,65 @@
+{
+    "BasicEnemyAI": {
+        "checkpoints": [
+            {
+                "steps": 499992,
+                "file_path": "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-499992.onnx",
+                "reward": 61.67046145420029,
+                "creation_time": 1710342057.1003132,
+                "auxillary_file_paths": [
+                    "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-499992.pt"
+                ]
+            },
+            {
+                "steps": 999945,
+                "file_path": "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-999945.onnx",
+                "reward": 64.99927846579389,
+                "creation_time": 1710343172.6973538,
+                "auxillary_file_paths": [
+                    "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-999945.pt"
+                ]
+            },
+            {
+                "steps": 1499997,
+                "file_path": "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-1499997.onnx",
+                "reward": 57.96011770481155,
+                "creation_time": 1710344376.8962293,
+                "auxillary_file_paths": [
+                    "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-1499997.pt"
+                ]
+            },
+            {
+                "steps": 1999960,
+                "file_path": "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-1999960.onnx",
+                "reward": 61.9547645666554,
+                "creation_time": 1710345584.678636,
+                "auxillary_file_paths": [
+                    "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-1999960.pt"
+                ]
+            },
+            {
+                "steps": 2000024,
+                "file_path": "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-2000024.onnx",
+                "reward": 61.9547645666554,
+                "creation_time": 1710345584.9307203,
+                "auxillary_file_paths": [
+                    "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-2000024.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2000024,
+            "file_path": "results\\Test08\\BasicEnemyAI.onnx",
+            "reward": 61.9547645666554,
+            "creation_time": 1710345584.9307203,
+            "auxillary_file_paths": [
+                "results\\Test08\\BasicEnemyAI\\BasicEnemyAI-2000024.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.1.2+cpu"
+    }
+}

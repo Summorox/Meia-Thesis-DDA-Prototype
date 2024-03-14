@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: EnemySensor
+  m_SensorName: IntermediateEnemySensor
   m_DetectableTags:
   - Player
   - Wall
@@ -191,7 +191,7 @@ MonoBehaviour:
   - Projectile
   m_RaysPerDirection: 4
   m_MaxRayDegrees: 45
-  m_SphereCastRadius: 0.4
+  m_SphereCastRadius: 0.2
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
@@ -233,7 +233,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7060014, w: 0.7082105}
   m_LocalPosition: {x: -0.18, y: 2.114, z: 0}
-  m_LocalScale: {x: 0.65639997, y: 0.6478172, z: 1}
+  m_LocalScale: {x: 0.65639985, y: 0.64781713, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7223652269397995042}
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 12
+    VectorObservationSize: 17
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 3
@@ -306,9 +306,9 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 3faea228c4727bb4a8fb8202e109bd51, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 8355fb69c2774534597b8e6cbf063e93, type: 3}
   m_InferenceDevice: 1
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: IntermediateEnemyAI
   TeamId: 0
   m_UseChildSensors: 1
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d443cfb3039674459c38b881652123d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficultyValue: 2
+  difficultyValue: 3
 --- !u!114 &656797086338514726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: RayPerceptionSensor
+  m_SensorName: BackIntermediateSensor
   m_DetectableTags:
   - Enemy
   - Player
@@ -408,10 +408,10 @@ PolygonCollider2D:
       - {x: -0.95105654, y: 0.30901697}
       - {x: -0.8995022, y: -0.1178249}
       - {x: -0.7173024, y: -0.41203815}
-      - {x: -0.4462025, y: -0.47672358}
+      - {x: -0.5603465, y: -0.4770849}
       - {x: -0.01891417, y: -0.699137}
-      - {x: 0.28711924, y: -0.53221685}
-      - {x: 0.34522566, y: -0.5287321}
+      - {x: 0.50246423, y: -0.47098303}
+      - {x: 0.5398327, y: -0.49410373}
       - {x: 0.65329766, y: -0.41822487}
       - {x: 0.75087184, y: -0.21251589}
       - {x: 0.8607301, y: -0.007640861}
@@ -437,7 +437,7 @@ MonoBehaviour:
   bulletSpawnPoint: {fileID: 2608470975179428774}
   bulletSpeed: 10
   shootingInterval: 2
-  moveSpeed: 4
+  moveSpeed: 5
   rotationSpeed: 165
   training: 0
 --- !u!114 &8226068602835315211
