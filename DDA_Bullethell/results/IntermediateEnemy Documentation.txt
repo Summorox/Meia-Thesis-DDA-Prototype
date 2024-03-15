@@ -1,5 +1,0 @@
-Test 01: Static target, random starting positions and orientation
-Test 02: Moving target with breaks
-	Added penalty for player collision
-	Adjusted time pressure and collision rewards
-Test 03: Moving target plus hazard generation

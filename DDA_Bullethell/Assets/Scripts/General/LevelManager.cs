@@ -77,7 +77,7 @@ public class LevelManager : Agent
 
             playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
         }
-        GenerateLevel(currentDifficultyValue);
+        //GenerateLevel(currentDifficultyValue);
         
 
     }
@@ -143,7 +143,7 @@ public class LevelManager : Agent
                     randomPos = GetRandomStartPosition();
                 }
                 int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                Instantiate(enemyPrefabs[enemyIndex], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
             }
             gameStarted = true;
         }
@@ -184,7 +184,7 @@ public class LevelManager : Agent
 
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!training && CountEnemyInstances() <= 0 && gameStarted)
         {

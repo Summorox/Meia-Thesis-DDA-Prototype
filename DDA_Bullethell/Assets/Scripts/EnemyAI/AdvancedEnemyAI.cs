@@ -154,7 +154,7 @@ public class AdvancedEnemyAI : Agent
 
             if (TookDamage)
             {
-                AddReward(-0.25f); // Penalty for taking damage
+                AddReward(-0.5f); // Penalty for taking damage
             }
 
             if (CollidedWithObject)
@@ -164,7 +164,7 @@ public class AdvancedEnemyAI : Agent
 
             if (Died)
             {
-                AddReward(-1f); // Penalty for dying
+                AddReward(-4.0f); // Penalty for dying
                 this.GetComponent<PolygonCollider2D>().enabled = false;
                 this.GetComponent<Health>().enabled = false;
                 EndEpisode();
@@ -175,7 +175,7 @@ public class AdvancedEnemyAI : Agent
             }
             if (!HitPlayer || !KilledPlayer)
             {
-                AddReward(-0.02f * Time.fixedDeltaTime);
+                AddReward(-0.01f * Time.fixedDeltaTime);
             }
         }
         if (Died)
@@ -274,10 +274,7 @@ public class AdvancedEnemyAI : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
-        {
-            CollidedWithObject = true;
-        }
+        CollidedWithObject = true;
 
 
 
@@ -286,11 +283,7 @@ public class AdvancedEnemyAI : Agent
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
-        {
-            // Apply a continuous penalty for staying in collision
-            CollidedWithObject = true;
-        }
+        CollidedWithObject = true;
 
 
     }

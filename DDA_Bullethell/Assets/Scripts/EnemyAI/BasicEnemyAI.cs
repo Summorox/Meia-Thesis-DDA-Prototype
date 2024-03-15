@@ -263,23 +263,16 @@ public class BasicEnemyAI : Agent
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
-        {
-            CollidedWithObject = true;
-        }
+        CollidedWithObject = true;
 
- 
+
 
 
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Hazard") || collision.gameObject.CompareTag("Enemy"))
-        {
-            // Apply a continuous penalty for staying in collision
-            CollidedWithObject = true;
-        }
+        CollidedWithObject = true;
 
 
     }
