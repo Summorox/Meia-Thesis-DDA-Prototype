@@ -77,7 +77,7 @@ public class LevelManager : Agent
 
             playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
         }
-        //GenerateLevel(currentDifficultyValue);
+        GenerateLevel(currentDifficultyValue);
         
 
     }
