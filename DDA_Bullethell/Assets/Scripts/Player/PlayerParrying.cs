@@ -29,8 +29,12 @@ public class PlayerParrying : MonoBehaviour
         {
             // Reduce the cooldown timer
             cooldownTimer -= Time.deltaTime;
-        }
-        else if (Input.GetMouseButtonDown(1) && !isParrying) // Right mouse button
+        }      
+    }
+
+    public void Parry()
+    {
+        if (!isParrying)
         {
             StartParry();
         }

@@ -59,8 +59,6 @@ public class BasicEnemyAI : Agent
         this.healthComponent.OnTakeDamage += () => TookDamage = true;
         this.healthComponent.OnDeath += () => Died = true;
 
-        Debug.Log("Test");
-
     }
 
 

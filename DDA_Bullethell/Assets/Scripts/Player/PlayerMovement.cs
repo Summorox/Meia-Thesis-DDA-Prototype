@@ -38,7 +38,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        TryDash();
         if (dashCooldownTimer > 0)
         {
             dashCooldownTimer -= Time.deltaTime;
@@ -70,14 +69,6 @@ public class PlayerMovement : MonoBehaviour
                 timer = changeTime;
             }
         }
-        else
-        {
-            float horizontalInput = Input.GetAxisRaw("Horizontal");
-            float verticalInput = Input.GetAxisRaw("Vertical");
-
-            // Create movement vector
-            movement = new Vector2(horizontalInput, verticalInput);
-        }
 
         // Apply movement
         rb.velocity = movement * speed;
@@ -90,9 +81,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void TryDash()
+    public void Move(Vector2 move)
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0 && !isDashing)
+        movement = move;
+    }
+
+    public void TryDash()
+    {
+        if (dashCooldownTimer <= 0 && !isDashing)
         {
             Vector2 dashDirection = movement.normalized; // Ensure direction is normalized
             StartCoroutine(Dash(dashDirection));

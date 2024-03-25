@@ -564,7 +564,7 @@ MonoBehaviour:
   - {fileID: 6115908855286334618}
   bulletSpeed: 12
   shootingInterval: 2.25
-  moveSpeed: 4
+  moveSpeed: 5
   rotationSpeed: 165
   training: 0
 --- !u!114 &258884539900706557
