@@ -14,8 +14,8 @@ public class LevelManager : Agent
     public GameObject playerPrefab;
 
     public bool training = false;
-    private float minX = -14, maxX = 14;
-    private float minY = -9, maxY = 9;
+    private float minX = -23, maxX = 23;
+    private float minY = -12, maxY = 12;
     public Transform LevelParent;
 
     // Max counts
@@ -89,7 +89,7 @@ public class LevelManager : Agent
         if (!training && waveCounter==0)
         {         
             GameObject player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
-            player.GetComponent<Health>().OnDeath+= () => playerDeath = true;
+            player.GetComponent<Health>().OnDeath+= PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
             Debug.Log("player spawned");
         }
@@ -114,7 +114,7 @@ public class LevelManager : Agent
                 if (!Physics2D.OverlapCircle(pos, 3f))
                 {
                     float randomChance = UnityEngine.Random.value;
-                    bool placeHazard = randomChance > 0.60f && currentHazards < maxHazards;
+                    bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
                     bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
 
                     if (placeHazard)
@@ -199,6 +199,48 @@ public class LevelManager : Agent
             else
             {
                 LoadMainMenu("You Lost!");
+            }
+        }
+    }
+
+    private void PlayerDeathHandler()
+    {
+
+        FreezeGameEntities();
+
+        // Load the main menu after a delay
+        StartCoroutine(LoadMainMenu("You Lost!")); // Adjust delay as needed
+    }
+
+    private void FreezeGameEntities()
+    {
+        // Freeze enemies
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies)
+        {
+            if (enemy.TryGetComponent(out Rigidbody2D rbEnemy))
+            {
+                rbEnemy.velocity = Vector2.zero;
+                rbEnemy.isKinematic = true;
+            }
+            if (enemy.TryGetComponent(out Collider2D colliderEnemy))
+            {
+                colliderEnemy.enabled = false;
+            }
+        }
+
+        // Freeze hazards
+        GameObject[] hazards = GameObject.FindGameObjectsWithTag("Hazard");
+        foreach (GameObject hazard in hazards)
+        {
+            if (hazard.TryGetComponent(out Rigidbody2D rbHazard))
+            {
+                rbHazard.velocity = Vector2.zero;
+                rbHazard.isKinematic = true;
+            }
+            if (hazard.TryGetComponent(out Collider2D colliderHazard))
+            {
+                colliderHazard.enabled = false;
             }
         }
     }

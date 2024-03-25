@@ -30,8 +30,8 @@ public class AdvancedEnemyAI : Agent
     private bool CollidedWithObject = false;
     private bool Died = false;
 
-    private float minX = -14, maxX = 14;
-    private float minY = -9, maxY = 9;
+    private float minX = -23, maxX = 23;
+    private float minY = -12, maxY = 12;
 
     private Transform environmentParent;
 
@@ -68,8 +68,10 @@ public class AdvancedEnemyAI : Agent
         this.GetComponent<Health>().enabled = true;
         this.Died = false;
         this.healthComponent.currentHealth = this.healthComponent.maxHealth;
-
-        this.transform.localPosition = GetRandomStartPosition();
+        if (training)
+        {
+            this.transform.localPosition = GetRandomStartPosition();
+        }
 
         // Reset orientation
         this.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
