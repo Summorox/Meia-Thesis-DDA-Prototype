@@ -26,8 +26,8 @@ public class LevelManager : Agent
     private int currentEnemies = 0;
     private int currentHazards = 0;
 
-    public int currentDifficultyValue;
-    public int difficultyIncrease;
+    private int currentDifficultyValue=6;
+    private int difficultyIncrease=2;
 
     public int maxWaves;
 

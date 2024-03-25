@@ -189,13 +189,13 @@ MonoBehaviour:
   - Enemy
   - Hazard
   - Projectile
-  m_RaysPerDirection: 3
-  m_MaxRayDegrees: 30
+  m_RaysPerDirection: 4
+  m_MaxRayDegrees: 35
   m_SphereCastRadius: 0.1
-  m_RayLength: 30
+  m_RayLength: 60
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 223
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -391,7 +391,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 2d1fc0455393dc14db0b179732f59469, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: bb534981d5c2f9a4e8a11e928ea6abf5, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 2
   m_BehaviorName: BasicEnemyAI
@@ -435,10 +435,10 @@ MonoBehaviour:
   m_RaysPerDirection: 0
   m_MaxRayDegrees: 70
   m_SphereCastRadius: 0.5
-  m_RayLength: 20
+  m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 223
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}

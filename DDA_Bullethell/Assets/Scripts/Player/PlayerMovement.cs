@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public bool training = false;
     public bool dead = false;
 
-    private float changeTime = 7f; // Time interval to change direction
+    private float changeTime = 5f; // Time interval to change direction
     private float timer;
     private Vector2 movement;
 
@@ -162,6 +162,7 @@ public class PlayerMovement : MonoBehaviour
     {
         float randomAngle = UnityEngine.Random.Range(0, 360) * Mathf.Deg2Rad;
         movement = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
+        Debug.Log(movement);
     }
 
     IEnumerator RestThenChangeDirection()
@@ -171,7 +172,7 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = Vector2.zero;
 
         // Wait for 0.5 to 3 seconds
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f, 3f));
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f, 2f));
 
         // Now change direction
         ChangeDirectionNow();
