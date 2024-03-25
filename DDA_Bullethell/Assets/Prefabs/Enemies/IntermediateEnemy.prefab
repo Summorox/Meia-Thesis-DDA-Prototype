@@ -432,11 +432,11 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 5000000
   bulletPrefab: {fileID: 4965641866268975501, guid: 9de29a806fd54ec4bbb06310f94d1a46, type: 3}
   bulletSpawnPoint: {fileID: 2608470975179428774}
-  bulletSpeed: 10
-  shootingInterval: 2
+  bulletSpeed: 12
+  shootingInterval: 1.5
   moveSpeed: 5
   rotationSpeed: 165
   training: 0

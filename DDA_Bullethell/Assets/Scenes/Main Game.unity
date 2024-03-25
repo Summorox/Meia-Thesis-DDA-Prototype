@@ -598,7 +598,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 5000000
   enemyPrefabs:
   - {fileID: 7363638488950980769, guid: aa2032e68659b1f4eac6215570e5dd07, type: 3}
   - {fileID: 7363638488950980769, guid: e3b7446636930224f816b2176c0384db, type: 3}

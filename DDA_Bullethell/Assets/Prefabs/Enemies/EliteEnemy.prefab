@@ -808,8 +808,8 @@ MonoBehaviour:
   - {fileID: 5570083674516809375}
   - {fileID: 7043006223824666294}
   - {fileID: 107853853823870668}
-  bulletSpeed: 10
-  shootingInterval: 4
+  bulletSpeed: 12
+  shootingInterval: 3
   moveSpeed: 3
   rotationSpeed: 150
   training: 0
@@ -828,7 +828,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 5000
+  MaxStep: 5000000
 --- !u!114 &8434331099774232761
 MonoBehaviour:
   m_ObjectHideFlags: 0
