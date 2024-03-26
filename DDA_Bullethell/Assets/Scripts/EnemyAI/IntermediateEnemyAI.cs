@@ -144,11 +144,11 @@ public class IntermediateEnemyAI : Agent
         {
             if (HitPlayer)
             {
-                AddReward(0.5f); // Reward for hitting the player
+                AddReward(1.0f); // Reward for hitting the player
             }
             if (KilledPlayer)
             {
-                AddReward(2.0f); // Large reward for killing the player
+                AddReward(4.0f); // Large reward for killing the player
                 currentPlayerInstance.GetComponent<PlayerMovement>().dead = true;
                 currentPlayerInstance.GetComponent<PlayerShooting>().dead = true;
                 currentPlayerInstance.GetComponent<BoxCollider2D>().enabled = false;
@@ -162,12 +162,12 @@ public class IntermediateEnemyAI : Agent
 
             if (CollidedWithObject)
             {
-                AddReward(-0.3f); // Penalty for collision
+                AddReward(-0.5f); // Penalty for collision
             }
 
             if (Died)
             {
-                AddReward(-1.5f); // Penalty for dying
+                AddReward(-2.0f); // Penalty for dying
                 this.GetComponent<PolygonCollider2D>().enabled = false;
                 this.GetComponent<Health>().enabled = false;
                 EndEpisode();
@@ -178,7 +178,7 @@ public class IntermediateEnemyAI : Agent
             }
             if (!HitPlayer || !KilledPlayer)
             {
-                AddReward(-0.025f * Time.fixedDeltaTime);
+                AddReward(-0.02f * Time.fixedDeltaTime);
             }
         }
         if (Died)

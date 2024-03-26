@@ -194,10 +194,10 @@ MonoBehaviour:
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
   m_SphereCastRadius: 0.2
-  m_RayLength: 30
+  m_RayLength: 60
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -308,10 +308,10 @@ MonoBehaviour:
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
   m_SphereCastRadius: 0.2
-  m_RayLength: 30
+  m_RayLength: 60
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -422,7 +422,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 72c8fa1febd7bde459def3ec70ae557d, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 093cee86ef153ab4da8b84579c3c6e67, type: 3}
   m_InferenceDevice: 1
   m_BehaviorType: 2
   m_BehaviorName: AdvancedEnemyAI
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_RaysPerDirection: 0
   m_MaxRayDegrees: 70
   m_SphereCastRadius: 0.5
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291
@@ -688,10 +688,10 @@ MonoBehaviour:
   m_RaysPerDirection: 3
   m_MaxRayDegrees: 30
   m_SphereCastRadius: 0.2
-  m_RayLength: 30
+  m_RayLength: 60
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}

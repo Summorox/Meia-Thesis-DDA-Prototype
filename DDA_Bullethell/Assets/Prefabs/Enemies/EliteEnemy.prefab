@@ -107,10 +107,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -221,10 +221,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 24
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -335,10 +335,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -449,10 +449,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -563,10 +563,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -950,10 +950,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1064,10 +1064,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1270,10 +1270,10 @@ MonoBehaviour:
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 25
   m_SphereCastRadius: 0.4
-  m_RayLength: 20
+  m_RayLength: 40
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967283
+    m_Bits: 4294967295
   m_ObservationStacks: 1
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
