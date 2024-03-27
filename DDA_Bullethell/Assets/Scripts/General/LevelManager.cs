@@ -45,7 +45,7 @@ public class LevelManager : Agent
         base.Initialize(); // Always call the base to initialize the Agent
         if (training)
         {
-            playerPrefab.GetComponent<PlayerMovement>().training = false;
+            playerPrefab.GetComponent<PlayerMovement>().training = this.training;
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
             playerPrefab.GetComponent<Health>().training = this.training;
             playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
@@ -77,7 +77,7 @@ public class LevelManager : Agent
 
             playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
         }
-        //GenerateLevel(currentDifficultyValue);
+        GenerateLevel(currentDifficultyValue);
         
 
     }
@@ -114,7 +114,7 @@ public class LevelManager : Agent
                 if (!Physics2D.OverlapCircle(pos, 3f))
                 {
                     float randomChance = UnityEngine.Random.value;
-                    bool placeHazard = randomChance > 0.00f && currentHazards < maxHazards;
+                    bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
                     bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
 
                     if (placeHazard)
@@ -143,7 +143,7 @@ public class LevelManager : Agent
                     randomPos = GetRandomStartPosition();
                 }
                 int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                //Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
             }
             gameStarted = true;
         }
