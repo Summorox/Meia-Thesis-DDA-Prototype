@@ -145,8 +145,10 @@ public class LevelManager : Agent
                         GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
+                        enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
+
                     }
-                    
+
                 }
             }
             // If by the end of the loop no enemy has been placed, forcefully place one at a random position
@@ -158,7 +160,9 @@ public class LevelManager : Agent
                     randomPos = GetRandomStartPosition();
                 }
                 int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                GameObject enemy=Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
+
             }
             gameStarted = true;
         }
@@ -175,6 +179,11 @@ public class LevelManager : Agent
         }
 
 
+    }
+
+    private void HandleEnemyDeath(int difficultyValue)
+    {
+        metricsLogger.LogEnemyKill(difficultyValue);
     }
 
     private void StartRecording()

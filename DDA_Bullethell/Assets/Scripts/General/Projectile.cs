@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public int damage = 20;
+    private int damage = 25;
     public string targetTag; // Tag of the target it can damage
 
     public event Action OnHitPlayer;

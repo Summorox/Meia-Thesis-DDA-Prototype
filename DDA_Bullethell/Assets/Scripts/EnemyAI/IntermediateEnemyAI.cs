@@ -113,7 +113,16 @@ public class IntermediateEnemyAI : Agent
         }
 
         // Player's State
-        sensor.AddObservation(currentPlayerInstance.GetComponent<Health>().currentHealth / currentPlayerInstance.GetComponent<Health>().maxHealth); // Normalized health
+        if(currentPlayerInstance != null)
+        {
+            sensor.AddObservation(currentPlayerInstance.GetComponent<Health>().currentHealth / currentPlayerInstance.GetComponent<Health>().maxHealth); // Normalized health
+
+        }
+        else
+        {
+            sensor.AddObservation(0f); // Normalized health
+
+        }
 
         // Enemy's Own State
         sensor.AddObservation(healthComponent.currentHealth / healthComponent.maxHealth); // Normalized health

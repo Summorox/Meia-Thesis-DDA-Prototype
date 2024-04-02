@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
@@ -41,6 +42,25 @@ public class PlayerAI : Agent
         Vector2 playerVelocity = GetComponent<Rigidbody2D>().velocity;
         sensor.AddObservation(playerVelocity.normalized);
         sensor.AddObservation(playerVelocity.magnitude);
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if( enemies.Length > 0 )
+        {
+            float closestDistance = enemies.Min(enemy => Vector2.Distance(transform.position, enemy.transform.position));
+            //Closest distance to enemy
+            sensor.AddObservation(closestDistance);
+
+            //Enemy density within a radius
+            sensor.AddObservation(enemies.Count(enemy => Vector2.Distance(transform.position, enemy.transform.position) < 8f));
+        }
+        else
+        {
+            //Closest distance to enemy
+            sensor.AddObservation(0f);
+
+            //Enemy density within a radius
+            sensor.AddObservation(0f);
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)

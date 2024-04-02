@@ -12,6 +12,7 @@ public class PerformanceMetrics
     public float averageAccuracy;
     public float averageParrySuccessRate;
     public float maxDifficulty;
+    public float killScore;
 }
 
 public class PerformanceMetricsLogger : MonoBehaviour
@@ -24,6 +25,7 @@ public class PerformanceMetricsLogger : MonoBehaviour
     private int parriesSuccessful;
     private int currentWave;
     private int difficultyValue;
+    private int killScore;
 
     private void Start()
     {
@@ -38,7 +40,8 @@ public class PerformanceMetricsLogger : MonoBehaviour
         parriesAttempted = 0;
         parriesSuccessful = 0;
         currentWave = 1;
-        difficultyValue = 2;
+        difficultyValue = 0;
+        killScore = 0;
     }
 
     public void LogShotFired() => shotsFired++;
@@ -48,6 +51,10 @@ public class PerformanceMetricsLogger : MonoBehaviour
     public void LogParryAttempt() => parriesAttempted++;
 
     public void LogParrySuccess() => parriesSuccessful++;
+    public void LogEnemyKill(int value)
+    {
+        killScore=killScore+value;
+    }
 
     public void WaveCompleted(int wave, int difficultyValue, float healthLost)
     {
@@ -65,6 +72,7 @@ public class PerformanceMetricsLogger : MonoBehaviour
         metrics.maxDifficulty = difficultyValue; 
         metrics.averageAccuracy = shotsFired > 0 ? (float)shotsHit / shotsFired : 0;
         metrics.averageParrySuccessRate = parriesAttempted > 0 ? (float)parriesSuccessful / parriesAttempted : 0;
+        metrics.killScore = killScore;
 
 
         string buildDirectory = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
