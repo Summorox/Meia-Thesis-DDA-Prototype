@@ -14,6 +14,7 @@ public class PlayerAI : Agent
     private PlayerMovement playerMovement;
     private PlayerParrying playerParrying;
     private PlayerShooting playerShooting;
+    private Health healthComponent;
 
 
     private bool useHeuristics = false;
@@ -25,11 +26,21 @@ public class PlayerAI : Agent
         playerMovement = GetComponent<PlayerMovement>();
         playerParrying = GetComponent<PlayerParrying>();
         playerShooting = GetComponent<PlayerShooting>();
+        healthComponent = GetComponent<Health>();
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        // Add vector observations here, e.g., player position, enemy direction
+        //Local Position
+        sensor.AddObservation(transform.localPosition);
+
+        //Current Health
+        sensor.AddObservation(healthComponent.currentHealth / healthComponent.maxHealth);
+
+        //Velocity
+        Vector2 playerVelocity = GetComponent<Rigidbody2D>().velocity;
+        sensor.AddObservation(playerVelocity.normalized);
+        sensor.AddObservation(playerVelocity.magnitude);
     }
 
     public override void OnActionReceived(ActionBuffers actions)

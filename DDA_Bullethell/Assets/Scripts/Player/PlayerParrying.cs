@@ -10,11 +10,20 @@ public class PlayerParrying : MonoBehaviour
     public ParticleSystem deflectionIndicator;
 
 
+
     public bool isParrying = false;
     private float parryTimer = 0f;
     private float cooldownTimer = 0f;
 
     public ParticleSystem parryEffect;
+
+    private PerformanceMetricsLogger metricsLogger;
+
+    void Start()
+    {
+        metricsLogger = GetComponent<PerformanceMetricsLogger>();
+
+    }
 
 
     void Update()
@@ -36,6 +45,7 @@ public class PlayerParrying : MonoBehaviour
     {
         if (!isParrying)
         {
+            metricsLogger.LogParryAttempt();
             StartParry();
         }
     }
@@ -97,7 +107,7 @@ public class PlayerParrying : MonoBehaviour
 
     void DeflectProjectile(GameObject projectile)
     {
-
+        metricsLogger.LogParrySuccess();
         // Determine the direction from the player to the projectile
         Vector2 directionToProjectile = (projectile.transform.position - transform.position).normalized;
 

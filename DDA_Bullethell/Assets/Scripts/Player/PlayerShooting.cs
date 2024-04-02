@@ -11,8 +11,13 @@ public class PlayerShooting : MonoBehaviour
     public bool dead = false;
 
     private float nextFireTime = 0.0f;
+    private PerformanceMetricsLogger metricsLogger;
 
+    void Start()
+    {
+        metricsLogger = GetComponent<PerformanceMetricsLogger>();
 
+    }
     void Update()
     {
         if (this.dead)
@@ -75,6 +80,8 @@ public class PlayerShooting : MonoBehaviour
         projectileScript.targetTag = "Enemy"; // Set the target tag
 
         SpriteRenderer projectileSprite = projectile.GetComponent<SpriteRenderer>();
+        metricsLogger.LogShotFired();
+        projectile.GetComponent<Projectile>().OnHitEnemy += metricsLogger.LogShotHit;
         if (projectileSprite != null)
         {
             projectileSprite.color = Color.blue;

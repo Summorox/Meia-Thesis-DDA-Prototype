@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using Unity.MLAgents;
+using Unity.MLAgents.Demonstrations;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,6 +13,7 @@ public class LevelManager : Agent
     public GameObject[] enemyPrefabs;
     public GameObject[] hazardPrefabs;
     public GameObject playerPrefab;
+
 
     public bool training = false;
     private float minX = -23, maxX = 23;
@@ -39,6 +41,14 @@ public class LevelManager : Agent
 
     private bool playerDeath = false;
 
+    private DemonstrationRecorder recorder;
+
+    private PerformanceMetricsLogger metricsLogger;
+
+    private GameObject player;
+
+    private int initialPlayerHealth;
+
 
     public override void Initialize()
     {
@@ -59,23 +69,24 @@ public class LevelManager : Agent
         playerDeath = false;
         if (training)
         {
+            player = playerPrefab;
             ClearLevel();
             waveCounter = 0;
             //Player
             // Instantiate a new player instance
-            playerPrefab.transform.position = GetRandomStartPosition();
+            player.transform.position = GetRandomStartPosition();
 
             // Reset orientation
-            playerPrefab.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
+            player.transform.rotation = Quaternion.Euler(0, 0, GetRandomStartRotation());
 
-            playerPrefab.transform.parent = LevelParent;
+            player.transform.parent = LevelParent;
 
             //Player
-            playerPrefab.GetComponent<PlayerMovement>().dead = false;
-            playerPrefab.GetComponent<PlayerShooting>().dead = false;
-            playerPrefab.GetComponent<BoxCollider2D>().enabled = true;
+            player.GetComponent<PlayerMovement>().dead = false;
+            player.GetComponent<PlayerShooting>().dead = false;
+            player.GetComponent<BoxCollider2D>().enabled = true;
 
-            playerPrefab.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
+            player.GetComponent<Health>().currentHealth = player.GetComponent<Health>().maxHealth;
         }
         GenerateLevel(currentDifficultyValue);
         
@@ -88,15 +99,19 @@ public class LevelManager : Agent
     {
         if (!training && waveCounter==0)
         {         
-            GameObject player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
+            player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
             player.GetComponent<Health>().OnDeath+= PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
+            recorder = player.GetComponent<DemonstrationRecorder>();
+            metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
+            StartRecording();
             Debug.Log("player spawned");
         }
         ClearLevel();
         Debug.Log(waveCounter);
         if (waveCounter < maxWaves)
         {
+            initialPlayerHealth= player.GetComponent<Health>().currentHealth;
             int totalDifficulty = 0;
             // Reset counts
             currentEnemies = 0;
@@ -160,6 +175,28 @@ public class LevelManager : Agent
         }
 
 
+    }
+
+    private void StartRecording()
+    {
+        if (recorder != null)
+        {
+            recorder.Record = true;
+            recorder.DemonstrationName = "PlayerDemo_" + System.DateTime.Now.ToString("yyyyMMddHHmmss"); 
+        }
+    }
+
+    private void StopRecording()
+    {
+        if (recorder != null)
+        {
+            recorder.Record = false;
+        }
+        if(metricsLogger != null)
+        {
+            metricsLogger.SaveMetrics(recorder.DemonstrationName);
+        }
+        Destroy(player);
     }
 
 
@@ -264,6 +301,7 @@ public class LevelManager : Agent
     {
         // Display the congratulations message
         waveText.text = message;
+        StopRecording();
         // Wait for a specified time
         yield return new WaitForSeconds(2); // Adjust the delay as needed
                                             // Load the Main Menu scene
@@ -275,6 +313,10 @@ public class LevelManager : Agent
     IEnumerator StartNewLevel(float delay)
     {
         yield return new WaitForSeconds(delay);
+        if(metricsLogger != null)
+        {
+            metricsLogger.WaveCompleted(waveCounter + 1, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
+        }
         currentDifficultyValue += difficultyIncrease;
         waveCounter++;
         GenerateLevel(currentDifficultyValue);

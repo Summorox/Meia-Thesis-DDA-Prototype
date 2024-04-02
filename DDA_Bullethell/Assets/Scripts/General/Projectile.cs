@@ -9,6 +9,7 @@ public class Projectile : MonoBehaviour
     public string targetTag; // Tag of the target it can damage
 
     public event Action OnHitPlayer;
+    public event Action OnHitEnemy;
 
     public TrailRenderer bulletTrail;
 
@@ -45,6 +46,7 @@ public class Projectile : MonoBehaviour
                     Health health = hitInfo.GetComponent<Health>();
                     if (health != null)
                     {
+                        OnHitEnemy?.Invoke();
                         health.TakeDamage(damage);
                     }
                 }

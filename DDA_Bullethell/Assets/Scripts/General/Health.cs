@@ -63,6 +63,10 @@ public class Health : MonoBehaviour
         {
             OnEnemyDeath?.Invoke();
         }
+        if (gameObject.CompareTag("Player")) 
+        {
+            gameObject.SetActive(false);
+        }
         if (!training)
         {
             Destroy(gameObject); // Destroy the object.
