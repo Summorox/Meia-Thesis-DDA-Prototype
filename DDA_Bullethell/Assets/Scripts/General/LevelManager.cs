@@ -182,7 +182,10 @@ public class LevelManager : Agent
         if (recorder != null)
         {
             recorder.Record = true;
-            recorder.DemonstrationName = "PlayerDemo_" + System.DateTime.Now.ToString("yyyyMMddHHmmss"); 
+            DateTime now = DateTime.Now;
+            string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
+            string demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
+            recorder.DemonstrationName = demoName; 
         }
     }
 
