@@ -59,7 +59,7 @@ public class PerformanceMetricsLogger : MonoBehaviour
         startTime = Time.time; // Reset the start time for the next wave
     }
 
-    public void SaveMetrics(string demoName)
+    public void SaveMetrics(string demoName, int initialPlayerHealth)
     {
         metrics.maxWaveReached = currentWave;
         metrics.maxDifficulty = difficultyValue; 

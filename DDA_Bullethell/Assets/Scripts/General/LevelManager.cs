@@ -194,7 +194,7 @@ public class LevelManager : Agent
         }
         if(metricsLogger != null)
         {
-            metricsLogger.SaveMetrics(recorder.DemonstrationName);
+            metricsLogger.SaveMetrics(recorder.DemonstrationName,initialPlayerHealth);
         }
         Destroy(player);
     }
@@ -244,7 +244,7 @@ public class LevelManager : Agent
     {
 
         FreezeGameEntities();
-
+        metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
         // Load the main menu after a delay
         StartCoroutine(LoadMainMenu("You Lost!")); // Adjust delay as needed
     }
