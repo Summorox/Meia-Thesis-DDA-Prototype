@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  EliteEnemyAI:
+  PlayerAI:
     trainer_type: ppo
     hyperparameters:
       batch_size: 1024
@@ -10,7 +10,6 @@ behaviors:
       epsilon: 0.3
       lambd: 0.95
       num_epoch: 5
-      shared_critic: false
       learning_rate_schedule: linear
       beta_schedule: linear
       epsilon_schedule: linear
@@ -19,9 +18,6 @@ behaviors:
       hidden_units: 512
       num_layers: 5
       vis_encode_type: simple
-      memory: null
-      goal_conditioning_type: hyper
-      deterministic: false
     reward_signals:
       extrinsic:
         gamma: 0.98
@@ -31,15 +27,14 @@ behaviors:
           hidden_units: 512
           num_layers: 5
           vis_encode_type: simple
-          memory: null
-          goal_conditioning_type: hyper
-          deterministic: false
+    behavioral_cloning:
+      demo_path: ./Assets/Demonstrations/PlayerDemo2024-0_3.demo  
+      strength: 0.5  
+      steps: 500000  
     init_path: null
     keep_checkpoints: 5
     checkpoint_interval: 500000
-    max_steps: 1000000
-    time_horizon: 32
-    summary_freq: 25000
+    max_steps: 1000000  
+    time_horizon: 64  
+    summary_freq: 25000  
     threaded: false
-    self_play: null
-    behavioral_cloning: null 

@@ -66,6 +66,36 @@ public class PerformanceMetricsLogger : MonoBehaviour
         startTime = Time.time; // Reset the start time for the next wave
     }
 
+    public float getAccuracy()
+    {
+        return shotsFired > 0 ? (float)shotsHit / shotsFired : 0;
+    }
+
+    public float getParrySuccessRate()
+    {
+        return parriesAttempted > 0 ? (float)parriesSuccessful / parriesAttempted : 0;
+    }
+
+    public float getCurrentWave()
+    {
+        return currentWave;
+    }
+
+    public float getKillScore()
+    {
+        return killScore;
+    }
+
+    public float getAverageWaveCompletionTime()
+    {
+        return metrics.averageWaveCompletionTime;
+    }
+
+    public float getAverageHealthLostPerWave()
+    {
+        return metrics.averageHealthLostPerWave;
+    }
+
     public void SaveMetrics(string demoName, int initialPlayerHealth)
     {
         metrics.maxWaveReached = currentWave;
@@ -86,6 +116,9 @@ public class PerformanceMetricsLogger : MonoBehaviour
         // Path to the specific metrics file within the "metrics" folder
         string filePath = Path.Combine(metricsDirectory, $"{demoName}_Metrics.json");
 
+        // Check if the file already exists and generate a unique file name if necessary
+        filePath = GenerateUniqueFilePath(filePath);
+
         // Serialize the metrics object to JSON
         string json = JsonUtility.ToJson(metrics, true);
 
@@ -93,5 +126,22 @@ public class PerformanceMetricsLogger : MonoBehaviour
         File.WriteAllText(filePath, json);
 
         Debug.Log($"Metrics saved to {filePath}");
+    }
+
+    private string GenerateUniqueFilePath(string filePath)
+    {
+        string directory = Path.GetDirectoryName(filePath);
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+        string extension = Path.GetExtension(filePath);
+        int fileCounter = 1;
+
+        // While the file exists, append a number to make the filename unique
+        while (File.Exists(filePath))
+        {
+            string newFilename = $"{fileNameWithoutExtension}_{fileCounter++}{extension}";
+            filePath = Path.Combine(directory, newFilename);
+        }
+
+        return filePath;
     }
 }

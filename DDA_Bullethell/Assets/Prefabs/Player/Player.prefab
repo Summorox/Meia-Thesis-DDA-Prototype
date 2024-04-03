@@ -36,8 +36,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6889814400746404644}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.95350283, w: -0.30138412}
-  m_LocalPosition: {x: 56.674343, y: 10.7958355, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.531158, w: -0.8472728}
+  m_LocalPosition: {x: 57.93988, y: 23.17573, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -190,7 +190,7 @@ MonoBehaviour:
   maxHealth: 250
   currentHealth: 250
   healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
-  training: 0
+  training: 1
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.2
 --- !u!114 &7753765641125380520
@@ -239,6 +239,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
+  training: 0
 --- !u!114 &4974996764398655742
 MonoBehaviour:
   m_ObjectHideFlags: 0

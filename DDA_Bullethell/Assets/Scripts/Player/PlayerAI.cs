@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,18 +17,38 @@ public class PlayerAI : Agent
     private PlayerParrying playerParrying;
     private PlayerShooting playerShooting;
     private Health healthComponent;
+    public bool training;
 
+    private bool KilledEnemy = false;
+    private bool TookDamage = false;
+    private bool Died = false;
+
+    private float minX = -23, maxX = 23;
+    private float minY = -12, maxY = 12;
 
     private bool useHeuristics = false;
     private bool shootingRequested;
 
+    private PerformanceMetricsLogger metrics;
+
     public override void Initialize()
     {
+        metrics=GetComponent<PerformanceMetricsLogger>();
         rb = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
         playerParrying = GetComponent<PlayerParrying>();
         playerShooting = GetComponent<PlayerShooting>();
         healthComponent = GetComponent<Health>();
+        healthComponent.OnTakeDamage += () => TookDamage = true;
+        healthComponent.OnDeath += () => Died = true;
+    }
+
+    public override void OnEpisodeBegin()
+    {
+        metrics.ResetMetrics();
+        this.Died = false;
+        this.TookDamage = false;
+        this.KilledEnemy = false;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -37,6 +58,38 @@ public class PlayerAI : Agent
 
         //Current Health
         sensor.AddObservation(healthComponent.currentHealth / healthComponent.maxHealth);
+
+        //Current Accuracy
+        sensor.AddObservation(metrics.getAccuracy());
+
+        //Current Parry Success Rate
+        sensor.AddObservation(metrics.getParrySuccessRate());
+
+        //Current Wave Reached
+        sensor.AddObservation(metrics.getCurrentWave());
+
+        //Current Kill Score
+        sensor.AddObservation(metrics.getKillScore());
+
+        //Current Average Health Lost Per Wave
+        if(metrics.getAverageHealthLostPerWave() != null)
+        {
+            sensor.AddObservation(metrics.getAverageHealthLostPerWave());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+        //Current Average Time spent per Wave
+        if (metrics.getAverageWaveCompletionTime() != null)
+        {
+            sensor.AddObservation(metrics.getAverageWaveCompletionTime());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
 
         //Velocity
         Vector2 playerVelocity = GetComponent<Rigidbody2D>().velocity;
@@ -65,6 +118,10 @@ public class PlayerAI : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        if (Died)
+        {
+            return;
+        }
         // Movement
         movementInput.x = actions.ContinuousActions[0];
         movementInput.y = actions.ContinuousActions[1];
@@ -78,22 +135,115 @@ public class PlayerAI : Agent
         }
 
         //Parrying
-        if (parryRequested)
+        if (actions.DiscreteActions[1] == 1)
         {
             playerParrying.Parry();
             parryRequested = false;
         }
 
         //Shooting
-        Vector2 targetPoint = new Vector2(actions.ContinuousActions[2], actions.ContinuousActions[3]);
-        targetPoint = ConvertToGameWorldPoint(targetPoint);
+        Vector2 shootDirection = new Vector2(actions.ContinuousActions[2], actions.ContinuousActions[3]).normalized;
+        Vector2 shootTarget = rb.position + shootDirection * 10;
 
-        if (shootingRequested)
+        if (actions.DiscreteActions[2] == 1)
         {
-            playerShooting.Shoot(targetPoint);
+            playerShooting.Shoot(shootTarget);
             shootingRequested = false;
         }
+        if (training)
+        {
+            AdjustRewards();
+        }
 
+    }
+
+    private void AdjustRewards()
+    {
+        float accuracy = metrics.getAccuracy();
+        float parrySuccessRate = metrics.getParrySuccessRate();
+        float averageHealthLost = metrics.getAverageHealthLostPerWave();
+        float averageCompletionTime = metrics.getAverageWaveCompletionTime();
+        float killScore = metrics.getKillScore();
+
+        // Define boundaries for low skill
+        float accuracyUpperBound = 0.3f; 
+        float parrySuccessUpperBound = 0.3f; 
+        float accuracyLowerBound = 0.1f; 
+        float parrySuccessLowerBound = 0.0f; 
+
+        if (accuracy > accuracyUpperBound || accuracy < accuracyLowerBound)
+        {
+            AddReward(-0.1f);
+            Debug.Log("accuracy penalty");
+        }
+        else
+        {
+            AddReward(0.1f);
+            Debug.Log("accuracy reward");
+        }
+
+        if (parrySuccessRate > parrySuccessUpperBound || parrySuccessRate < parrySuccessLowerBound)
+        {
+            AddReward(-0.1f);
+            Debug.Log("parry penalty");
+        }
+        else
+        {
+            AddReward(0.1f);
+            Debug.Log("parry reward");
+        }
+
+        if(averageHealthLost != null)
+        {
+            if(averageHealthLost > 100 || averageHealthLost < 80)
+            {
+                AddReward(-0.1f);
+                Debug.Log("health penalty");
+            }
+            else
+            {
+                AddReward(0.1f);
+                Debug.Log("health reward");
+            }
+        }
+        if (averageCompletionTime!= null)
+        {
+            if (averageCompletionTime > 50 || averageCompletionTime < 10)
+            {
+                AddReward(-0.1f);
+                Debug.Log("time penalty");
+            }
+            else
+            {
+                AddReward(0.1f);
+                Debug.Log("time reward");
+            }
+        }
+        if(killScore >= 0 || killScore <= 8)
+        {
+            AddReward(0.1f);
+            Debug.Log("score reward");
+        }
+        else
+        {
+            AddReward(0.1f);
+            Debug.Log("score penalty");
+        }
+      
+        if (this.Died)
+        {
+            if(metrics.getCurrentWave() > 3 || metrics.getCurrentWave() < 2)
+            {
+                AddReward(-1.0f);
+                Debug.Log("wave penalty");
+            }
+            else
+            {
+                AddReward(1.0f);
+                Debug.Log("wave reward");
+            }
+            EndEpisode();
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -113,9 +263,12 @@ public class PlayerAI : Agent
         discreteActions[1] = parryRequested ? 1 : 0;
 
         //Shooting Input
-        Vector2 mousePosition = Input.mousePosition;
-        continuousActions[2] = mousePosition.x;
-        continuousActions[3] = mousePosition.y;
+        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 shootingDirection = mouseWorldPosition - transform.position;
+        shootingDirection.Normalize();
+
+        continuousActions[2] = shootingDirection.x;
+        continuousActions[3] = shootingDirection.y;
         discreteActions[2] = shootingRequested ? 1 : 0;
 
     }
@@ -145,13 +298,6 @@ public class PlayerAI : Agent
             }
         }
        
-    }
-
-    private Vector2 ConvertToGameWorldPoint(Vector2 point)
-    {
-        // Example conversion, adjust based on your game's coordinate system
-        // This could be a direct mapping or a more complex calculation based on the game's camera and UI layout
-        return Camera.main.ScreenToWorldPoint(new Vector3(point.x, point.y, 0));
     }
 
 

@@ -295,6 +295,14 @@ PrefabInstance:
       propertyPath: MaxStep
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1820260929958473620, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
+      propertyPath: training
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820260929958473620, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 6889814400746404644, guid: 61250775034d1de42a1777aa937d87fd, type: 3}
     - target: {fileID: 5014316185892442303, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 55.04
@@ -334,6 +342,10 @@ PrefabInstance:
     - target: {fileID: 5014316185892442303, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6473682090470817830, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
+      propertyPath: m_BehaviorType
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8630211526120770392, guid: dc13f55ab6a6f5b43ba61b9d14262ae1, type: 3}
       propertyPath: m_Name

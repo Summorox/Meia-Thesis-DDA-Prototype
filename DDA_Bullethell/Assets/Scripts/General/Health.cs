@@ -65,13 +65,16 @@ public class Health : MonoBehaviour
         }
         if (gameObject.CompareTag("Player")) 
         {
-            gameObject.SetActive(false);
+            if (!training)
+            {
+                gameObject.SetActive(false);
+            }
         }
         if (!training)
         {
             Destroy(gameObject); // Destroy the object.
             Destroy(healthBarInstance); // Destroy the health bar object
-            Debug.Log($"Health bar destroied");
+            Debug.Log($"Health bar destroyed");
 
         }
     }

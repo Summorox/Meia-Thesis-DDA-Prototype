@@ -55,9 +55,9 @@ public class LevelManager : Agent
         base.Initialize(); // Always call the base to initialize the Agent
         if (training)
         {
-            playerPrefab.GetComponent<PlayerMovement>().training = this.training;
+            playerPrefab.GetComponent<PlayerMovement>().training = false;
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
-            playerPrefab.GetComponent<Health>().training = this.training;
+            playerPrefab.GetComponent<Health>().training = training;
             playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
         }
     }
@@ -87,6 +87,8 @@ public class LevelManager : Agent
             player.GetComponent<BoxCollider2D>().enabled = true;
 
             player.GetComponent<Health>().currentHealth = player.GetComponent<Health>().maxHealth;
+
+            metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
         }
         GenerateLevel(currentDifficultyValue);
         
@@ -208,7 +210,14 @@ public class LevelManager : Agent
         {
             metricsLogger.SaveMetrics(recorder.DemonstrationName,initialPlayerHealth);
         }
-        Destroy(player);
+        if (!training)
+        {
+            Destroy(player);
+        }
+        else
+        {
+            EndEpisode();
+        }
     }
 
 
@@ -219,13 +228,11 @@ public class LevelManager : Agent
         {
             if (child.CompareTag("Hazard") || (child.CompareTag("Enemy")))
                 {
-                Debug.Log($"Destroying {child.name} with tag {child.tag}");
                 if (child.GetComponent<Health>() != null)
                 {
-                    Debug.Log($"Attempting to destroy health bar of {child.name}");
                     child.GetComponent<Health>().Die();
                 }
-                Destroy(child.gameObject); // Destroy directly for simplicity in this example
+                Destroy(child.gameObject);
             }
         }
 
@@ -235,7 +242,7 @@ public class LevelManager : Agent
 
     void Update()
     {
-        if (!training && CountEnemyInstances() <= 0 && gameStarted)
+        if (CountEnemyInstances() <= 0 && gameStarted)
         {
             gameStarted = false;
             StartCoroutine(StartNewLevel(2));
@@ -257,8 +264,12 @@ public class LevelManager : Agent
 
         FreezeGameEntities();
         metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
+        if (training)
+        {
+            EndEpisode();
+        }
         // Load the main menu after a delay
-        StartCoroutine(LoadMainMenu("You Lost!")); // Adjust delay as needed
+        StartCoroutine(LoadMainMenu("You Lost!")); 
     }
 
     private void FreezeGameEntities()
@@ -315,8 +326,8 @@ public class LevelManager : Agent
         waveText.text = message;
         StopRecording();
         // Wait for a specified time
-        yield return new WaitForSeconds(2); // Adjust the delay as needed
-                                            // Load the Main Menu scene
+        yield return new WaitForSeconds(2); 
+                                          
         SceneManager.LoadScene("Main Menu");
     }
 

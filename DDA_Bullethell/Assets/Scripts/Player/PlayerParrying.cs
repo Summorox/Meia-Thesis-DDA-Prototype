@@ -58,7 +58,6 @@ public class PlayerParrying : MonoBehaviour
 
         if (parryEffect != null)
         {
-            Debug.Log("Parry Effect");
             parryEffect.Play(); // Play the parry effect
         }
     }
