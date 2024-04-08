@@ -14,6 +14,7 @@ public class PlayerParrying : MonoBehaviour
     public bool isParrying = false;
     private float parryTimer = 0f;
     private float cooldownTimer = 0f;
+    private bool parrySuccess = false;
 
     public ParticleSystem parryEffect;
 
@@ -82,6 +83,11 @@ public class PlayerParrying : MonoBehaviour
     void EndParry()
     {
         isParrying = false;
+        if (parrySuccess)
+        {
+            metricsLogger.LogParrySuccess();
+            parrySuccess = false;
+        }
         if (parryEffect != null && parryEffect.isPlaying)
         {
             parryEffect.Stop(); // Stop the parry effect
@@ -106,7 +112,7 @@ public class PlayerParrying : MonoBehaviour
 
     void DeflectProjectile(GameObject projectile)
     {
-        metricsLogger.LogParrySuccess();
+        parrySuccess = true;
         // Determine the direction from the player to the projectile
         Vector2 directionToProjectile = (projectile.transform.position - transform.position).normalized;
 

@@ -49,6 +49,8 @@ public class LevelManager : Agent
 
     private int initialPlayerHealth;
 
+    public event Action<int,float,float> OnWaveFinished;
+
 
     public override void Initialize()
     {
@@ -128,7 +130,7 @@ public class LevelManager : Agent
                 {
                     break;
                 }
-                if (!Physics2D.OverlapCircle(pos, 3f))
+                if (!Physics2D.OverlapCircle(pos, 5f))
                 {
                     float randomChance = UnityEngine.Random.value;
                     bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
@@ -157,7 +159,7 @@ public class LevelManager : Agent
             if (currentEnemies == 0)
             {
                 Vector2 randomPos = Vector2.zero;
-                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 0.5f))
+                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 5f))
                 {
                     randomPos = GetRandomStartPosition();
                 }
@@ -208,7 +210,7 @@ public class LevelManager : Agent
         }
         if(metricsLogger != null)
         {
-            metricsLogger.SaveMetrics(recorder.DemonstrationName,initialPlayerHealth);
+            metricsLogger.SaveMetrics(recorder.DemonstrationName);
         }
         if (!training)
         {
@@ -263,7 +265,14 @@ public class LevelManager : Agent
     {
 
         FreezeGameEntities();
-        metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
+        if(metricsLogger != null)
+        {
+            metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
+        }
+        if (training)
+        {
+            OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+        }
         if (training)
         {
             EndEpisode();
@@ -339,6 +348,10 @@ public class LevelManager : Agent
         if(metricsLogger != null)
         {
             metricsLogger.WaveCompleted(waveCounter + 1, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
+            if (training)
+            {
+                OnWaveFinished?.Invoke(waveCounter + 1, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+            }
         }
         currentDifficultyValue += difficultyIncrease;
         waveCounter++;

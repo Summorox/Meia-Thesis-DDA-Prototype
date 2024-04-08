@@ -19,17 +19,13 @@ public class PlayerAI : Agent
     private Health healthComponent;
     public bool training;
 
-    private bool KilledEnemy = false;
-    private bool TookDamage = false;
     private bool Died = false;
-
-    private float minX = -23, maxX = 23;
-    private float minY = -12, maxY = 12;
 
     private bool useHeuristics = false;
     private bool shootingRequested;
 
     private PerformanceMetricsLogger metrics;
+    private LevelManager levelManager;
 
     public override void Initialize()
     {
@@ -39,16 +35,19 @@ public class PlayerAI : Agent
         playerParrying = GetComponent<PlayerParrying>();
         playerShooting = GetComponent<PlayerShooting>();
         healthComponent = GetComponent<Health>();
-        healthComponent.OnTakeDamage += () => TookDamage = true;
         healthComponent.OnDeath += () => Died = true;
+        levelManager = FindObjectOfType<LevelManager>(); // Find the LevelManager instance
+        if (levelManager != null)
+        {
+            levelManager.OnWaveFinished += EvaluateWaveMetrics; // Subscribe to the event
+        }
     }
 
     public override void OnEpisodeBegin()
     {
         metrics.ResetMetrics();
         this.Died = false;
-        this.TookDamage = false;
-        this.KilledEnemy = false;
+
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -161,9 +160,8 @@ public class PlayerAI : Agent
     {
         float accuracy = metrics.getAccuracy();
         float parrySuccessRate = metrics.getParrySuccessRate();
-        float averageHealthLost = metrics.getAverageHealthLostPerWave();
-        float averageCompletionTime = metrics.getAverageWaveCompletionTime();
         float killScore = metrics.getKillScore();
+
 
         // Define boundaries for low skill
         float accuracyUpperBound = 0.3f; 
@@ -192,43 +190,6 @@ public class PlayerAI : Agent
             AddReward(0.1f);
             Debug.Log("parry reward");
         }
-
-        if(averageHealthLost != null)
-        {
-            if(averageHealthLost > 100 || averageHealthLost < 80)
-            {
-                AddReward(-0.1f);
-                Debug.Log("health penalty");
-            }
-            else
-            {
-                AddReward(0.1f);
-                Debug.Log("health reward");
-            }
-        }
-        if (averageCompletionTime!= null)
-        {
-            if (averageCompletionTime > 50 || averageCompletionTime < 10)
-            {
-                AddReward(-0.1f);
-                Debug.Log("time penalty");
-            }
-            else
-            {
-                AddReward(0.1f);
-                Debug.Log("time reward");
-            }
-        }
-        if(killScore >= 0 || killScore <= 8)
-        {
-            AddReward(0.1f);
-            Debug.Log("score reward");
-        }
-        else
-        {
-            AddReward(0.1f);
-            Debug.Log("score penalty");
-        }
       
         if (this.Died)
         {
@@ -242,8 +203,73 @@ public class PlayerAI : Agent
                 AddReward(1.0f);
                 Debug.Log("wave reward");
             }
+            if (killScore >= 0 || killScore <= 8)
+            {
+                AddReward(1.0f);
+                Debug.Log("score reward");
+            }
+            else
+            {
+                AddReward(-1.0f);
+                Debug.Log("score penalty");
+            }
             EndEpisode();
         }
+    }
+
+    private void EvaluateWaveMetrics(int waveNumber, float healthLost, float completionTime)
+    {
+        float averageHealthLost = metrics.getAverageHealthLostPerWave();
+        float averageCompletionTime = metrics.getAverageWaveCompletionTime();
+
+        if (healthLost > 100 || healthLost < 80)
+        {
+            AddReward(-0.5f);
+            Debug.Log("health penalty");
+        }
+        else
+        {
+            AddReward(0.5f);
+            Debug.Log("health reward");
+        }
+
+
+        if (completionTime > 50 || completionTime < 10)
+        {
+            AddReward(-0.5f);
+            Debug.Log("time penalty");
+        }
+        else
+        {
+            AddReward(0.5f);
+            Debug.Log("time reward");
+        }
+        if(waveNumber > 1)
+        {
+            if (averageHealthLost > 100 || averageHealthLost < 80)
+            {
+                AddReward(-0.5f);
+                Debug.Log("average health penalty");
+            }
+            else
+            {
+                AddReward(0.5f);
+                Debug.Log("average health reward");
+            }
+
+
+            if (averageCompletionTime > 50 || averageCompletionTime < 10)
+            {
+                AddReward(-0.5f);
+                Debug.Log("average time penalty");
+            }
+            else
+            {
+                AddReward(0.5f);
+                Debug.Log("average time reward");
+            }
+        }
+
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

@@ -13,18 +13,22 @@ public class Health : MonoBehaviour
     public bool training = false;
 
     private SpriteRenderer spriteRenderer;
+    private Color originalColor;
     public Color flashColor = Color.red;
-    public float flashDuration = 0.2f;
+    public float flashDuration = 0.1f;
 
     public event Action OnTakeDamage; // Event triggered when taking damage
     public event Action OnDeath; // Event triggered on Death
     public event Action<int> OnEnemyDeath;
+
+    private Coroutine flashCoroutine;
 
 
     void Start()
     {
         currentHealth = maxHealth;
         spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
         if (healthBarPrefab != null)
         {
             // Instantiate health bar and set it up
@@ -41,7 +45,13 @@ public class Health : MonoBehaviour
     {
         currentHealth -= damage;
         OnTakeDamage?.Invoke(); // Trigger the OnTakeDamage event
-        StartCoroutine(FlashDamageEffect());
+
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
+        }
+        flashCoroutine = StartCoroutine(FlashDamageEffect());
+
         if (currentHealth <= 0)
         {
             Die();
@@ -50,7 +60,7 @@ public class Health : MonoBehaviour
 
     IEnumerator FlashDamageEffect()
     {
-        Color originalColor = spriteRenderer.color;
+
         spriteRenderer.color = flashColor;
         yield return new WaitForSeconds(flashDuration);
         spriteRenderer.color = originalColor;

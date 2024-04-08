@@ -13,6 +13,7 @@ public class PerformanceMetrics
     public float averageParrySuccessRate;
     public float maxDifficulty;
     public float killScore;
+    public string playerSessionID;
 }
 
 public class PerformanceMetricsLogger : MonoBehaviour
@@ -26,6 +27,12 @@ public class PerformanceMetricsLogger : MonoBehaviour
     private int currentWave;
     private int difficultyValue;
     private int killScore;
+    private float lastWaveCompletionTime;
+
+    private void Awake()
+    {
+        metrics.playerSessionID = MainMenu.PlayerSessionID;
+    }
 
     private void Start()
     {
@@ -61,14 +68,19 @@ public class PerformanceMetricsLogger : MonoBehaviour
         currentWave = wave;
         this.difficultyValue = difficultyValue;
         metrics.averageHealthLostPerWave = (metrics.averageHealthLostPerWave * (wave - 1) + healthLost) / wave;
-        float waveCompletionTime = Time.time - startTime;
-        metrics.averageWaveCompletionTime = (metrics.averageWaveCompletionTime * (wave - 1) + waveCompletionTime) / wave;
+        lastWaveCompletionTime = Time.time - startTime;
+        metrics.averageWaveCompletionTime = (metrics.averageWaveCompletionTime * (wave - 1) + lastWaveCompletionTime) / wave;
         startTime = Time.time; // Reset the start time for the next wave
     }
 
     public float getAccuracy()
     {
         return shotsFired > 0 ? (float)shotsHit / shotsFired : 0;
+    }
+
+    public float getLastWaveCompletionTime()
+    {
+        return lastWaveCompletionTime;
     }
 
     public float getParrySuccessRate()
@@ -96,7 +108,7 @@ public class PerformanceMetricsLogger : MonoBehaviour
         return metrics.averageHealthLostPerWave;
     }
 
-    public void SaveMetrics(string demoName, int initialPlayerHealth)
+    public void SaveMetrics(string demoName)
     {
         metrics.maxWaveReached = currentWave;
         metrics.maxDifficulty = difficultyValue; 
