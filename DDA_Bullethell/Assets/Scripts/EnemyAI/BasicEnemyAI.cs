@@ -56,6 +56,7 @@ public class BasicEnemyAI : Agent
         this.healthComponent = GetComponent<Health>();
         this.healthComponent.training = this.training;
         this.rb = GetComponent<Rigidbody2D>();
+        this.GetComponent<PolygonCollider2D>().enabled = true;
         this.healthComponent.OnTakeDamage += () => TookDamage = true;
         this.healthComponent.OnDeath += () => Died = true;
 

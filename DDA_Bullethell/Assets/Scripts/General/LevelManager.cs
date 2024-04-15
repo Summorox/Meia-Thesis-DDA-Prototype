@@ -39,8 +39,6 @@ public class LevelManager : Agent
 
     public TextMeshProUGUI waveText;
 
-    private bool playerDeath = false;
-
     private DemonstrationRecorder recorder;
 
     private PerformanceMetricsLogger metricsLogger;
@@ -60,7 +58,7 @@ public class LevelManager : Agent
             playerPrefab.GetComponent<PlayerMovement>().training = false;
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
             playerPrefab.GetComponent<Health>().training = training;
-            playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
+            //playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
         }
     }
 
@@ -68,7 +66,6 @@ public class LevelManager : Agent
 
     public override void OnEpisodeBegin()
     {
-        playerDeath = false;
         if (training)
         {
             player = playerPrefab;
@@ -89,11 +86,12 @@ public class LevelManager : Agent
             player.GetComponent<BoxCollider2D>().enabled = true;
 
             player.GetComponent<Health>().currentHealth = player.GetComponent<Health>().maxHealth;
-
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
+
         }
         GenerateLevel(currentDifficultyValue);
-        
+        Debug.Log("Manager episode begin");
+
 
     }
 
@@ -104,15 +102,13 @@ public class LevelManager : Agent
         if (!training && waveCounter==0)
         {         
             player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
-            player.GetComponent<Health>().OnDeath+= PlayerDeathHandler;
+            player.GetComponent<Health>().OnPlayerDeath+= PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
             recorder = player.GetComponent<DemonstrationRecorder>();
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
-            Debug.Log("player spawned");
         }
         ClearLevel();
-        Debug.Log(waveCounter);
         if (waveCounter < maxWaves)
         {
             initialPlayerHealth= player.GetComponent<Health>().currentHealth;
@@ -142,7 +138,8 @@ public class LevelManager : Agent
                         GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentHazards++;
                         totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
-                     }
+                        hazard.GetComponent<Collider2D>().enabled = true;
+                    }
                      else if (placeEnemy)
                      {
                         int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
@@ -150,6 +147,7 @@ public class LevelManager : Agent
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
                         enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
+                        enemy.GetComponent<Collider2D>().enabled = true;
 
                     }
 
@@ -165,6 +163,7 @@ public class LevelManager : Agent
                 }
                 int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
                 GameObject enemy=Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                enemy.GetComponent<Collider2D>().enabled = true;
                 enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
 
             }
@@ -174,10 +173,12 @@ public class LevelManager : Agent
         {
             if (!training)
             {
+                StopRecording();
                 StartCoroutine(LoadMainMenu("Congratulations!"));
             }
             else
             {
+                Debug.Log("Manager win episode end");
                 EndEpisode();
             }
         }
@@ -202,19 +203,16 @@ public class LevelManager : Agent
         }
     }
 
-    private void StopRecording()
+    public void StopRecording()
     {
         if (recorder != null)
         {
+            Debug.Log("Stopped Recording");
             recorder.Record = false;
         }
         if(metricsLogger != null)
         {
             metricsLogger.SaveMetrics(recorder.DemonstrationName);
-        }
-        if (!training)
-        {
-            Destroy(player);
         }
         else
         {
@@ -228,12 +226,15 @@ public class LevelManager : Agent
 
         foreach (Transform child in LevelParent)
         {
-            if (child.CompareTag("Hazard") || (child.CompareTag("Enemy")))
+            if (child.CompareTag("Enemy"))
                 {
                 if (child.GetComponent<Health>() != null)
                 {
                     child.GetComponent<Health>().Die();
                 }
+                Destroy(child.gameObject);
+            }else if (child.CompareTag("Hazard"))
+            {
                 Destroy(child.gameObject);
             }
         }
@@ -249,21 +250,12 @@ public class LevelManager : Agent
             gameStarted = false;
             StartCoroutine(StartNewLevel(2));
         }
-        if(playerPrefab.GetComponent<Health>().currentHealth <= 0 || playerDeath) {
-            if(training){
-                Debug.Log("Player Death");
-                EndEpisode();
-            }
-            else
-            {
-                LoadMainMenu("You Lost!");
-            }
-        }
+        
     }
 
-    private void PlayerDeathHandler()
+    public void PlayerDeathHandler()
     {
-
+        Debug.Log("Actual Player Death");
         FreezeGameEntities();
         if(metricsLogger != null)
         {
@@ -272,42 +264,55 @@ public class LevelManager : Agent
         if (training)
         {
             OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
-        }
-        if (training)
-        {
+            Debug.Log("Manager death episode end");
             EndEpisode();
         }
-        // Load the main menu after a delay
-        StartCoroutine(LoadMainMenu("You Lost!")); 
+        if (!training)
+        {
+            // Load the main menu after a delay
+            StartCoroutine(LoadMainMenu("You Lost!"));
+        }
     }
 
     private void FreezeGameEntities()
     {
-        // Freeze enemies
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (GameObject enemy in enemies)
+        // Freeze enemies that are children of this GameObject
+        Rigidbody2D[] enemyRigidbodies = GetComponentsInChildren<Rigidbody2D>();
+        Collider2D[] enemyColliders = GetComponentsInChildren<Collider2D>();
+
+        foreach (Rigidbody2D rbEnemy in enemyRigidbodies)
         {
-            if (enemy.TryGetComponent(out Rigidbody2D rbEnemy))
+            if (rbEnemy.gameObject.CompareTag("Enemy"))
             {
                 rbEnemy.velocity = Vector2.zero;
                 rbEnemy.isKinematic = true;
             }
-            if (enemy.TryGetComponent(out Collider2D colliderEnemy))
+        }
+
+        foreach (Collider2D colliderEnemy in enemyColliders)
+        {
+            if (colliderEnemy.gameObject.CompareTag("Enemy"))
             {
                 colliderEnemy.enabled = false;
             }
         }
 
-        // Freeze hazards
-        GameObject[] hazards = GameObject.FindGameObjectsWithTag("Hazard");
-        foreach (GameObject hazard in hazards)
+        // Freeze hazards that are children of this GameObject
+        Rigidbody2D[] hazardRigidbodies = GetComponentsInChildren<Rigidbody2D>();
+        Collider2D[] hazardColliders = GetComponentsInChildren<Collider2D>();
+
+        foreach (Rigidbody2D rbHazard in hazardRigidbodies)
         {
-            if (hazard.TryGetComponent(out Rigidbody2D rbHazard))
+            if (rbHazard.gameObject.CompareTag("Hazard"))
             {
                 rbHazard.velocity = Vector2.zero;
                 rbHazard.isKinematic = true;
             }
-            if (hazard.TryGetComponent(out Collider2D colliderHazard))
+        }
+
+        foreach (Collider2D colliderHazard in hazardColliders)
+        {
+            if (colliderHazard.gameObject.CompareTag("Hazard"))
             {
                 colliderHazard.enabled = false;
             }
@@ -333,7 +338,6 @@ public class LevelManager : Agent
     {
         // Display the congratulations message
         waveText.text = message;
-        StopRecording();
         // Wait for a specified time
         yield return new WaitForSeconds(2); 
                                           

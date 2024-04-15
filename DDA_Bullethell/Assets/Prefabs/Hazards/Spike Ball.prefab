@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2995122857023249163}
   - component: {fileID: 5174142526287295922}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 670513369613091837}
   - component: {fileID: 8265932445435146184}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8362221876525948615}
   - component: {fileID: 5518163491838768793}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4999601067728698100}
   - component: {fileID: 916673131437007935}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -354,7 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6461941841892213058}
   - component: {fileID: 9125088698794674992}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -438,7 +438,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8936634995499616649}
   - component: {fileID: 2369980889691113476}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,7 +522,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4318913360658420814}
   - component: {fileID: 3750199479030226511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -606,7 +606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4075541014343791239}
   - component: {fileID: 8428947441501859255}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,7 +690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8526774041831616909}
   - component: {fileID: 3529981365136539042}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -778,7 +778,7 @@ GameObject:
   - component: {fileID: 7685674530560403425}
   - component: {fileID: 4191739238976322325}
   - component: {fileID: 7399353591676303705}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spike Ball
   m_TagString: Hazard
   m_Icon: {fileID: 0}
@@ -881,7 +881,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

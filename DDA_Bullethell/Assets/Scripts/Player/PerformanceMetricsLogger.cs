@@ -67,6 +67,10 @@ public class PerformanceMetricsLogger : MonoBehaviour
     {
         currentWave = wave;
         this.difficultyValue = difficultyValue;
+        if (wave == 0)
+        {
+            wave = 1;
+        }
         metrics.averageHealthLostPerWave = (metrics.averageHealthLostPerWave * (wave - 1) + healthLost) / wave;
         lastWaveCompletionTime = Time.time - startTime;
         metrics.averageWaveCompletionTime = (metrics.averageWaveCompletionTime * (wave - 1) + lastWaveCompletionTime) / wave;

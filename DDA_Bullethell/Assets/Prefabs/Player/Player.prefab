@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4464699865550948282}
   - component: {fileID: 1633643876767522460}
   - component: {fileID: 377211398897068092}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ MonoBehaviour:
   maxHealth: 250
   currentHealth: 250
   healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
-  training: 1
+  training: 0
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.2
 --- !u!114 &7753765641125380520
@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SensorName: RayPerceptionSensor
+  m_SensorName: PlayerPerceptionSensor
   m_DetectableTags:
   - Enemy
   - Hazard
@@ -318,6 +318,7 @@ MonoBehaviour:
     averageParrySuccessRate: 0
     maxDifficulty: 0
     killScore: 0
+    playerSessionID: 
 --- !u!1001 &5959887137014575495
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -436,6 +437,10 @@ PrefabInstance:
     - target: {fileID: 8980731252012686009, guid: 7482e4e48feeab34083cd202a1874296, type: 3}
       propertyPath: m_Name
       value: Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 8980731252012686009, guid: 7482e4e48feeab34083cd202a1874296, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -28,9 +28,9 @@ behaviors:
           num_layers: 5
           vis_encode_type: simple
     behavioral_cloning:
-      demo_path: ./Assets/Demonstrations/PlayerDemo2024-0_3.demo  
-      strength: 0.5  
-      steps: 500000  
+      demo_path: ./demos
+      strength: 0.6  
+      steps: 1000000  
     init_path: null
     keep_checkpoints: 5
     checkpoint_interval: 500000

@@ -11,6 +11,9 @@
 /DDA_Bullethell/UserSettings/
 /DDA_Bullethell/venv/
 /DDA_Bullethell/results/
+/DDA_Bullethell/demos/
+/DDA_Bullethell/Assets/Demonstrations
+/DDA_Bullethell/Assets/NN Models
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

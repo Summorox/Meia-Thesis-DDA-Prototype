@@ -12,6 +12,7 @@ public class SpikeBallMovement : MonoBehaviour
 
     void Start()
     {
+        this.GetComponent<PolygonCollider2D>().enabled = true;
         ChangeDirection();
     }
 

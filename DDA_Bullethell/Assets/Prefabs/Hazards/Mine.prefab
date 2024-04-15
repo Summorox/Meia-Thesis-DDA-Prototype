@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2704149673886943477}
   - component: {fileID: 7862651150319337486}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Isometric Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8799754992225075883}
   - component: {fileID: 5898995675696560441}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 599601697221929070}
   - component: {fileID: 2083940128093729177}
   - component: {fileID: 5253236507536182149}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mine
   m_TagString: Hazard
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ PolygonCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0

@@ -14,6 +14,7 @@ public class MovingObstacle : MonoBehaviour
 
     void Start()
     {
+        GetComponent<CapsuleCollider2D>().enabled = true;
         // Calculate start and end points based on the moveDistance and moveDirection
         startPoint = transform.position;
         endPoint = startPoint + (Vector3)(moveDirection.normalized * moveDistance);

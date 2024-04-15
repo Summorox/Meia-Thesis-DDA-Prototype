@@ -12,6 +12,7 @@ public class MineExplosion : MonoBehaviour
 
     private void Start()
     {
+        GetComponent<PolygonCollider2D>().enabled = true;
         this.GetComponent<Health>().OnDeath += () => detonate();
     }
 

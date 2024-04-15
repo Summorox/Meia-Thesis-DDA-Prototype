@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8302533652674325135}
   - component: {fileID: 234720537214810500}
   - component: {fileID: 7340650764257189511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Obstacle
   m_TagString: Hazard
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8298564127284903205}
   - component: {fileID: 5202801267907379088}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}

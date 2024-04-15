@@ -18,8 +18,9 @@ public class Health : MonoBehaviour
     public float flashDuration = 0.1f;
 
     public event Action OnTakeDamage; // Event triggered when taking damage
-    public event Action OnDeath; // Event triggered on Death
+    public event Action OnPlayerDeath; // Event triggered on Death
     public event Action<int> OnEnemyDeath;
+    public event Action OnDeath;
 
     private Coroutine flashCoroutine;
 
@@ -60,33 +61,53 @@ public class Health : MonoBehaviour
 
     IEnumerator FlashDamageEffect()
     {
-
-        spriteRenderer.color = flashColor;
+        if(spriteRenderer!= null)
+        {
+            spriteRenderer.color = flashColor;
+        }
         yield return new WaitForSeconds(flashDuration);
         spriteRenderer.color = originalColor;
     }
 
     public void Die()
     {
-        OnDeath?.Invoke();
         if (gameObject.CompareTag("Enemy")) // Ensure this is an enemy dying
         {
             OnEnemyDeath?.Invoke(GetComponent<EntityData>().difficultyValue);
         }
-        if (gameObject.CompareTag("Player")) 
+        else if (gameObject.CompareTag("Player"))
         {
             if (!training)
             {
-                gameObject.SetActive(false);
+                LevelManager levelManager = FindLevelManagerInAncestors(transform);
+                if (levelManager != null)
+                {
+                    levelManager.StopRecording();
+                }
             }
+            OnPlayerDeath?.Invoke();
+        } else if (gameObject.CompareTag("Hazard")){
+            OnDeath?.Invoke();
         }
-        if (!training)
+        if(!training)
         {
             Destroy(gameObject); // Destroy the object.
             Destroy(healthBarInstance); // Destroy the health bar object
-            Debug.Log($"Health bar destroyed");
 
         }
+    }
+
+    LevelManager FindLevelManagerInAncestors(Transform current)
+    {
+        while (current != null)
+        {
+            LevelManager manager = current.GetComponent<LevelManager>();
+            if (manager != null)
+                return manager;
+
+            current = current.parent;
+        }
+        return null; // No LevelManager found in any ancestors
     }
 
     public void Reset()

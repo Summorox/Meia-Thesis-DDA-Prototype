@@ -56,6 +56,7 @@ public class EliteEnemyAI : Agent
         this.rb = GetComponent<Rigidbody2D>();
         this.healthComponent.OnTakeDamage += () => TookDamage = true;
         this.healthComponent.OnDeath += () => Died = true;
+        this.GetComponent<PolygonCollider2D>().enabled = true;
 
     }
 

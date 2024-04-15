@@ -12,7 +12,7 @@ public class PlayerAI : Agent
     private Vector2 movementInput; // To store movement input
     private Rigidbody2D rb; // Rigidbody 
     private bool dashRequested = false;
-    private bool parryRequested=false;
+    private bool parryRequested = false;
     private PlayerMovement playerMovement;
     private PlayerParrying playerParrying;
     private PlayerShooting playerShooting;
@@ -29,24 +29,34 @@ public class PlayerAI : Agent
 
     public override void Initialize()
     {
-        metrics=GetComponent<PerformanceMetricsLogger>();
+        metrics = GetComponent<PerformanceMetricsLogger>();
         rb = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
         playerParrying = GetComponent<PlayerParrying>();
         playerShooting = GetComponent<PlayerShooting>();
         healthComponent = GetComponent<Health>();
-        healthComponent.OnDeath += () => Died = true;
-        levelManager = FindObjectOfType<LevelManager>(); // Find the LevelManager instance
-        if (levelManager != null)
+        if (training)
         {
-            levelManager.OnWaveFinished += EvaluateWaveMetrics; // Subscribe to the event
+            levelManager = GetComponentInParent<LevelManager>(); // Find the LevelManager instance
+            if (levelManager != null)
+            {
+                levelManager.OnWaveFinished += EvaluateWaveMetrics; // Subscribe to the event
+            }
+            GetComponent<Health>().OnPlayerDeath += DeathHandler;
         }
+    }
+
+    private void DeathHandler()
+    {
+        this.Died = true;
+        levelManager.PlayerDeathHandler();
     }
 
     public override void OnEpisodeBegin()
     {
-        metrics.ResetMetrics();
+        Debug.Log("Episode Begin");
         this.Died = false;
+        metrics.ResetMetrics();
 
     }
 
@@ -65,13 +75,27 @@ public class PlayerAI : Agent
         sensor.AddObservation(metrics.getParrySuccessRate());
 
         //Current Wave Reached
-        sensor.AddObservation(metrics.getCurrentWave());
+        if (ValidateObservation(metrics.getCurrentWave()))
+        {
+            sensor.AddObservation(metrics.getCurrentWave());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
 
         //Current Kill Score
-        sensor.AddObservation(metrics.getKillScore());
+        if (ValidateObservation(metrics.getKillScore()))
+        {
+            sensor.AddObservation(metrics.getKillScore());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
 
         //Current Average Health Lost Per Wave
-        if(metrics.getAverageHealthLostPerWave() != null)
+        if (ValidateObservation(metrics.getAverageHealthLostPerWave()))
         {
             sensor.AddObservation(metrics.getAverageHealthLostPerWave());
         }
@@ -81,7 +105,7 @@ public class PlayerAI : Agent
         }
 
         //Current Average Time spent per Wave
-        if (metrics.getAverageWaveCompletionTime() != null)
+        if (ValidateObservation(metrics.getAverageWaveCompletionTime()))
         {
             sensor.AddObservation(metrics.getAverageWaveCompletionTime());
         }
@@ -96,7 +120,7 @@ public class PlayerAI : Agent
         sensor.AddObservation(playerVelocity.magnitude);
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        if( enemies.Length > 0 )
+        if (enemies.Length > 0)
         {
             float closestDistance = enemies.Min(enemy => Vector2.Distance(transform.position, enemy.transform.position));
             //Closest distance to enemy
@@ -117,9 +141,13 @@ public class PlayerAI : Agent
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        if (Died)
+        if (training)
         {
-            return;
+            if (this.Died)
+            {
+                return;
+            }
+            AdjustRewards();
         }
         // Movement
         movementInput.x = actions.ContinuousActions[0];
@@ -149,10 +177,6 @@ public class PlayerAI : Agent
             playerShooting.Shoot(shootTarget);
             shootingRequested = false;
         }
-        if (training)
-        {
-            AdjustRewards();
-        }
 
     }
 
@@ -160,60 +184,42 @@ public class PlayerAI : Agent
     {
         float accuracy = metrics.getAccuracy();
         float parrySuccessRate = metrics.getParrySuccessRate();
-        float killScore = metrics.getKillScore();
-
 
         // Define boundaries for low skill
-        float accuracyUpperBound = 0.3f; 
-        float parrySuccessUpperBound = 0.3f; 
-        float accuracyLowerBound = 0.1f; 
-        float parrySuccessLowerBound = 0.0f; 
+        float accuracyUpperBound = 0.3f;
+        float parrySuccessUpperBound = 0.3f;
+        float accuracyLowerBound = 0.1f;
+        float parrySuccessLowerBound = 0.0f;
 
         if (accuracy > accuracyUpperBound || accuracy < accuracyLowerBound)
         {
-            AddReward(-0.1f);
-            Debug.Log("accuracy penalty");
+            AddReward(-0.05f);
         }
         else
         {
-            AddReward(0.1f);
-            Debug.Log("accuracy reward");
+            AddReward(0.05f);
         }
 
         if (parrySuccessRate > parrySuccessUpperBound || parrySuccessRate < parrySuccessLowerBound)
         {
-            AddReward(-0.1f);
-            Debug.Log("parry penalty");
+            AddReward(-0.05f);
         }
         else
         {
-            AddReward(0.1f);
-            Debug.Log("parry reward");
+            AddReward(0.05f);
         }
-      
-        if (this.Died)
+        
+    }
+
+    private bool ValidateObservation(float value)
+    {
+        if (float.IsNaN(value) || float.IsInfinity(value))
         {
-            if(metrics.getCurrentWave() > 3 || metrics.getCurrentWave() < 2)
-            {
-                AddReward(-1.0f);
-                Debug.Log("wave penalty");
-            }
-            else
-            {
-                AddReward(1.0f);
-                Debug.Log("wave reward");
-            }
-            if (killScore >= 0 || killScore <= 8)
-            {
-                AddReward(1.0f);
-                Debug.Log("score reward");
-            }
-            else
-            {
-                AddReward(-1.0f);
-                Debug.Log("score penalty");
-            }
-            EndEpisode();
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
@@ -221,54 +227,73 @@ public class PlayerAI : Agent
     {
         float averageHealthLost = metrics.getAverageHealthLostPerWave();
         float averageCompletionTime = metrics.getAverageWaveCompletionTime();
-
-        if (healthLost > 100 || healthLost < 80)
+        Debug.Log("EvaluateWaveMetrics");
+        if (healthLost > 90 || healthLost < 60)
         {
             AddReward(-0.5f);
-            Debug.Log("health penalty");
         }
         else
         {
             AddReward(0.5f);
-            Debug.Log("health reward");
         }
 
 
-        if (completionTime > 50 || completionTime < 10)
+        if (completionTime > 30 || completionTime < 8)
         {
             AddReward(-0.5f);
-            Debug.Log("time penalty");
         }
         else
         {
             AddReward(0.5f);
-            Debug.Log("time reward");
         }
-        if(waveNumber > 1)
+        if (waveNumber > 1)
         {
-            if (averageHealthLost > 100 || averageHealthLost < 80)
+            if (averageHealthLost > 90 || averageHealthLost < 60)
             {
                 AddReward(-0.5f);
-                Debug.Log("average health penalty");
             }
             else
             {
                 AddReward(0.5f);
-                Debug.Log("average health reward");
             }
 
 
-            if (averageCompletionTime > 50 || averageCompletionTime < 10)
+            if (averageCompletionTime > 30 || averageCompletionTime < 8)
             {
                 AddReward(-0.5f);
-                Debug.Log("average time penalty");
             }
             else
             {
                 AddReward(0.5f);
-                Debug.Log("average time reward");
             }
         }
+        if (this.Died)
+        {
+            if (metrics.getCurrentWave() > 3 || metrics.getCurrentWave() < 2)
+            {
+                AddReward(-1.0f);
+            }
+            else
+            {
+                AddReward(1.0f);
+            }
+            if (metrics.getKillScore() >= 2 || metrics.getKillScore() <= 12)
+            {
+                AddReward(1.0f);
+            }
+            else
+            {
+                AddReward(-1.0f);
+            }
+            Debug.Log("Death episode end");
+            EndEpisode();
+        }
+        if (waveNumber == 10)
+        {
+            Debug.Log("Win episode end");
+            EndEpisode();
+        }
+
 
     }
 
@@ -299,7 +324,7 @@ public class PlayerAI : Agent
 
     }
 
-   
+
 
     void Update()
     {
@@ -323,7 +348,7 @@ public class PlayerAI : Agent
                 shootingRequested = true;
             }
         }
-       
+
     }
 
 
@@ -331,3 +356,4 @@ public class PlayerAI : Agent
 
 
 }
+
