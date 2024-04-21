@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Demonstrations;
+using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,8 @@ public class LevelManager : Agent
     public GameObject playerPrefab;
 
 
-    public bool training = false;
+    public bool entityTraining = false;
+    public bool managerTraining = false;
     private float minX = -23, maxX = 23;
     private float minY = -12, maxY = 12;
     public Transform LevelParent;
@@ -53,14 +55,18 @@ public class LevelManager : Agent
     public override void Initialize()
     {
         base.Initialize(); // Always call the base to initialize the Agent
-        if (training)
+        if (entityTraining)
         {
             playerPrefab.GetComponent<PlayerMovement>().training = false;
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
-            playerPrefab.GetComponent<Health>().training = training;
+            playerPrefab.GetComponent<Health>().training = entityTraining;
             //playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
             player = playerPrefab;
             player.GetComponent<Health>().OnPlayerDeath += PlayerDeathHandler;
+        }
+        if (managerTraining)
+        {
+
         }
     }
 
@@ -68,7 +74,7 @@ public class LevelManager : Agent
 
     public override void OnEpisodeBegin()
     {
-        if (training)
+        if (entityTraining)
         {
             ClearLevel();
             waveCounter = 0;
@@ -96,11 +102,21 @@ public class LevelManager : Agent
 
     }
 
-    
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        // Existing observations
+        base.CollectObservations(sensor);
+
+        // Add player performance metrics
+        sensor.AddObservation(metricsLogger.getAverageAccuracy());
+        sensor.AddObservation(metricsLogger.getAverageParrySuccessRate());
+        sensor.AddObservation(metricsLogger.getCurrentWave());
+    }
+
 
     private void GenerateLevel(int DifficultyValue)
     {
-        if (!training && waveCounter==0)
+        if (!entityTraining && waveCounter==0)
         {         
             player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
             player.GetComponent<Health>().OnPlayerDeath+= PlayerDeathHandler;
@@ -172,7 +188,7 @@ public class LevelManager : Agent
         }
         else
         {
-            if (!training)
+            if (!entityTraining)
             {
                 StopRecording();
                 StartCoroutine(LoadMainMenu("Congratulations!"));
@@ -262,13 +278,13 @@ public class LevelManager : Agent
         {
             metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
         }
-        if (training)
+        if (entityTraining)
         {
             player.GetComponent<PlayerAI>().Died = true;
             OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
             EndEpisode();
         }
-        if (!training)
+        if (!entityTraining)
         {
             // Load the main menu after a delay
             StartCoroutine(LoadMainMenu("You Lost!"));
@@ -353,7 +369,7 @@ public class LevelManager : Agent
         if(metricsLogger != null)
         {
             metricsLogger.WaveCompleted(waveCounter + 1, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
-            if (training)
+            if (entityTraining)
             {
                 OnWaveFinished?.Invoke(waveCounter + 1, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
             }
