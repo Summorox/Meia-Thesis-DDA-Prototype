@@ -52,6 +52,7 @@ public class LevelManager : Agent
     public event Action<int,float,float> OnWaveFinished;
 
 
+
     public override void Initialize()
     {
         base.Initialize(); // Always call the base to initialize the Agent
@@ -105,7 +106,14 @@ public class LevelManager : Agent
             player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
             player.GetComponent<Health>().OnPlayerDeath+= PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
-            recorder = player.GetComponent<DemonstrationRecorder>();
+            if(player.GetComponent<DemonstrationRecorder>().enabled)
+            {
+                recorder = player.GetComponent<DemonstrationRecorder>();
+            }
+            else
+            {
+                recorder = null;
+            }
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
         }
@@ -195,12 +203,13 @@ public class LevelManager : Agent
 
     private void StartRecording()
     {
+        
         if (recorder != null)
         {
-            recorder.Record = true;
             DateTime now = DateTime.Now;
             string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
-            string demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
+            String demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
+            recorder.Record = true;
             recorder.DemonstrationName = demoName; 
         }
     }
@@ -214,7 +223,10 @@ public class LevelManager : Agent
         }
         if(metricsLogger != null)
         {
-            metricsLogger.SaveMetrics(recorder.DemonstrationName);
+            Debug.Log("Save Metrics");
+            DateTime now = DateTime.Now;
+            string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
+            metricsLogger.SaveMetrics("Metrics-"+formattedDateTime);
         }
         else
         {
@@ -261,6 +273,7 @@ public class LevelManager : Agent
         if(metricsLogger != null)
         {
             metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
+            StopRecording();
         }
         if (entityTraining)
         {

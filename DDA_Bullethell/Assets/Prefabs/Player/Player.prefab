@@ -190,7 +190,7 @@ MonoBehaviour:
   maxHealth: 250
   currentHealth: 250
   healthBarPrefab: {fileID: 1117314361987957873, guid: 6848b1e02222895438cacfdaec6ecde5, type: 3}
-  training: 1
+  training: 0
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.2
 --- !u!114 &7753765641125380520
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6889814400746404644}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
   m_Name: 

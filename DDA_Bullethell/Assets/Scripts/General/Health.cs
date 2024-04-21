@@ -77,14 +77,6 @@ public class Health : MonoBehaviour
         }
         else if (gameObject.CompareTag("Player"))
         {
-            if (!training)
-            {
-                LevelManager levelManager = FindLevelManagerInAncestors(transform);
-                if (levelManager != null)
-                {
-                    levelManager.StopRecording();
-                }
-            }
             OnPlayerDeath?.Invoke();
         } else if (gameObject.CompareTag("Hazard")){
             OnDeath?.Invoke();

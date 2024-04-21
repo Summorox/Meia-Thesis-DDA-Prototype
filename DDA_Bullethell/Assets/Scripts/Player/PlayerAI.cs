@@ -162,7 +162,6 @@ public class PlayerAI : Agent
         //Dash
         if (actions.DiscreteActions[0] == 1)
         {
-            Debug.Log("Wants to Dash");
             bool dash = true;
             Vector2 ifDirection = Vector2.zero;
             if (!useHeuristics)
