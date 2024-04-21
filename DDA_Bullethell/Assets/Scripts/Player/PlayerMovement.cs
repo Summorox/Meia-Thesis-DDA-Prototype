@@ -86,11 +86,19 @@ public class PlayerMovement : MonoBehaviour
         movement = move;
     }
 
-    public void TryDash()
+    public void TryDash(Vector2 ifDirection)
     {
         if (dashCooldownTimer <= 0 && !isDashing)
         {
-            Vector2 dashDirection = movement.normalized; // Ensure direction is normalized
+            Vector2 dashDirection = Vector2.zero;
+            if (ifDirection == Vector2.zero)
+            {
+                dashDirection = movement.normalized; 
+            }
+            else
+            {
+                dashDirection = ifDirection.normalized;
+            }
             StartCoroutine(Dash(dashDirection));
         }
     }
@@ -177,4 +185,6 @@ public class PlayerMovement : MonoBehaviour
         // Now change direction
         ChangeDirectionNow();
     }
+
+    public Vector2 getMovement() { return movement; }
 }

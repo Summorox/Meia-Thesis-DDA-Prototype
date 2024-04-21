@@ -786,6 +786,7 @@ GameObject:
   - component: {fileID: 5014316185892442303}
   - component: {fileID: 6473682090470817830}
   - component: {fileID: 1820260929958473620}
+  - component: {fileID: 7345960315263030824}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -856,7 +857,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 10000
+  MaxStep: 0
   enemyPrefabs:
   - {fileID: 7363638488950980769, guid: aa2032e68659b1f4eac6215570e5dd07, type: 3}
   - {fileID: 7363638488950980769, guid: e3b7446636930224f816b2176c0384db, type: 3}
@@ -873,3 +874,17 @@ MonoBehaviour:
   maxHazards: 6
   maxWaves: 10
   waveText: {fileID: 4489429071408218328}
+--- !u!114 &7345960315263030824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8630211526120770392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DecisionPeriod: 5
+  TakeActionsBetweenDecisions: 1

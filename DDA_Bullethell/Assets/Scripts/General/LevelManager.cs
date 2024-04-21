@@ -59,6 +59,8 @@ public class LevelManager : Agent
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
             playerPrefab.GetComponent<Health>().training = training;
             //playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
+            player = playerPrefab;
+            player.GetComponent<Health>().OnPlayerDeath += PlayerDeathHandler;
         }
     }
 
@@ -68,7 +70,6 @@ public class LevelManager : Agent
     {
         if (training)
         {
-            player = playerPrefab;
             ClearLevel();
             waveCounter = 0;
             //Player
@@ -89,8 +90,8 @@ public class LevelManager : Agent
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
 
         }
+        currentDifficultyValue = 2;
         GenerateLevel(currentDifficultyValue);
-        Debug.Log("Manager episode begin");
 
 
     }
@@ -178,6 +179,7 @@ public class LevelManager : Agent
             }
             else
             {
+                OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
                 Debug.Log("Manager win episode end");
                 EndEpisode();
             }
@@ -255,7 +257,6 @@ public class LevelManager : Agent
 
     public void PlayerDeathHandler()
     {
-        Debug.Log("Actual Player Death");
         FreezeGameEntities();
         if(metricsLogger != null)
         {
@@ -263,8 +264,8 @@ public class LevelManager : Agent
         }
         if (training)
         {
+            player.GetComponent<PlayerAI>().Died = true;
             OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
-            Debug.Log("Manager death episode end");
             EndEpisode();
         }
         if (!training)

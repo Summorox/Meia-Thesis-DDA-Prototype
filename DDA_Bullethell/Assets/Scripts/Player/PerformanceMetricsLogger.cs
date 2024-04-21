@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +19,7 @@ public class PerformanceMetrics
 
 public class PerformanceMetricsLogger : MonoBehaviour
 {
-    public PerformanceMetrics metrics = new PerformanceMetrics();
+    public PerformanceMetrics metrics;
     private float startTime;
     private int shotsFired;
     private int shotsHit;
@@ -28,6 +29,9 @@ public class PerformanceMetricsLogger : MonoBehaviour
     private int difficultyValue;
     private int killScore;
     private float lastWaveCompletionTime;
+    public Action HitTarget;
+    public Action Parried;
+    public Action<int> killedEnemy;
 
     private void Awake()
     {
@@ -49,18 +53,28 @@ public class PerformanceMetricsLogger : MonoBehaviour
         currentWave = 1;
         difficultyValue = 0;
         killScore = 0;
+        metrics = new PerformanceMetrics();
     }
 
     public void LogShotFired() => shotsFired++;
 
-    public void LogShotHit() => shotsHit++;
+    public void LogShotHit()
+    {
+        shotsHit++;
+        HitTarget?.Invoke();
+    }
 
     public void LogParryAttempt() => parriesAttempted++;
 
-    public void LogParrySuccess() => parriesSuccessful++;
+    public void LogParrySuccess()
+    {
+        parriesSuccessful++;
+        Parried?.Invoke();
+    }
     public void LogEnemyKill(int value)
     {
         killScore=killScore+value;
+        killedEnemy?.Invoke(value);
     }
 
     public void WaveCompleted(int wave, int difficultyValue, float healthLost)
