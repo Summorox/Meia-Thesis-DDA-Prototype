@@ -235,13 +235,13 @@ public class PlayerAI : Agent
                     case DifficultyLevel.Low:
                         break;
                     case DifficultyLevel.Medium:
-                        shootDirection = AdjustShootDirection(shootDirection, 6f);
+                        shootDirection = AdjustShootDirection(shootDirection, 5f);
                         break;
                     case DifficultyLevel.High:
-                        shootDirection = AdjustShootDirection(shootDirection, 4f);
+                        shootDirection = AdjustShootDirection(shootDirection, 3f);
                         break;
                     case DifficultyLevel.VeryHigh:
-                        shootDirection = AdjustShootDirection(shootDirection, 2f);
+                        shootDirection = AdjustShootDirection(shootDirection, 1f);
                         break;
                 }
             }
@@ -259,10 +259,10 @@ public class PlayerAI : Agent
         float parrySuccessRate = metrics.getParrySuccessRate();
 
         // Define boundaries for low skill
-        float accuracyUpperBound = 0.70f;
-        float parrySuccessUpperBound = 0.60f;
-        float accuracyLowerBound = 0.30f;
-        float parrySuccessLowerBound = 0.20f;
+        float accuracyUpperBound = 1f;
+        float parrySuccessUpperBound = 1f;
+        float accuracyLowerBound = 0.40f;
+        float parrySuccessLowerBound = 0.25f;
         float accuracyOptimal = accuracyUpperBound - accuracyLowerBound;
         float parryOptimal = parrySuccessUpperBound - parrySuccessLowerBound;
 
@@ -342,8 +342,8 @@ public class PlayerAI : Agent
         float healthLowerBound = 0f;
         float healthOptimal = 13f;
         float healthUpperBound = 25f;
-        float timeLowerBound = 6f;
-        float timeOptimal = 13f;
+        float timeLowerBound = 4f;
+        float timeOptimal = 12f;
         float timeUpperBound = 20f;
 
         float healthLostReward = CalculateReward(0.5f,healthLost, healthLowerBound, healthOptimal, healthUpperBound);
