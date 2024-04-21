@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,7 +17,12 @@ public class TutorialManager : MonoBehaviour
     void Start()
     {
         ShowTutorial("Use WASD to move around.");
-        enemyPrefab.GetComponent<Health>().OnDeath += () => enemyDefeated=true;
+        enemyPrefab.GetComponent<Health>().OnEnemyDeath += EnemyDied;
+    }
+
+    private void EnemyDied(int difficultyValue)
+    {
+        enemyDefeated = true;
     }
 
     void Update()

@@ -60,13 +60,8 @@ public class LevelManager : Agent
             playerPrefab.GetComponent<PlayerMovement>().training = false;
             //playerPrefab.GetComponent<PlayerShooting>().training = this.training;
             playerPrefab.GetComponent<Health>().training = entityTraining;
-            //playerPrefab.GetComponent<Health>().OnDeath += () => playerDeath = true;
             player = playerPrefab;
             player.GetComponent<Health>().OnPlayerDeath += PlayerDeathHandler;
-        }
-        if (managerTraining)
-        {
-
         }
     }
 
@@ -100,17 +95,6 @@ public class LevelManager : Agent
         GenerateLevel(currentDifficultyValue);
 
 
-    }
-
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        // Existing observations
-        base.CollectObservations(sensor);
-
-        // Add player performance metrics
-        sensor.AddObservation(metricsLogger.getAverageAccuracy());
-        sensor.AddObservation(metricsLogger.getAverageParrySuccessRate());
-        sensor.AddObservation(metricsLogger.getCurrentWave());
     }
 
 

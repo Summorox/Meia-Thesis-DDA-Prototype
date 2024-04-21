@@ -49,15 +49,20 @@ public class AdvancedEnemyAI : Agent
         this.currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
 
         this.shootingTimer = shootingInterval;
-        this.currentPlayerInstance.GetComponent<Health>().OnDeath += () => KilledPlayer = true;
+        this.currentPlayerInstance.GetComponent<Health>().OnPlayerDeath += () => KilledPlayer = true;
 
         this.healthComponent = GetComponent<Health>();
         this.healthComponent.training = this.training;
         this.rb = GetComponent<Rigidbody2D>();
         this.GetComponent<PolygonCollider2D>().enabled = true;
         this.healthComponent.OnTakeDamage += () => TookDamage = true;
-        this.healthComponent.OnDeath += () => Died = true;
+        this.healthComponent.OnEnemyDeath += EnemyDied;
 
+    }
+
+    private void EnemyDied(int difficultyValue)
+    {
+        Died = true;
     }
 
     public override void OnEpisodeBegin()

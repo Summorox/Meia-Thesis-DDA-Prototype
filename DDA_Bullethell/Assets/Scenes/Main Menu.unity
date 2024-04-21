@@ -718,24 +718,20 @@ MonoBehaviour:
     we will collect the following information:\r\n\r\n-Timestamps of your gameplay
     sessions..\r\n-Generic ID: A unique, anonymized identifier assigned to your game
     profile to distinguish between different players.\r\n-Player Performance Metrics:
-    Data related to your in-game performance.\n-Player Demonstrations: Recordings
-    or logs of your gameplay actions and decisions.\r\n\n2. Purpose of Collection\r\n\nThe
-    collected data will be used exclusively for the following purposes:\r\n\r\n-Dynamic
-    Difficulty Adjustment: Implementing and refining a mechanism within the prototype
-    that adjusts the game's difficulty based on your performance, aiming to provide
-    a tailored and engaging gameplay experience.\r\n-Academic Analysis: Analyzing
-    gameplay metrics to contribute to the development of am academic thesis related
-    to the development of this prototype.\n\n3. Data Sharing and Privacy\r\n\n-Your
-    data will be kept confidential and stored securely.\r \n-It will be automatically
-    deleted within a 6-month period.\n-Data may be used for purely academic purposes
-    in analyzing the gameplay metrics.\n\r-You have the right to access the data
-    collected about you and request its deletion.\r\n\n4. Consent Withdrawal\r\n\r\nYou
-    can withdraw your consent at any time by contacting us at dspjorge@gmail.com.
-    Upon withdrawal, we will stop collecting data from that point forward and will
-    delete your personal data from our records if requested.\r\n\r\n5. Agreement\r\n\r\nBy
-    clicking \"I Accept,\" you confirm that you have read and understood these terms
-    and agree to the data collection and use as described. If you do not agree, unfortunately,
-    we will not be able to start the game.."
+    Data related to your in-game performance.\n\n2. Purpose of Collection\r\n\nThe
+    collected data will be used exclusively for the following purposes:\r\n\r\n-Academic
+    Analysis: Analyzing gameplay metrics to contribute to the development of am academic
+    thesis related to the comparison between traditional and dynamic difficulty systems.\n\n3.
+    Data Sharing and Privacy\r\n\n-Your data will be kept confidential and stored
+    securely.\r \n-It will be automatically deleted within a 6-month period.\n-Data
+    may be used for purely academic purposes in analyzing the gameplay metrics.\n\r-You
+    have the right to access the data collected about you and request its deletion.\r\n\n4.
+    Consent Withdrawal\r\n\r\nYou can withdraw your consent at any time by contacting
+    us at dspjorge@gmail.com. Upon withdrawal, we will stop collecting data from
+    that point forward and will delete your personal data from our records if requested.\r\n\r\n5.
+    Agreement\r\n\r\nBy clicking \"I Accept,\" you confirm that you have read and
+    understood these terms and agree to the data collection and use as described.
+    If you do not agree, unfortunately, we will not be able to start the game.."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
