@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Demonstrations;
 using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
@@ -13,6 +14,7 @@ public class LevelManager : Agent
 {
     public GameObject[] enemyPrefabs;
     public GameObject[] hazardPrefabs;
+    public GameObject[] playerTrainedPrefabs;
     public GameObject playerPrefab;
 
 
@@ -29,13 +31,17 @@ public class LevelManager : Agent
     // Current counts
     private int currentEnemies = 0;
     private int currentHazards = 0;
+    private float lastEnemyCount;
+    private float lastHazardsCount;
+    private float lastEnemyType;
+    private float lastHazardType;
 
-    private int currentDifficultyValue=2;
-    private int difficultyIncrease=2;
+
+    private int lastDifficultyValue;
 
     public int maxWaves;
 
-    private int waveCounter = 0;
+    private int waveCounter;
 
     private bool gameStarted = false;
 
@@ -50,6 +56,26 @@ public class LevelManager : Agent
     private int initialPlayerHealth;
 
     public event Action<int,float,float> OnWaveFinished;
+
+    private bool startGame = false;
+
+    private bool nextWave = false;
+
+    private float lastHealthLost;
+
+    private float lastTimeSpent;
+
+    private float maxHealth = 250;
+
+    private float maxKillScore = 200;
+
+    private float maxTimePerWave = 150;
+
+    private float maxDifficultyLevel = 32;
+
+    private float hazardTypes = 3;
+
+    private float enemyTypes = 4;
 
 
 
@@ -66,14 +92,117 @@ public class LevelManager : Agent
         }
     }
 
-    
+    public override void CollectObservations(VectorSensor sensor)
+    {
+
+        //Current Health
+        if(player !=null)
+        {
+            sensor.AddObservation((float)player.GetComponent<Health>().currentHealth / maxHealth);
+
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+        //Health lost last wave
+        if (player != null)
+        {
+            sensor.AddObservation(lastHealthLost/ maxHealth);
+
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+
+        //Current Wave Reached
+        sensor.AddObservation(waveCounter / maxWaves);
+
+        //Current Kill Score
+        float killScore = Utils.ValidateObservation(metricsLogger.getKillScore());
+        if (killScore != -1)
+        {
+            sensor.AddObservation(metricsLogger.getKillScore() / maxKillScore);
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+       
+        //Time spent last wave
+        sensor.AddObservation(lastTimeSpent/maxTimePerWave);
+
+
+        //Parry Success Rate
+        float parrySuccess = Utils.ValidateObservation(metricsLogger.getParrySuccessRate());
+        if (parrySuccess != -1f)
+        {
+            sensor.AddObservation(metricsLogger.getParrySuccessRate());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+        //Accuracy
+        float accuracy = Utils.ValidateObservation(metricsLogger.getAccuracy());
+        if (accuracy != -1f)
+        {
+            sensor.AddObservation(metricsLogger.getAccuracy());
+        }
+        else
+        {
+            sensor.AddObservation(0f);
+        }
+
+        //current difficulty level
+        sensor.AddObservation(lastDifficultyValue / maxDifficultyLevel);
+
+        //last enemy count
+        sensor.AddObservation(lastEnemyCount/maxEnemies);
+
+        //last hazard count
+        sensor.AddObservation(lastHazardsCount/maxHazards);
+
+        //last hazard type focus
+        sensor.AddObservation(lastHazardType / hazardTypes);
+
+        //last enemy type focus
+        sensor.AddObservation(lastEnemyType/enemyTypes);
+
+        if (startGame || nextWave)
+        {
+            sensor.AddObservation(1);
+        }
+        else
+        {
+            sensor.AddObservation(0);
+        }
+
+    }
 
     public override void OnEpisodeBegin()
     {
+        ClearLevel();
+        waveCounter = 1;
+        lastEnemyCount = 0;
+        lastHazardsCount = 0;
+        lastEnemyType = 0;
+        lastHazardType = 0;
+        lastDifficultyValue = 0;
+        lastHealthLost = 0;
+        lastTimeSpent = 0;
+        if (player != null)
+        {
+            player.GetComponent<Health>().OnPlayerDeath -= PlayerDeathHandler;
+            player.GetComponent<Health>().Die();
+        }
         if (entityTraining)
         {
-            ClearLevel();
-            waveCounter = 0;
             //Player
             // Instantiate a new player instance
             player.transform.position = GetRandomStartPosition();
@@ -92,21 +221,21 @@ public class LevelManager : Agent
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
 
         }
-        currentDifficultyValue = 2;
-        GenerateLevel(currentDifficultyValue);
 
-
-    }
-
-
-    private void GenerateLevel(int DifficultyValue)
-    {
-        if (!entityTraining && waveCounter==0)
-        {         
-            player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
-            player.GetComponent<Health>().OnPlayerDeath+= PlayerDeathHandler;
+        if (!entityTraining)
+        {
+            if (managerTraining)
+            {
+                int playerIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
+                player= Instantiate(playerTrainedPrefabs[playerIndex], GetRandomStartPosition(), Quaternion.identity, LevelParent);
+            }
+            else
+            {
+                player = Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity, LevelParent);
+            }
+            player.GetComponent<Health>().OnPlayerDeath += PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
-            if(player.GetComponent<DemonstrationRecorder>().enabled)
+            if (player.GetComponent<DemonstrationRecorder>().enabled)
             {
                 recorder = player.GetComponent<DemonstrationRecorder>();
             }
@@ -117,42 +246,81 @@ public class LevelManager : Agent
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
         }
+        startGame = true;
+    }
+
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        if (startGame || nextWave)
+        {
+            Debug.Log("Wave Generated");
+            int enemyCount = actions.DiscreteActions[0]+1;
+            int enemyTypeFocus = actions.DiscreteActions[1];
+            int hazardCount = actions.DiscreteActions[2];
+            int hazardTypeFocus = actions.DiscreteActions[3];
+            // Adjust level generation based on AI decisions
+            GenerateLevel(enemyCount, hazardCount, enemyTypeFocus, hazardTypeFocus);
+            
+        }
+        else
+        {
+            return;
+        }
+        
+    }
+
+
+    private void GenerateLevel(int enemyCount, int hazardCount, int enemyTypeFocus, int hazardTypeFocus)
+    {
         ClearLevel();
-        if (waveCounter < maxWaves)
+        if (waveCounter <= maxWaves)
         {
             initialPlayerHealth= player.GetComponent<Health>().currentHealth;
             int totalDifficulty = 0;
             // Reset counts
             currentEnemies = 0;
             currentHazards = 0;
-            waveText.text = "Wave " + (waveCounter+1);
+            lastHazardsCount = hazardCount;
+            lastEnemyCount = enemyCount;
+            lastHazardType = hazardTypeFocus+1;
+            lastEnemyType = enemyTypeFocus+1;
+            if(!managerTraining)
+            {
+                waveText.text = "Wave " + (waveCounter);
+            }
 
             // Generate hazards
-            while (totalDifficulty < currentDifficultyValue)
+            while(currentEnemies < enemyCount || currentHazards < hazardCount)
             {
                 Vector2 pos = GetRandomStartPosition();
-                if (totalDifficulty >= currentDifficultyValue)
-                {
-                    break;
-                }
                 if (!Physics2D.OverlapCircle(pos, 5f))
                 {
                     float randomChance = UnityEngine.Random.value;
-                    bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
-                    bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
+                    bool placeHazard = randomChance > 0.50f && currentHazards < hazardCount;
+                    bool placeEnemy = !placeHazard && currentEnemies < enemyCount;
 
                     if (placeHazard)
                     {
+                        float typeFocus = UnityEngine.Random.value;
                         int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
-                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
+                        if (typeFocus > 0.65 || hazardCount <=2)
+                        {
+                            hazardIndex = hazardTypeFocus;
+                        }
+                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentHazards++;
                         totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
                         hazard.GetComponent<Collider2D>().enabled = true;
                     }
-                     else if (placeEnemy)
-                     {
+                    else if (placeEnemy)
+                    {
+                        float typeFocus = UnityEngine.Random.value;
                         int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
+                        if (typeFocus > 0.65 || enemyCount <= 2)
+                        {
+                            enemyIndex = enemyTypeFocus;
+                        }
+                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
                         enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
@@ -162,38 +330,126 @@ public class LevelManager : Agent
 
                 }
             }
-            // If by the end of the loop no enemy has been placed, forcefully place one at a random position
-            if (currentEnemies == 0)
-            {
-                Vector2 randomPos = Vector2.zero;
-                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 5f))
-                {
-                    randomPos = GetRandomStartPosition();
-                }
-                int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                GameObject enemy=Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
-                enemy.GetComponent<Collider2D>().enabled = true;
-                enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
-
-            }
+            Debug.Log("Number of enemies spawned: " + currentEnemies);
             gameStarted = true;
+            startGame = false;
+            nextWave = false;
+            lastDifficultyValue = totalDifficulty;
         }
         else
         {
-            if (!entityTraining)
+            if (!entityTraining && !managerTraining)
             {
                 StopRecording();
                 StartCoroutine(LoadMainMenu("Congratulations!"));
             }
             else
             {
-                OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
-                Debug.Log("Manager win episode end");
-                EndEpisode();
+                if (entityTraining)
+                {
+                    OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+
+                }
+                else
+                {
+                    EvaluateWave(false,true,player.GetComponent<Health>().currentHealth);
+                    Debug.Log("Manager win episode end");
+                    EndEpisode();
+                }
             }
         }
 
 
+    }
+
+    private void EvaluateWave(bool playerDeath, bool playerWin, float currentHealth)
+    {
+        if (!playerDeath)
+        {
+            float healthLost = initialPlayerHealth - currentHealth;
+            lastHealthLost = healthLost;
+            if(waveCounter <=5)
+            {
+                if(healthLost > 25)
+                {
+                    AddReward(-0.02f * (healthLost - 25));
+                }else if (healthLost < 25)
+                {
+                    AddReward(-0.50f);
+                }
+            }
+            else
+            {
+                if (healthLost > 50)
+                {
+                    AddReward(-0.02f * (healthLost - 50));
+                }
+                else if (healthLost < 25)
+                {
+                    AddReward(-0.50f);
+                }
+            }
+
+            float adjustment = 0.0f;
+            float skillLevel = (float)(metricsLogger.getAccuracy() + metricsLogger.getParrySuccessRate()) / 2.0f; // Simple average of skill indicators
+            float healthBasedDifficulty = (250 - currentHealth) / 25; // Number of total hits taken
+
+            if (skillLevel >= 0.40 && healthBasedDifficulty < waveCounter - 1)
+            {
+                adjustment = -1.0f; // Penalize for not increasing challenge for skilled players
+                Debug.Log("High Skill Penalty");
+            }
+            else if (skillLevel <= 0.20 && healthBasedDifficulty > waveCounter - 1)
+            {
+                adjustment = -1.0f; // Penalize for not decreasing challenge for unskilled players
+                Debug.Log("Low Skill Penalty");
+            }
+            AddReward(adjustment);
+
+        }
+
+        float timeSpent = metricsLogger.getLastWaveCompletionTime();
+        lastTimeSpent = timeSpent;
+        float optimalTimeLowerBound = 5;
+        float optimalTimeUpperBound = 55;
+        float optimalTime = 30;
+        float timeReward = Utils.CalculateRewardOptimal(0.25f, timeSpent, optimalTimeLowerBound, optimalTime, optimalTimeUpperBound);
+        AddReward(timeReward);
+        if(timeReward > 0 )
+        {
+            Debug.Log("Time Reward");
+        }
+
+        
+        
+
+        if (playerDeath) {
+            if(waveCounter <= 5)
+            {
+                float penalty = -1.0f * (5 - waveCounter);
+                AddReward(penalty);
+                Debug.Log("Death Penalty");
+            }
+            else {
+                float reward = 0.5f * waveCounter;
+                AddReward(reward);
+                Debug.Log("Death Reward");
+            }
+
+        }
+        if (playerWin)
+        {
+            if(currentHealth > 50)
+            {
+                AddReward(-5f);
+                Debug.Log("Win Penalty");
+            }
+            else
+            {
+                AddReward(5.0f);
+                Debug.Log("Win Reward");
+            }
+        }
     }
 
     private void HandleEnemyDeath(int difficultyValue)
@@ -221,16 +477,12 @@ public class LevelManager : Agent
             Debug.Log("Stopped Recording");
             recorder.Record = false;
         }
-        if(metricsLogger != null)
+        if(metricsLogger != null && !managerTraining && !entityTraining)
         {
             Debug.Log("Save Metrics");
             DateTime now = DateTime.Now;
             string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
             metricsLogger.SaveMetrics("Metrics-"+formattedDateTime);
-        }
-        else
-        {
-            EndEpisode();
         }
     }
 
@@ -253,7 +505,11 @@ public class LevelManager : Agent
             }
         }
 
-
+        GameObject[] afterimages = GameObject.FindGameObjectsWithTag("Afterimage");
+        foreach (GameObject afterimage in afterimages)
+        {
+            Destroy(afterimage);
+        }
 
     }
 
@@ -272,7 +528,7 @@ public class LevelManager : Agent
         FreezeGameEntities();
         if(metricsLogger != null)
         {
-            metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
+            metricsLogger.WaveCompleted(waveCounter, lastDifficultyValue, initialPlayerHealth);
             StopRecording();
         }
         if (entityTraining)
@@ -281,7 +537,15 @@ public class LevelManager : Agent
             OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
             EndEpisode();
         }
-        if (!entityTraining)
+        if (managerTraining)
+        {
+            EvaluateWave(true,false,0);
+            if (!startGame)
+            {
+                EndEpisode();
+            }
+        }
+        if (!entityTraining && !managerTraining)
         {
             // Load the main menu after a delay
             StartCoroutine(LoadMainMenu("You Lost!"));
@@ -365,15 +629,18 @@ public class LevelManager : Agent
         yield return new WaitForSeconds(delay);
         if(metricsLogger != null)
         {
-            metricsLogger.WaveCompleted(waveCounter + 1, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
+            metricsLogger.WaveCompleted(waveCounter, lastDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
             if (entityTraining)
             {
-                OnWaveFinished?.Invoke(waveCounter + 1, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+                OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+            }
+            if (managerTraining)
+            {
+                EvaluateWave(false,false,player.GetComponent<Health>().currentHealth);
             }
         }
-        currentDifficultyValue += difficultyIncrease;
+        nextWave = true;
         waveCounter++;
-        GenerateLevel(currentDifficultyValue);
     }
 
     private Vector3 GetRandomStartPosition()

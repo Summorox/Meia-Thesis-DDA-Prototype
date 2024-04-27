@@ -22,16 +22,18 @@ public class Health : MonoBehaviour
     public event Action<int> OnEnemyDeath;
     public event Action OnDeath;
 
+    public bool managerTraining = true;
+
     private Coroutine flashCoroutine;
 
 
     void Start()
     {
         currentHealth = maxHealth;
-        spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color;
-        if (healthBarPrefab != null)
+        if (healthBarPrefab != null && !managerTraining)
         {
+            spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
+            originalColor = spriteRenderer.color;
             // Instantiate health bar and set it up
             healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
             healthBarInstance.transform.SetParent(transform, false);
@@ -47,11 +49,14 @@ public class Health : MonoBehaviour
         currentHealth -= damage;
         OnTakeDamage?.Invoke(); // Trigger the OnTakeDamage event
 
-        if (flashCoroutine != null)
+        if (flashCoroutine != null && !managerTraining)
         {
             StopCoroutine(flashCoroutine);
         }
-        flashCoroutine = StartCoroutine(FlashDamageEffect());
+        if (!managerTraining)
+        {
+            flashCoroutine = StartCoroutine(FlashDamageEffect());
+        }
 
         if (currentHealth <= 0)
         {
@@ -84,22 +89,12 @@ public class Health : MonoBehaviour
         if(!training)
         {
             Destroy(gameObject); // Destroy the object.
-            Destroy(healthBarInstance); // Destroy the health bar object
+            if(healthBarInstance != null)
+            {
+                Destroy(healthBarInstance); // Destroy the health bar object
+            }
 
         }
-    }
-
-    LevelManager FindLevelManagerInAncestors(Transform current)
-    {
-        while (current != null)
-        {
-            LevelManager manager = current.GetComponent<LevelManager>();
-            if (manager != null)
-                return manager;
-
-            current = current.parent;
-        }
-        return null; // No LevelManager found in any ancestors
     }
 
     public void Reset()
@@ -109,9 +104,23 @@ public class Health : MonoBehaviour
         {
 
             Destroy(gameObject); // Destroy the object.
-            Destroy(healthBarInstance); // Destroy the health bar object
+            if (healthBarInstance != null)
+            {
+                Destroy(healthBarInstance); // Destroy the health bar object
+            }
             Debug.Log($"Health bar destroied");
 
         }
     }
+
+    private void OnDestroy()
+    {
+        this.OnDeath = null;
+        this.OnEnemyDeath = null;
+        this.OnPlayerDeath = null;
+        this.OnTakeDamage = null;
+        StopAllCoroutines();
+
+    }
+
 }

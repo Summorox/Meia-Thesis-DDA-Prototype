@@ -67,7 +67,9 @@ public class Projectile : MonoBehaviour
     private void AddTrailRenderer()
     {
         TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
-        trail.material = new Material(Shader.Find("Sprites/Default"));
+        Material trailMaterial = new Material(Shader.Find("Sprites/Default"));
+
+        trail.material = trailMaterial;
         trail.time = 0.5f; // Duration of trail
         trail.startWidth = 0.1f;
         trail.endWidth = 0.0f;
@@ -86,6 +88,16 @@ public class Projectile : MonoBehaviour
             trail.endColor = new Color(0, 0, 1, 0); // Fade to transparent
         }
         this.bulletTrail = trail;
+    }
+
+    private void OnDestroy()
+    {
+        if (this.bulletTrail != null && this.bulletTrail.material != null)
+        {
+            Destroy(this.bulletTrail.material);  // Destroy the material
+        }
+        this.OnHitEnemy = null;
+        this.OnHitPlayer = null;
     }
 
 

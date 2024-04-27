@@ -20,6 +20,8 @@ public class PlayerParrying : MonoBehaviour
 
     private PerformanceMetricsLogger metricsLogger;
 
+    public bool managerTraining = true;
+
     void Start()
     {
         metricsLogger = GetComponent<PerformanceMetricsLogger>();
@@ -57,7 +59,7 @@ public class PlayerParrying : MonoBehaviour
         parryTimer = parryDuration;
         cooldownTimer = parryCooldown;
 
-        if (parryEffect != null)
+        if (parryEffect != null && !managerTraining)
         {
             parryEffect.Play(); // Play the parry effect
         }
@@ -116,18 +118,20 @@ public class PlayerParrying : MonoBehaviour
         // Determine the direction from the player to the projectile
         Vector2 directionToProjectile = (projectile.transform.position - transform.position).normalized;
 
-        // Calculate the X rotation so that the cone is emitted towards the deflected projectile
-        float angleX = Mathf.Atan2(directionToProjectile.y, directionToProjectile.x) * Mathf.Rad2Deg;
+        if (!managerTraining){
+            // Calculate the X rotation so that the cone is emitted towards the deflected projectile
+            float angleX = Mathf.Atan2(directionToProjectile.y, directionToProjectile.x) * Mathf.Rad2Deg;
 
-        // Since we want the particle system to emit in the direction of the deflected projectile,
-        Quaternion rotation = Quaternion.Euler(angleX, 90, -90);
+            // Since we want the particle system to emit in the direction of the deflected projectile,
+            Quaternion rotation = Quaternion.Euler(angleX, 90, -90);
 
-        // Instantiate the particle system with the calculated orientation
-        ParticleSystem deflectEffect = Instantiate(deflectionIndicator, projectile.transform.position, rotation);
+            // Instantiate the particle system with the calculated orientation
+            ParticleSystem deflectEffect = Instantiate(deflectionIndicator, projectile.transform.position, rotation);
 
-        if (deflectEffect != null)
-        {
-            deflectEffect.Play();
+            if (deflectEffect != null)
+            {
+                deflectEffect.Play();
+            }
         }
 
 

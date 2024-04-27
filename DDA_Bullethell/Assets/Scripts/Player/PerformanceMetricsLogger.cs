@@ -54,6 +54,9 @@ public class PerformanceMetricsLogger : MonoBehaviour
         difficultyValue = 0;
         killScore = 0;
         metrics = new PerformanceMetrics();
+        this.HitTarget = null;
+        this.Parried = null;
+        this.killedEnemy = null;
     }
 
     public void LogShotFired() => shotsFired++;

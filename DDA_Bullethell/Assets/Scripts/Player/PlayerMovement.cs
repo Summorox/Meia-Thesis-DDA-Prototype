@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float afterimageSpawnInterval = 0.001f;
     private float afterimageSpawnTimer;
 
+    public bool managerTraining = true;
+
 
     void Start()
     {
@@ -47,7 +49,10 @@ public class PlayerMovement : MonoBehaviour
             afterimageSpawnTimer -= Time.deltaTime;
             if (afterimageSpawnTimer <= 0)
             {
-                SpawnAfterimage();
+                if (!managerTraining)
+                {
+                    SpawnAfterimage();
+                }
                 afterimageSpawnTimer = afterimageSpawnInterval;
             }
         }
@@ -146,12 +151,18 @@ public class PlayerMovement : MonoBehaviour
         while (elapsedTime < afterimageLifetime)
         {
             float alpha = Mathf.Lerp(initialColor.a, 0, elapsedTime / afterimageLifetime);
+            if(spriteRenderer == null)
+            {
+                break;
+            }
             spriteRenderer.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        Destroy(afterimage);
+        if(afterimage != null)
+        {
+            Destroy(afterimage);
+        }
     }
 
     private void ChooseNewDirection()
@@ -187,4 +198,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public Vector2 getMovement() { return movement; }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
 }

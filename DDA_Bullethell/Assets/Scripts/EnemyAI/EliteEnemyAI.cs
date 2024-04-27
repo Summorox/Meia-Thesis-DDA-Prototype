@@ -49,14 +49,17 @@ public class EliteEnemyAI : Agent
         this.currentPlayerInstance = environmentParent.GetComponentInChildren<PlayerMovement>(true).gameObject;
 
         this.shootingTimer = shootingInterval;
-        this.currentPlayerInstance.GetComponent<Health>().OnPlayerDeath += () => KilledPlayer = true;
+        if (training)
+        {
+            this.currentPlayerInstance.GetComponent<Health>().OnPlayerDeath += () => KilledPlayer = true;
+            this.healthComponent.OnTakeDamage += () => TookDamage = true;
+            this.healthComponent.OnEnemyDeath += EnemyDied;
+        }
 
         this.healthComponent = GetComponent<Health>();
         this.healthComponent.training = this.training;
         this.rb = GetComponent<Rigidbody2D>();
         this.GetComponent<PolygonCollider2D>().enabled = true;
-        this.healthComponent.OnTakeDamage += () => TookDamage = true;
-        this.healthComponent.OnEnemyDeath += EnemyDied;
 
     }
 
@@ -318,5 +321,9 @@ public class EliteEnemyAI : Agent
     {
         // Generate a random rotation in degrees
         return UnityEngine.Random.Range(0f, 360f);
+    }
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }

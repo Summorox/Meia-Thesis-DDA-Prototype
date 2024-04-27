@@ -588,7 +588,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7102843908595512013}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -786,7 +786,7 @@ GameObject:
   - component: {fileID: 5014316185892442303}
   - component: {fileID: 6473682090470817830}
   - component: {fileID: 1820260929958473620}
-  - component: {fileID: 7345960315263030824}
+  - component: {fileID: 9012134121620860246}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -825,22 +825,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 0
+    VectorObservationSize: 13
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 
-    VectorActionSize: 
+      BranchSizes: 04000000040000000400000003000000
+    VectorActionSize: 04000000040000000400000003000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: LevelManager
   TeamId: 0
-  m_UseChildSensors: 1
+  m_UseChildSensors: 0
   m_UseChildActuators: 1
+  m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
 --- !u!114 &1820260929958473620
 MonoBehaviour:
@@ -867,14 +868,20 @@ MonoBehaviour:
   - {fileID: 7099020014177455085, guid: 43b7512b9168bb4498230abfd92f5525, type: 3}
   - {fileID: 7205239852523578279, guid: c89a91604a1f9d2459f0f7ede8a04f37, type: 3}
   - {fileID: 8682381939132187238, guid: 828ffa5c553184347a80afc6d975b0b9, type: 3}
+  playerTrainedPrefabs:
+  - {fileID: 6889814400746404644, guid: 4b2cb485551816c499162b15f366c3d3, type: 3}
+  - {fileID: 6889814400746404644, guid: fe211fd62f195f84d92247e21ac984b4, type: 3}
+  - {fileID: 6889814400746404644, guid: eeb0a3ebc808b42488444b6ec950c066, type: 3}
+  - {fileID: 6889814400746404644, guid: 341f365efaa966d4db44521f56b7e61e, type: 3}
   playerPrefab: {fileID: 6889814400746404644, guid: 61250775034d1de42a1777aa937d87fd, type: 3}
-  training: 0
+  entityTraining: 0
+  managerTraining: 1
   LevelParent: {fileID: 5014316185892442303}
-  maxEnemies: 6
-  maxHazards: 6
+  maxEnemies: 4
+  maxHazards: 4
   maxWaves: 10
   waveText: {fileID: 4489429071408218328}
---- !u!114 &7345960315263030824
+--- !u!114 &9012134121620860246
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -887,4 +894,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
-  TakeActionsBetweenDecisions: 1
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 0

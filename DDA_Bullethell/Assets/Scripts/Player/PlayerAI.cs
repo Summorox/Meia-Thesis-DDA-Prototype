@@ -80,7 +80,8 @@ public class PlayerAI : Agent
         sensor.AddObservation(metrics.getParrySuccessRate());
 
         //Current Wave Reached
-        if (ValidateObservation(metrics.getCurrentWave()))
+        float currentWave = Utils.ValidateObservation(metrics.getCurrentWave());
+        if (currentWave != -1)
         {
             sensor.AddObservation(metrics.getCurrentWave());
         }
@@ -90,7 +91,8 @@ public class PlayerAI : Agent
         }
 
         //Current Kill Score
-        if (ValidateObservation(metrics.getKillScore()))
+        float killScore = Utils.ValidateObservation(metrics.getKillScore());
+        if (killScore != -1)
         {
             sensor.AddObservation(metrics.getKillScore());
         }
@@ -100,7 +102,8 @@ public class PlayerAI : Agent
         }
 
         //Current Average Health Lost Per Wave
-        if (ValidateObservation(metrics.getAverageHealthLostPerWave()))
+        float averageHealthLost = Utils.ValidateObservation(metrics.getAverageHealthLostPerWave());
+        if (averageHealthLost != -1)
         {
             sensor.AddObservation(metrics.getAverageHealthLostPerWave());
         }
@@ -110,7 +113,8 @@ public class PlayerAI : Agent
         }
 
         //Current Average Time spent per Wave
-        if (ValidateObservation(metrics.getAverageWaveCompletionTime()))
+        float averageWaveCompletionTime = Utils.ValidateObservation(metrics.getAverageWaveCompletionTime());
+        if (averageWaveCompletionTime != -1)
         {
             sensor.AddObservation(metrics.getAverageWaveCompletionTime());
         }
@@ -265,8 +269,8 @@ public class PlayerAI : Agent
         float accuracyOptimal = accuracyUpperBound - accuracyLowerBound;
         float parryOptimal = parrySuccessUpperBound - parrySuccessLowerBound;
 
-        float accuracyReward = CalculateReward(0.05f,accuracy, accuracyLowerBound, accuracyOptimal, accuracyUpperBound);
-        float parrySuccessReward = CalculateReward(0.05f,parrySuccessRate, parrySuccessLowerBound, parryOptimal, parrySuccessUpperBound);
+        float accuracyReward = Utils.CalculateRewardOptimal(0.05f,accuracy, accuracyLowerBound, accuracyOptimal, accuracyUpperBound);
+        float parrySuccessReward = Utils.CalculateRewardOptimal(0.05f,parrySuccessRate, parrySuccessLowerBound, parryOptimal, parrySuccessUpperBound);
 
         AddReward(accuracyReward);
         AddReward(parrySuccessReward);
@@ -308,33 +312,6 @@ public class PlayerAI : Agent
         AddReward(0.02f*value);
     }
 
-    float CalculateReward(float baseReward,float currentValue, float lowerBound, float optimal, float upperBound)
-    {
-        if (currentValue < lowerBound || currentValue > upperBound)
-        {
-            return -baseReward; 
-        }
-        float range = upperBound - lowerBound;
-        if (range == 0) return baseReward; //Prevent division by zero
-        float normalizedValue = (currentValue - lowerBound) / range; 
-        float optimalNormalized = (optimal - lowerBound) / range;
-        float modifier = 1 - 4 * (normalizedValue - optimalNormalized) * (normalizedValue - optimalNormalized);
-        float reward = baseReward * (1 + modifier);
-        return Math.Max(baseReward, Math.Min(2.5f * baseReward, reward));
-    }
-
-    private bool ValidateObservation(float value)
-    {
-        if (float.IsNaN(value) || float.IsInfinity(value))
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
     private void EvaluateWaveMetrics(int waveNumber, float healthLost, float completionTime)
     {
 
@@ -345,8 +322,8 @@ public class PlayerAI : Agent
         float timeOptimal = 12f;
         float timeUpperBound = 20f;
 
-        float healthLostReward = CalculateReward(0.5f,healthLost, healthLowerBound, healthOptimal, healthUpperBound);
-        float completionTimeReward = CalculateReward(0.5f, completionTime, timeLowerBound, timeOptimal, timeUpperBound);
+        float healthLostReward = Utils.CalculateRewardOptimal(0.5f,healthLost, healthLowerBound, healthOptimal, healthUpperBound);
+        float completionTimeReward = Utils.CalculateRewardOptimal(0.5f, completionTime, timeLowerBound, timeOptimal, timeUpperBound);
         AddReward(healthLostReward);
         if (!this.Died)
         {
@@ -374,8 +351,8 @@ public class PlayerAI : Agent
             float averageHealthLost = metrics.getAverageHealthLostPerWave();
             float averageCompletionTime = metrics.getAverageWaveCompletionTime();
 
-            float averageHealthLostReward = CalculateReward(0.5f, averageHealthLost, healthLowerBound, healthOptimal, healthUpperBound);
-            float averageCompletionTimeReward = CalculateReward(0.5f, averageCompletionTime, timeLowerBound, timeOptimal, timeUpperBound);
+            float averageHealthLostReward = Utils.CalculateRewardOptimal(0.5f, averageHealthLost, healthLowerBound, healthOptimal, healthUpperBound);
+            float averageCompletionTimeReward = Utils.CalculateRewardOptimal(0.5f, averageCompletionTime, timeLowerBound, timeOptimal, timeUpperBound);
 
             AddReward(averageHealthLostReward);
             if (averageHealthLostReward > 0)
