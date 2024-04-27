@@ -68,7 +68,10 @@ public class Projectile : MonoBehaviour
     {
         TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
         Material trailMaterial = new Material(Shader.Find("Sprites/Default"));
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         trail.material = trailMaterial;
         trail.time = 0.5f; // Duration of trail
         trail.startWidth = 0.1f;

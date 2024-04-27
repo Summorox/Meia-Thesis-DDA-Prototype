@@ -118,6 +118,7 @@ public class PlayerParrying : MonoBehaviour
         // Determine the direction from the player to the projectile
         Vector2 directionToProjectile = (projectile.transform.position - transform.position).normalized;
 
+<<<<<<< Updated upstream
         if (!managerTraining){
             // Calculate the X rotation so that the cone is emitted towards the deflected projectile
             float angleX = Mathf.Atan2(directionToProjectile.y, directionToProjectile.x) * Mathf.Rad2Deg;
@@ -133,7 +134,24 @@ public class PlayerParrying : MonoBehaviour
                 deflectEffect.Play();
             }
         }
+=======
+        if (!managerTraining)
+        {
+            // Calculate the X rotation so that the cone is emitted towards the deflected projectile
+            float angleX = Mathf.Atan2(directionToProjectile.y, directionToProjectile.x) * Mathf.Rad2Deg;
+>>>>>>> Stashed changes
 
+            // Since we want the particle system to emit in the direction of the deflected projectile,
+            Quaternion rotation = Quaternion.Euler(angleX, 90, -90);
+
+            // Instantiate the particle system with the calculated orientation
+            ParticleSystem deflectEffect = Instantiate(deflectionIndicator, projectile.transform.position, rotation);
+
+            if (deflectEffect != null)
+            {
+                deflectEffect.Play();
+            }
+        }
 
         // Apply the new velocity to the projectile
         Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();

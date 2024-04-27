@@ -869,10 +869,17 @@ MonoBehaviour:
   - {fileID: 7205239852523578279, guid: c89a91604a1f9d2459f0f7ede8a04f37, type: 3}
   - {fileID: 8682381939132187238, guid: 828ffa5c553184347a80afc6d975b0b9, type: 3}
   playerTrainedPrefabs:
+<<<<<<< Updated upstream
   - {fileID: 6889814400746404644, guid: 4b2cb485551816c499162b15f366c3d3, type: 3}
   - {fileID: 6889814400746404644, guid: fe211fd62f195f84d92247e21ac984b4, type: 3}
   - {fileID: 6889814400746404644, guid: eeb0a3ebc808b42488444b6ec950c066, type: 3}
   - {fileID: 6889814400746404644, guid: 341f365efaa966d4db44521f56b7e61e, type: 3}
+=======
+  - {fileID: 6889814400746404644, guid: c3c91091276cf554b8aea7fc373209f3, type: 3}
+  - {fileID: 6889814400746404644, guid: 1b4a9617f1f91ef4981f006c5417cb25, type: 3}
+  - {fileID: 6889814400746404644, guid: 59613055ff2fea445bbb6d109e236342, type: 3}
+  - {fileID: 6889814400746404644, guid: 671c3081890c69b40b3d272ffa8bc604, type: 3}
+>>>>>>> Stashed changes
   playerPrefab: {fileID: 6889814400746404644, guid: 61250775034d1de42a1777aa937d87fd, type: 3}
   entityTraining: 0
   managerTraining: 1
@@ -895,4 +902,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
   DecisionStep: 0
+<<<<<<< Updated upstream
   TakeActionsBetweenDecisions: 0
+=======
+  TakeActionsBetweenDecisions: 1
+>>>>>>> Stashed changes
