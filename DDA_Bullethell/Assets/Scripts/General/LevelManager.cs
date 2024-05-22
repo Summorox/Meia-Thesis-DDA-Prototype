@@ -29,22 +29,16 @@ public class LevelManager : Agent
     public int maxHazards;
 
     // Current counts
-<<<<<<< Updated upstream
     private int currentEnemies = 0;
     private int currentHazards = 0;
-=======
-    private float currentEnemies = 0;
-    private float currentHazards = 0;
->>>>>>> Stashed changes
+
     private float lastEnemyCount;
     private float lastHazardsCount;
-    private float lastEnemyType;
-    private float lastHazardType;
+    private float lastMainEnemyType;
+    private float lastMainHazardType;
+    private float lastSecundaryEnemyType;
+    private float lastSecundaryHazardType;
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     private int lastDifficultyValue;
 
     public int maxWaves;
@@ -63,7 +57,7 @@ public class LevelManager : Agent
 
     private int initialPlayerHealth;
 
-    public event Action<int,float,float> OnWaveFinished;
+    public event Action<int, float, float> OnWaveFinished;
 
     private bool startGame = false;
 
@@ -84,10 +78,6 @@ public class LevelManager : Agent
     private float hazardTypes = 3;
 
     private float enemyTypes = 4;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 
 
     public override void Initialize()
@@ -107,11 +97,7 @@ public class LevelManager : Agent
     {
 
         //Current Health
-<<<<<<< Updated upstream
-        if(player !=null)
-=======
         if (player != null)
->>>>>>> Stashed changes
         {
             sensor.AddObservation((float)player.GetComponent<Health>().currentHealth / maxHealth);
 
@@ -124,11 +110,7 @@ public class LevelManager : Agent
         //Health lost last wave
         if (player != null)
         {
-<<<<<<< Updated upstream
-            sensor.AddObservation(lastHealthLost/ maxHealth);
-=======
             sensor.AddObservation(lastHealthLost / maxHealth);
->>>>>>> Stashed changes
 
         }
         else
@@ -151,16 +133,8 @@ public class LevelManager : Agent
             sensor.AddObservation(0f);
         }
 
-<<<<<<< Updated upstream
-       
-        //Time spent last wave
-        sensor.AddObservation(lastTimeSpent/maxTimePerWave);
-=======
-
         //Time spent last wave
         sensor.AddObservation(lastTimeSpent / maxTimePerWave);
->>>>>>> Stashed changes
-
 
         //Parry Success Rate
         float parrySuccess = Utils.ValidateObservation(metricsLogger.getParrySuccessRate());
@@ -188,27 +162,22 @@ public class LevelManager : Agent
         sensor.AddObservation(lastDifficultyValue / maxDifficultyLevel);
 
         //last enemy count
-<<<<<<< Updated upstream
-        sensor.AddObservation(lastEnemyCount/maxEnemies);
-
-        //last hazard count
-        sensor.AddObservation(lastHazardsCount/maxHazards);
-=======
         sensor.AddObservation(lastEnemyCount / maxEnemies);
 
         //last hazard count
         sensor.AddObservation(lastHazardsCount / maxHazards);
->>>>>>> Stashed changes
 
         //last hazard type focus
-        sensor.AddObservation(lastHazardType / hazardTypes);
+        sensor.AddObservation(lastMainHazardType / hazardTypes);
 
         //last enemy type focus
-<<<<<<< Updated upstream
-        sensor.AddObservation(lastEnemyType/enemyTypes);
-=======
-        sensor.AddObservation(lastEnemyType / enemyTypes);
->>>>>>> Stashed changes
+        sensor.AddObservation(lastMainEnemyType / enemyTypes);
+
+        //last secundary hazard type focus
+        sensor.AddObservation(lastSecundaryHazardType / hazardTypes);
+
+        //last secundary enemy type focus
+        sensor.AddObservation(lastSecundaryEnemyType / enemyTypes);
 
         if (startGame || nextWave)
         {
@@ -227,8 +196,10 @@ public class LevelManager : Agent
         waveCounter = 1;
         lastEnemyCount = 0;
         lastHazardsCount = 0;
-        lastEnemyType = 0;
-        lastHazardType = 0;
+        lastMainEnemyType = 0;
+        lastMainHazardType = 0;
+        lastSecundaryEnemyType = 0;
+        lastSecundaryHazardType = 0;
         lastDifficultyValue = 0;
         lastHealthLost = 0;
         lastTimeSpent = 0;
@@ -262,12 +233,8 @@ public class LevelManager : Agent
         {
             if (managerTraining)
             {
-                int playerIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
-<<<<<<< Updated upstream
-                player= Instantiate(playerTrainedPrefabs[playerIndex], GetRandomStartPosition(), Quaternion.identity, LevelParent);
-=======
+                int playerIndex = UnityEngine.Random.Range(0, playerTrainedPrefabs.Length);
                 player = Instantiate(playerTrainedPrefabs[playerIndex], GetRandomStartPosition(), Quaternion.identity, LevelParent);
->>>>>>> Stashed changes
             }
             else
             {
@@ -287,52 +254,23 @@ public class LevelManager : Agent
             StartRecording();
         }
         startGame = true;
-<<<<<<< Updated upstream
-    }
-
-    public override void OnActionReceived(ActionBuffers actions)
-    {
-        if (startGame || nextWave)
-        {
-            Debug.Log("Wave Generated");
-            int enemyCount = actions.DiscreteActions[0]+1;
-            int enemyTypeFocus = actions.DiscreteActions[1];
-            int hazardCount = actions.DiscreteActions[2];
-            int hazardTypeFocus = actions.DiscreteActions[3];
-            // Adjust level generation based on AI decisions
-            GenerateLevel(enemyCount, hazardCount, enemyTypeFocus, hazardTypeFocus);
-            
-        }
-        else
-        {
-            return;
-        }
-        
-    }
-
-
-    private void GenerateLevel(int enemyCount, int hazardCount, int enemyTypeFocus, int hazardTypeFocus)
-    {
-        ClearLevel();
-        if (waveCounter <= maxWaves)
-=======
-
-
     }
 
 
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (startGame || nextWave)
->>>>>>> Stashed changes
         {
             Debug.Log("Wave Generated");
             int enemyCount = actions.DiscreteActions[0] + 1;
-            int enemyTypeFocus = actions.DiscreteActions[1];
-            int hazardCount = actions.DiscreteActions[2];
-            int hazardTypeFocus = actions.DiscreteActions[3];
+            int mainEnemyTypeFocus = actions.DiscreteActions[1];
+            int hazardCount = actions.DiscreteActions[2] + 1;
+            int mainHazardTypeFocus = actions.DiscreteActions[3];
+            int secundaryEnemyTypeFocus = actions.DiscreteActions[4];
+            int secundaryHazardTypeFocus = actions.DiscreteActions[5];
             // Adjust level generation based on AI decisions
-            GenerateLevel(enemyCount, hazardCount, enemyTypeFocus, hazardTypeFocus);
+            GenerateLevel(enemyCount, hazardCount, mainEnemyTypeFocus, mainHazardTypeFocus,
+                secundaryEnemyTypeFocus, secundaryHazardTypeFocus);
 
         }
         else
@@ -343,7 +281,8 @@ public class LevelManager : Agent
     }
 
 
-    private void GenerateLevel(int enemyCount, int hazardCount, int enemyTypeFocus, int hazardTypeFocus)
+    private void GenerateLevel(int enemyCount, int hazardCount, int mainEnemyTypeFocus, int mainHazardTypeFocus,
+                int secundaryEnemyTypeFocus, int secundaryHazardTypeFocus)
     {
         ClearLevel();
         if (waveCounter <= maxWaves)
@@ -355,25 +294,32 @@ public class LevelManager : Agent
             currentHazards = 0;
             lastHazardsCount = hazardCount;
             lastEnemyCount = enemyCount;
-<<<<<<< Updated upstream
-            lastHazardType = hazardTypeFocus+1;
-            lastEnemyType = enemyTypeFocus+1;
-            if(!managerTraining)
-=======
-            lastHazardType = hazardTypeFocus + 1;
-            lastEnemyType = enemyTypeFocus + 1;
+            if (managerTraining)
+            {
+                if (lastMainHazardType == mainHazardTypeFocus + 1)
+                {
+                    AddReward(-0.5f);
+                }
+                if (lastMainEnemyType == mainEnemyTypeFocus + 1)
+                {
+                    AddReward(-0.5f);
+                }
+                if (waveCounter > 5 && (enemyCount == 1 || hazardCount == 1))
+                {
+                    AddReward(-0.5f);
+                }
+            }
+            lastMainHazardType = mainHazardTypeFocus + 1;
+            lastMainEnemyType = mainEnemyTypeFocus + 1;
+            lastSecundaryHazardType = secundaryHazardTypeFocus + 1;
+            lastSecundaryEnemyType = secundaryEnemyTypeFocus + 1;
             if (!managerTraining)
->>>>>>> Stashed changes
             {
                 waveText.text = "Wave " + (waveCounter);
             }
 
             // Generate hazards
-<<<<<<< Updated upstream
-            while(currentEnemies < enemyCount || currentHazards < hazardCount)
-=======
             while (currentEnemies < enemyCount || currentHazards < hazardCount)
->>>>>>> Stashed changes
             {
                 Vector2 pos = GetRandomStartPosition();
                 if (!Physics2D.OverlapCircle(pos, 5f))
@@ -386,13 +332,14 @@ public class LevelManager : Agent
                     {
                         float typeFocus = UnityEngine.Random.value;
                         int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
-<<<<<<< Updated upstream
-                        if (typeFocus > 0.65 || hazardCount <=2)
-=======
-                        if (typeFocus > 0.65 || hazardCount <= 2)
->>>>>>> Stashed changes
+
+                        if (typeFocus > 0.30 || hazardCount <= 1)
                         {
-                            hazardIndex = hazardTypeFocus;
+                            hazardIndex = mainHazardTypeFocus;
+                        }
+                        if (typeFocus <= 0.30 && enemyCount > 1)
+                        {
+                            hazardIndex = secundaryHazardTypeFocus;
                         }
                         GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentHazards++;
@@ -403,9 +350,13 @@ public class LevelManager : Agent
                     {
                         float typeFocus = UnityEngine.Random.value;
                         int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                        if (typeFocus > 0.65 || enemyCount <= 2)
+                        if (typeFocus > 0.30 || enemyCount <= 1)
                         {
-                            enemyIndex = enemyTypeFocus;
+                            enemyIndex = mainEnemyTypeFocus;
+                        }
+                        if (typeFocus <= 0.30 && enemyCount > 1)
+                        {
+                            enemyIndex = secundaryEnemyTypeFocus;
                         }
                         GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentEnemies++;
@@ -439,11 +390,7 @@ public class LevelManager : Agent
                 }
                 else
                 {
-<<<<<<< Updated upstream
-                    EvaluateWave(false,true,player.GetComponent<Health>().currentHealth);
-=======
                     EvaluateWave(false, true, player.GetComponent<Health>().currentHealth);
->>>>>>> Stashed changes
                     Debug.Log("Manager win episode end");
                     EndEpisode();
                 }
@@ -459,14 +406,7 @@ public class LevelManager : Agent
         {
             float healthLost = initialPlayerHealth - currentHealth;
             lastHealthLost = healthLost;
-<<<<<<< Updated upstream
-            if(waveCounter <=5)
-            {
-                if(healthLost > 25)
-                {
-                    AddReward(-0.02f * (healthLost - 25));
-                }else if (healthLost < 25)
-=======
+
             if (waveCounter <= 5)
             {
                 if (healthLost > 25)
@@ -474,9 +414,12 @@ public class LevelManager : Agent
                     AddReward(-0.02f * (healthLost - 25));
                 }
                 else if (healthLost < 25)
->>>>>>> Stashed changes
                 {
-                    AddReward(-0.50f);
+                    AddReward(-0.5f);
+                }
+                else
+                {
+                    AddReward(0.5f);
                 }
             }
             else
@@ -487,7 +430,11 @@ public class LevelManager : Agent
                 }
                 else if (healthLost < 25)
                 {
-                    AddReward(-0.50f);
+                    AddReward(-0.5f);
+                }
+                else
+                {
+                    AddReward(0.5f);
                 }
             }
 
@@ -500,78 +447,66 @@ public class LevelManager : Agent
                 adjustment = -1.0f; // Penalize for not increasing challenge for skilled players
                 Debug.Log("High Skill Penalty");
             }
-            else if (skillLevel <= 0.20 && healthBasedDifficulty > waveCounter - 1)
+            else if (skillLevel <= 0.20 && healthBasedDifficulty > waveCounter + 1)
             {
                 adjustment = -1.0f; // Penalize for not decreasing challenge for unskilled players
                 Debug.Log("Low Skill Penalty");
             }
             AddReward(adjustment);
+            if (healthBasedDifficulty > waveCounter + 1 || healthBasedDifficulty < waveCounter - 1)
+            {
+                AddReward(-0.5f);
+            }
+            else
+            {
+                AddReward(1.0f);
+                Debug.Log("Appropriate Difficulty Reward");
+            }
+
+            float timeSpent = metricsLogger.getLastWaveCompletionTime();
+            lastTimeSpent = timeSpent;
+            float optimalTimeLowerBound = 5;
+            float optimalTimeUpperBound = 55;
+            float optimalTime = 30;
+            float timeReward = Utils.CalculateRewardOptimal(0.25f, timeSpent, optimalTimeLowerBound, optimalTime, optimalTimeUpperBound);
+            AddReward(timeReward);
+            if (timeReward > 0)
+            {
+                Debug.Log("Time Reward");
+            }
+
+            if (playerWin)
+            {
+                float winReward = 0.5f * (-10f + 2f * healthBasedDifficulty);
+                AddReward(winReward);
+                if (winReward > 0)
+                {
+                    Debug.Log("Win Reward");
+                }
+                else
+                {
+                    Debug.Log("Win Penalty");
+
+                }
+
+            }
 
         }
-
-        float timeSpent = metricsLogger.getLastWaveCompletionTime();
-        lastTimeSpent = timeSpent;
-        float optimalTimeLowerBound = 5;
-        float optimalTimeUpperBound = 55;
-        float optimalTime = 30;
-        float timeReward = Utils.CalculateRewardOptimal(0.25f, timeSpent, optimalTimeLowerBound, optimalTime, optimalTimeUpperBound);
-        AddReward(timeReward);
-<<<<<<< Updated upstream
-        if(timeReward > 0 )
-=======
-        if (timeReward > 0)
->>>>>>> Stashed changes
-        {
-            Debug.Log("Time Reward");
-        }
-
-<<<<<<< Updated upstream
-        
-        
-
-        if (playerDeath) {
-            if(waveCounter <= 5)
-=======
-
-
-
         if (playerDeath)
         {
             if (waveCounter <= 5)
->>>>>>> Stashed changes
             {
                 float penalty = -1.0f * (5 - waveCounter);
                 AddReward(penalty);
                 Debug.Log("Death Penalty");
             }
-<<<<<<< Updated upstream
-            else {
-=======
             else
             {
->>>>>>> Stashed changes
-                float reward = 0.5f * waveCounter;
-                AddReward(reward);
+                float waveReward = Utils.CalculateRewardOptimal(1f, waveCounter, 6, 8, 10);
+                AddReward(waveReward);
                 Debug.Log("Death Reward");
             }
 
-        }
-        if (playerWin)
-        {
-<<<<<<< Updated upstream
-            if(currentHealth > 50)
-=======
-            if (currentHealth > 50)
->>>>>>> Stashed changes
-            {
-                AddReward(-5f);
-                Debug.Log("Win Penalty");
-            }
-            else
-            {
-                AddReward(5.0f);
-                Debug.Log("Win Reward");
-            }
         }
     }
 
@@ -582,14 +517,14 @@ public class LevelManager : Agent
 
     private void StartRecording()
     {
-        
+
         if (recorder != null)
         {
-            DateTime now = DateTime.Now;
-            string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
-            String demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
-            recorder.Record = true;
-            recorder.DemonstrationName = demoName; 
+                DateTime now = DateTime.Now;
+                string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
+                String demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
+                recorder.Record = true;
+                recorder.DemonstrationName = demoName;
         }
     }
 
@@ -597,23 +532,16 @@ public class LevelManager : Agent
     {
         if (recorder != null)
         {
-            Debug.Log("Stopped Recording");
-            recorder.Record = false;
+                Debug.Log("Stopped Recording");
+                recorder.Record = false;
         }
-<<<<<<< Updated upstream
-        if(metricsLogger != null && !managerTraining && !entityTraining)
-=======
         if (metricsLogger != null && !managerTraining && !entityTraining)
->>>>>>> Stashed changes
         {
-            Debug.Log("Save Metrics");
-            DateTime now = DateTime.Now;
-            string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
-<<<<<<< Updated upstream
-            metricsLogger.SaveMetrics("Metrics-"+formattedDateTime);
-=======
-            metricsLogger.SaveMetrics("Metrics-" + formattedDateTime);
->>>>>>> Stashed changes
+                Debug.Log("Save Metrics");
+                DateTime now = DateTime.Now;
+                string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
+                metricsLogger.SaveMetrics("Metrics-" + formattedDateTime);
+
         }
     }
 
@@ -642,11 +570,6 @@ public class LevelManager : Agent
         {
             Destroy(afterimage);
         }
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes
 
     }
 
@@ -657,7 +580,7 @@ public class LevelManager : Agent
             gameStarted = false;
             StartCoroutine(StartNewLevel(2));
         }
-        
+
     }
 
     public void PlayerDeathHandler()
@@ -676,11 +599,9 @@ public class LevelManager : Agent
         }
         if (managerTraining)
         {
-<<<<<<< Updated upstream
-            EvaluateWave(true,false,0);
-=======
+
             EvaluateWave(true, false, 0);
->>>>>>> Stashed changes
+
             if (!startGame)
             {
                 EndEpisode();
@@ -758,8 +679,8 @@ public class LevelManager : Agent
         // Display the congratulations message
         waveText.text = message;
         // Wait for a specified time
-        yield return new WaitForSeconds(2); 
-                                          
+        yield return new WaitForSeconds(2);
+
         SceneManager.LoadScene("Main Menu");
     }
 
@@ -777,11 +698,8 @@ public class LevelManager : Agent
             }
             if (managerTraining)
             {
-<<<<<<< Updated upstream
-                EvaluateWave(false,false,player.GetComponent<Health>().currentHealth);
-=======
                 EvaluateWave(false, false, player.GetComponent<Health>().currentHealth);
->>>>>>> Stashed changes
+
             }
         }
         nextWave = true;

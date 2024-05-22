@@ -197,6 +197,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 223
   m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &7363638488950980769
@@ -369,6 +371,7 @@ MonoBehaviour:
   training: 0
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.2
+  managerTraining: 0
 --- !u!114 &1161861069338615070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,6 +401,7 @@ MonoBehaviour:
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
+  m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
 --- !u!114 &2392501322933377132
 MonoBehaviour:
@@ -412,6 +416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
+  DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!114 &4114373327534697656
 MonoBehaviour:
@@ -440,6 +445,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 223
   m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &5180876580601693838

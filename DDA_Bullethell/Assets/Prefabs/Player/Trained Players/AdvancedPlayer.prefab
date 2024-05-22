@@ -157,6 +157,7 @@ MonoBehaviour:
   afterimagePrefab: {fileID: 8980731252012686009, guid: 01f2c48381e9ac34585472044b27f5eb, type: 3}
   afterimageLifetime: 0.5
   afterimageSpawnInterval: 0.1
+  managerTraining: 1
 --- !u!114 &4397100167006793614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +176,7 @@ MonoBehaviour:
   deflectionIndicator: {fileID: 2324011455707696439, guid: fafc8964cb1b33f4c96f388056e06c7e, type: 3}
   isParrying: 0
   parryEffect: {fileID: 5483183876916645121}
+  managerTraining: 1
 --- !u!114 &8252827603147838688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193,6 +195,7 @@ MonoBehaviour:
   training: 0
   flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.2
+  managerTraining: 1
 --- !u!114 &7753765641125380520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +225,7 @@ MonoBehaviour:
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
+  m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
 --- !u!114 &4992624675075393909
 MonoBehaviour:
@@ -255,6 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 5
+  DecisionStep: 4
   TakeActionsBetweenDecisions: 0
 --- !u!114 &4464699865550948282
 MonoBehaviour:
@@ -298,6 +303,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967291
   m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &377211398897068092

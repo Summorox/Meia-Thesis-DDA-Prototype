@@ -199,8 +199,4 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector2 getMovement() { return movement; }
 
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
 }

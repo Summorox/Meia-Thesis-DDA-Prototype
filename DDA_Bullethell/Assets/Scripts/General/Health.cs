@@ -26,7 +26,6 @@ public class Health : MonoBehaviour
 
     private Coroutine flashCoroutine;
 
-    public bool managerTraining = true;
 
     void Start()
     {
@@ -90,11 +89,8 @@ public class Health : MonoBehaviour
         if(!training)
         {
             Destroy(gameObject); // Destroy the object.
-<<<<<<< Updated upstream
-            if(healthBarInstance != null)
-=======
+
             if (healthBarInstance != null)
->>>>>>> Stashed changes
             {
                 Destroy(healthBarInstance); // Destroy the health bar object
             }
@@ -116,16 +112,6 @@ public class Health : MonoBehaviour
             Debug.Log($"Health bar destroied");
 
         }
-    }
-
-    private void OnDestroy()
-    {
-        this.OnDeath = null;
-        this.OnEnemyDeath = null;
-        this.OnPlayerDeath = null;
-        this.OnTakeDamage = null;
-        StopAllCoroutines();
-
     }
 
 }

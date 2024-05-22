@@ -15,6 +15,17 @@ public class PerformanceMetrics
     public float maxDifficulty;
     public float killScore;
     public string playerSessionID;
+
+    public void Reset()
+    {
+        averageHealthLostPerWave = 0f;
+        maxWaveReached = 0;
+        averageWaveCompletionTime = 0f;
+        averageAccuracy = 0f;
+        averageParrySuccessRate = 0f;
+        maxDifficulty = 0f;
+        killScore = 0f;
+    }
 }
 
 public class PerformanceMetricsLogger : MonoBehaviour
@@ -53,7 +64,7 @@ public class PerformanceMetricsLogger : MonoBehaviour
         currentWave = 1;
         difficultyValue = 0;
         killScore = 0;
-        metrics = new PerformanceMetrics();
+        metrics.Reset();
         this.HitTarget = null;
         this.Parried = null;
         this.killedEnemy = null;

@@ -334,8 +334,4 @@ public class IntermediateEnemyAI : Agent
         // Generate a random rotation in degrees
         return UnityEngine.Random.Range(0f, 360f);
     }
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
 }

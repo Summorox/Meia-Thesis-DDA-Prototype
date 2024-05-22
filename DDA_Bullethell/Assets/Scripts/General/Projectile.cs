@@ -12,9 +12,11 @@ public class Projectile : MonoBehaviour
     public event Action OnHitEnemy;
 
     public TrailRenderer bulletTrail;
+    Material trailMaterial;
 
     void Start()
     {
+        trailMaterial = new Material(Shader.Find("Sprites/Default"));
         AddTrailRenderer();
     }
 
@@ -67,11 +69,6 @@ public class Projectile : MonoBehaviour
     private void AddTrailRenderer()
     {
         TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
-        Material trailMaterial = new Material(Shader.Find("Sprites/Default"));
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
         trail.material = trailMaterial;
         trail.time = 0.5f; // Duration of trail
         trail.startWidth = 0.1f;
@@ -95,12 +92,11 @@ public class Projectile : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (this.bulletTrail != null && this.bulletTrail.material != null)
+        if(bulletTrail != null)
         {
             Destroy(this.bulletTrail.material);  // Destroy the material
         }
-        this.OnHitEnemy = null;
-        this.OnHitPlayer = null;
+        Destroy(trailMaterial);
     }
 
 

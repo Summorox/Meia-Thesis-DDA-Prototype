@@ -333,8 +333,4 @@ public class AdvancedEnemyAI : Agent
         return UnityEngine.Random.Range(0f, 360f);
     }
 
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
 }
