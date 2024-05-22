@@ -146,12 +146,18 @@ public class PlayerMovement : MonoBehaviour
         while (elapsedTime < afterimageLifetime)
         {
             float alpha = Mathf.Lerp(initialColor.a, 0, elapsedTime / afterimageLifetime);
+            if (spriteRenderer == null)
+            {
+                break;
+            }
             spriteRenderer.color = new Color(initialColor.r, initialColor.g, initialColor.b, alpha);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        Destroy(afterimage);
+        if (afterimage != null)
+        {
+            Destroy(afterimage);
+        }
     }
 
     private void ChooseNewDirection()

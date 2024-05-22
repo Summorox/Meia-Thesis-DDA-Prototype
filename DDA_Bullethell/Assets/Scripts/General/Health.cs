@@ -28,10 +28,10 @@ public class Health : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color;
         if (healthBarPrefab != null)
         {
+            spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
+            originalColor = spriteRenderer.color;
             // Instantiate health bar and set it up
             healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
             healthBarInstance.transform.SetParent(transform, false);
@@ -84,22 +84,13 @@ public class Health : MonoBehaviour
         if(!training)
         {
             Destroy(gameObject); // Destroy the object.
-            Destroy(healthBarInstance); // Destroy the health bar object
+
+            if (healthBarInstance != null)
+            {
+                Destroy(healthBarInstance); // Destroy the health bar object
+            }
 
         }
-    }
-
-    LevelManager FindLevelManagerInAncestors(Transform current)
-    {
-        while (current != null)
-        {
-            LevelManager manager = current.GetComponent<LevelManager>();
-            if (manager != null)
-                return manager;
-
-            current = current.parent;
-        }
-        return null; // No LevelManager found in any ancestors
     }
 
     public void Reset()
@@ -109,7 +100,10 @@ public class Health : MonoBehaviour
         {
 
             Destroy(gameObject); // Destroy the object.
-            Destroy(healthBarInstance); // Destroy the health bar object
+            if (healthBarInstance != null)
+            {
+                Destroy(healthBarInstance); // Destroy the health bar object
+            }
             Debug.Log($"Health bar destroied");
 
         }

@@ -13,6 +13,7 @@ public class LevelManager : Agent
 {
     public GameObject[] enemyPrefabs;
     public GameObject[] hazardPrefabs;
+    public GameObject[] playerTrainedPrefabs;
     public GameObject playerPrefab;
 
 
@@ -35,7 +36,7 @@ public class LevelManager : Agent
 
     public int maxWaves;
 
-    private int waveCounter = 0;
+    private int waveCounter;
 
     private bool gameStarted = false;
 
@@ -70,10 +71,15 @@ public class LevelManager : Agent
 
     public override void OnEpisodeBegin()
     {
+        ClearLevel();
+        waveCounter = 1;
+        if (player != null)
+        {
+            player.GetComponent<Health>().OnPlayerDeath -= PlayerDeathHandler;
+            player.GetComponent<Health>().Die();
+        }
         if (entityTraining)
         {
-            ClearLevel();
-            waveCounter = 0;
             //Player
             // Instantiate a new player instance
             player.transform.position = GetRandomStartPosition();
@@ -92,21 +98,13 @@ public class LevelManager : Agent
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
 
         }
-        currentDifficultyValue = 2;
-        GenerateLevel(currentDifficultyValue);
-
-
-    }
-
-
-    private void GenerateLevel(int DifficultyValue)
-    {
-        if (!entityTraining && waveCounter==0)
-        {         
-            player= Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity,LevelParent);
-            player.GetComponent<Health>().OnPlayerDeath+= PlayerDeathHandler;
+        if (!entityTraining)
+        {
+            player = Instantiate(playerPrefab, GetRandomStartPosition(), Quaternion.identity, LevelParent);
+            
+            player.GetComponent<Health>().OnPlayerDeath += PlayerDeathHandler;
             player.GetComponent<Health>().currentHealth = playerPrefab.GetComponent<Health>().maxHealth;
-            if(player.GetComponent<DemonstrationRecorder>().enabled)
+            if (player.GetComponent<DemonstrationRecorder>().enabled)
             {
                 recorder = player.GetComponent<DemonstrationRecorder>();
             }
@@ -117,15 +115,29 @@ public class LevelManager : Agent
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
         }
+        currentDifficultyValue = 2;
+        GenerateLevel();
+
+
+    }
+
+
+    private void GenerateLevel()
+    {
         ClearLevel();
-        if (waveCounter < maxWaves)
+        if (waveCounter <= maxWaves)
         {
             initialPlayerHealth= player.GetComponent<Health>().currentHealth;
             int totalDifficulty = 0;
             // Reset counts
             currentEnemies = 0;
             currentHazards = 0;
-            waveText.text = "Wave " + (waveCounter+1);
+            waveText.text = "Wave " + (waveCounter);
+            int mainHazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
+            int secundaryHazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
+            int mainEnemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+            int secundaryEnemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+
 
             // Generate hazards
             while (totalDifficulty < currentDifficultyValue)
@@ -143,7 +155,16 @@ public class LevelManager : Agent
 
                     if (placeHazard)
                     {
-                        int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
+                        float typeFocus = UnityEngine.Random.value;
+                        int hazardIndex = 0;
+                        if (typeFocus > 0.30 || currentHazards <= 1)
+                        {
+                            hazardIndex = mainHazardIndex;
+                        }
+                        if (typeFocus <= 0.30 && currentHazards > 1)
+                        {
+                            hazardIndex = secundaryHazardIndex;
+                        }
                         GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentHazards++;
                         totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
@@ -151,7 +172,16 @@ public class LevelManager : Agent
                     }
                      else if (placeEnemy)
                      {
-                        int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+                        float typeFocus = UnityEngine.Random.value;
+                        int enemyIndex = 0;
+                        if (typeFocus > 0.30 || currentEnemies <= 1)
+                        {
+                            enemyIndex = mainEnemyIndex;
+                        }
+                        if (typeFocus <= 0.30 && currentEnemies > 1)
+                        {
+                            enemyIndex = secundaryEnemyIndex;
+                        }
                         GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
@@ -203,14 +233,14 @@ public class LevelManager : Agent
 
     private void StartRecording()
     {
-        
+
         if (recorder != null)
         {
             DateTime now = DateTime.Now;
             string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
             String demoName = $"\"PlayerDemo_\"_{formattedDateTime}";
             recorder.Record = true;
-            recorder.DemonstrationName = demoName; 
+            recorder.DemonstrationName = demoName;
         }
     }
 
@@ -221,40 +251,38 @@ public class LevelManager : Agent
             Debug.Log("Stopped Recording");
             recorder.Record = false;
         }
-        if(metricsLogger != null)
+        if (metricsLogger != null && !entityTraining)
         {
             Debug.Log("Save Metrics");
             DateTime now = DateTime.Now;
             string formattedDateTime = now.ToString("yyyy-MM-dd_HH-mm");
-            metricsLogger.SaveMetrics("Metrics-"+formattedDateTime);
-        }
-        else
-        {
-            EndEpisode();
+            metricsLogger.SaveMetrics("Metrics-" + formattedDateTime);
+
         }
     }
-
-
     void ClearLevel()
     {
-
         foreach (Transform child in LevelParent)
         {
             if (child.CompareTag("Enemy"))
-                {
+            {
                 if (child.GetComponent<Health>() != null)
                 {
                     child.GetComponent<Health>().Die();
                 }
                 Destroy(child.gameObject);
-            }else if (child.CompareTag("Hazard"))
+            }
+            else if (child.CompareTag("Hazard"))
             {
                 Destroy(child.gameObject);
             }
         }
 
-
-
+        GameObject[] afterimages = GameObject.FindGameObjectsWithTag("Afterimage");
+        foreach (GameObject afterimage in afterimages)
+        {
+            Destroy(afterimage);
+        }
     }
 
     void Update()
@@ -365,15 +393,15 @@ public class LevelManager : Agent
         yield return new WaitForSeconds(delay);
         if(metricsLogger != null)
         {
-            metricsLogger.WaveCompleted(waveCounter + 1, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
+            metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth - player.GetComponent<Health>().currentHealth);
             if (entityTraining)
             {
-                OnWaveFinished?.Invoke(waveCounter + 1, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
+                OnWaveFinished?.Invoke(waveCounter, initialPlayerHealth - player.GetComponent<Health>().currentHealth, metricsLogger.getLastWaveCompletionTime());
             }
         }
         currentDifficultyValue += difficultyIncrease;
         waveCounter++;
-        GenerateLevel(currentDifficultyValue);
+        GenerateLevel();
     }
 
     private Vector3 GetRandomStartPosition()

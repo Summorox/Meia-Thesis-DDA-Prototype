@@ -12,16 +12,18 @@ public class Projectile : MonoBehaviour
     public event Action OnHitEnemy;
 
     public TrailRenderer bulletTrail;
+    Material trailMaterial;
 
     void Start()
     {
+        trailMaterial = new Material(Shader.Find("Sprites/Default"));
         AddTrailRenderer();
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
         // Check if the collided object has the correct tag
-        if (hitInfo.gameObject.CompareTag(targetTag) || hitInfo.gameObject.CompareTag("Hazard") )
+        if (hitInfo.gameObject.CompareTag(targetTag) || hitInfo.gameObject.CompareTag("Hazard"))
         {
             if (hitInfo.gameObject.CompareTag("Player"))
             {
@@ -41,7 +43,7 @@ public class Projectile : MonoBehaviour
             }
             else if (hitInfo.gameObject.CompareTag("Enemy") || hitInfo.gameObject.CompareTag("Hazard"))
             {
-                if(hitInfo.GetComponent<Health>() != null)
+                if (hitInfo.GetComponent<Health>() != null)
                 {
                     Health health = hitInfo.GetComponent<Health>();
                     if (health != null)
@@ -50,7 +52,7 @@ public class Projectile : MonoBehaviour
                         health.TakeDamage(damage);
                     }
                 }
-               
+
                 Destroy(gameObject); // Destroy the projectile on hit.
             }
 
@@ -67,7 +69,7 @@ public class Projectile : MonoBehaviour
     private void AddTrailRenderer()
     {
         TrailRenderer trail = gameObject.AddComponent<TrailRenderer>();
-        trail.material = new Material(Shader.Find("Sprites/Default"));
+        trail.material = trailMaterial;
         trail.time = 0.5f; // Duration of trail
         trail.startWidth = 0.1f;
         trail.endWidth = 0.0f;
@@ -79,13 +81,22 @@ public class Projectile : MonoBehaviour
             trail.startColor = Color.red;
             trail.endColor = new Color(1, 0, 0, 0); // Fade to transparent
         }
-        else if (targetTag == "Enemy" || targetTag =="Hazard")
+        else if (targetTag == "Enemy" || targetTag == "Hazard")
         {
             // Player shoots, so make the trail blue
             trail.startColor = Color.blue;
             trail.endColor = new Color(0, 0, 1, 0); // Fade to transparent
         }
         this.bulletTrail = trail;
+    }
+
+    private void OnDestroy()
+    {
+        if (bulletTrail != null)
+        {
+            Destroy(this.bulletTrail.material);  // Destroy the material
+        }
+        Destroy(trailMaterial);
     }
 
 
