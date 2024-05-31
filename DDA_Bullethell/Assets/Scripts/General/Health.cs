@@ -30,10 +30,10 @@ public class Health : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
         if (healthBarPrefab != null && !managerTraining)
         {
-            spriteRenderer = transform.Find("Visual").GetComponent<SpriteRenderer>();
-            originalColor = spriteRenderer.color;
             // Instantiate health bar and set it up
             healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
             healthBarInstance.transform.SetParent(transform, false);

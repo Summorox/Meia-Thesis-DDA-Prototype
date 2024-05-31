@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
@@ -40,6 +41,8 @@ public class LevelManager : Agent
     private float lastSecundaryHazardType;
 
     private int lastDifficultyValue;
+
+    private bool recording = false;
 
     public int maxWaves;
 
@@ -252,6 +255,7 @@ public class LevelManager : Agent
             }
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
+            recording = true;
         }
         startGame = true;
     }
@@ -318,55 +322,46 @@ public class LevelManager : Agent
                 waveText.text = "Wave " + (waveCounter);
             }
 
-            // Generate hazards
-            while (currentEnemies < enemyCount || currentHazards < hazardCount)
+            List<Vector2> spawnPositions = new List<Vector2>();
+            for (int i = 0; i < (hazardCount + enemyCount) * 2; i++)
             {
                 Vector2 pos = GetRandomStartPosition();
-                if (!Physics2D.OverlapCircle(pos, 5f))
+                if (!Physics2D.OverlapCircle(pos, 3.5f))
                 {
+                    spawnPositions.Add(pos);
+                }
+            }
+
+            int spawnIndex = 0;
+
+            // Generate hazards
+            while ((currentEnemies < enemyCount || currentHazards < hazardCount) && spawnIndex < spawnPositions.Count)
+            {
+                Vector2 pos = spawnPositions[spawnIndex++];
+
                     float randomChance = UnityEngine.Random.value;
                     bool placeHazard = randomChance > 0.50f && currentHazards < hazardCount;
                     bool placeEnemy = !placeHazard && currentEnemies < enemyCount;
 
                     if (placeHazard)
                     {
-                        float typeFocus = UnityEngine.Random.value;
-                        int hazardIndex = UnityEngine.Random.Range(0, hazardPrefabs.Length);
-
-                        if (typeFocus > 0.30 || hazardCount <= 1)
-                        {
-                            hazardIndex = mainHazardTypeFocus;
-                        }
-                        if (typeFocus <= 0.30 && enemyCount > 1)
-                        {
-                            hazardIndex = secundaryHazardTypeFocus;
-                        }
+                        int hazardIndex = (currentHazards <= 1 || UnityEngine.Random.value > 0.30f) ? mainHazardTypeFocus : secundaryHazardTypeFocus;
                         GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentHazards++;
-                        totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
+                        totalDifficulty += hazard.GetComponent<EntityData>().difficultyValue;
                         hazard.GetComponent<Collider2D>().enabled = true;
                     }
                     else if (placeEnemy)
                     {
-                        float typeFocus = UnityEngine.Random.value;
-                        int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                        if (typeFocus > 0.30 || enemyCount <= 1)
-                        {
-                            enemyIndex = mainEnemyTypeFocus;
-                        }
-                        if (typeFocus <= 0.30 && enemyCount > 1)
-                        {
-                            enemyIndex = secundaryEnemyTypeFocus;
-                        }
+                        int enemyIndex = (currentEnemies <= 1 || UnityEngine.Random.value > 0.30f) ? mainEnemyTypeFocus : secundaryEnemyTypeFocus;
                         GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentEnemies++;
-                        totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
+                        totalDifficulty += enemy.GetComponent<EntityData>().difficultyValue;
                         enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
                         enemy.GetComponent<Collider2D>().enabled = true;
-
                     }
 
-                }
+                
             }
             Debug.Log("Number of enemies spawned: " + currentEnemies);
             gameStarted = true;
@@ -379,6 +374,7 @@ public class LevelManager : Agent
             if (!entityTraining && !managerTraining)
             {
                 StopRecording();
+                recording = false;
                 StartCoroutine(LoadMainMenu("Congratulations!"));
             }
             else
@@ -535,7 +531,7 @@ public class LevelManager : Agent
                 Debug.Log("Stopped Recording");
                 recorder.Record = false;
         }
-        if (metricsLogger != null && !managerTraining && !entityTraining)
+        if (metricsLogger != null && !managerTraining && !entityTraining && recording)
         {
                 Debug.Log("Save Metrics");
                 DateTime now = DateTime.Now;
@@ -590,6 +586,7 @@ public class LevelManager : Agent
         {
             metricsLogger.WaveCompleted(waveCounter, lastDifficultyValue, initialPlayerHealth);
             StopRecording();
+            recording = false;
         }
         if (entityTraining)
         {
