@@ -159,61 +159,37 @@ public class LevelManager : Agent
             while (totalDifficulty < currentDifficultyValue && spawnIndex < spawnPositions.Count)
             {
                 Vector2 pos = spawnPositions[spawnIndex++];
+                float randomChance = UnityEngine.Random.value;
+                bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
+                bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
 
                 if (totalDifficulty >= currentDifficultyValue)
                 {
                     break;
                 }
-                if (!Physics2D.OverlapCircle(pos, 5f))
+                if (placeHazard)
                 {
-                    float randomChance = UnityEngine.Random.value;
-                    bool placeHazard = randomChance > 0.50f && currentHazards < maxHazards;
-                    bool placeEnemy = !placeHazard && currentEnemies < maxEnemies;
-
-                    if (placeHazard)
-                    {
-                        float typeFocus = UnityEngine.Random.value;
-                        int hazardIndex = 0;
-                        if (typeFocus > 0.30 || currentHazards <= 1)
-                        {
-                            hazardIndex = mainHazardIndex;
-                        }
-                        if (typeFocus <= 0.30 && currentHazards > 1)
-                        {
-                            hazardIndex = secundaryHazardIndex;
-                        }
-                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
-                        currentHazards++;
-                        totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
-                        hazard.GetComponent<Collider2D>().enabled = true;
-                    }
-                    else if (placeEnemy)
-                    {
-                        float typeFocus = UnityEngine.Random.value;
-                        int enemyIndex = 0;
-                        if (typeFocus > 0.30 || currentEnemies <= 1)
-                        {
-                            enemyIndex = mainEnemyIndex;
-                        }
-                        if (typeFocus <= 0.30 && currentEnemies > 1)
-                        {
-                            enemyIndex = secundaryEnemyIndex;
-                        }
-                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
-                        currentEnemies++;
-                        totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
-                        enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
-                        enemy.GetComponent<Collider2D>().enabled = true;
-
-                    }
-
+                    int hazardIndex = (currentHazards <= 1 || UnityEngine.Random.value > 0.30f) ? mainHazardIndex : secundaryHazardIndex;
+                    GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                    currentHazards++;
+                    totalDifficulty += hazard.GetComponent<EntityData>().difficultyValue;
+                    hazard.GetComponent<Collider2D>().enabled = true;
+                }
+                else if (placeEnemy)
+                {
+                    int enemyIndex = (currentEnemies <= 1 || UnityEngine.Random.value > 0.30f) ? mainEnemyIndex : secundaryEnemyIndex;
+                    GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                    currentEnemies++;
+                    totalDifficulty += enemy.GetComponent<EntityData>().difficultyValue;
+                    enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
+                    enemy.GetComponent<Collider2D>().enabled = true;
                 }
             }
             // If by the end of the loop no enemy has been placed, forcefully place one at a random position
             if (currentEnemies == 0)
             {
                 Vector2 randomPos = Vector2.zero;
-                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 3.5f))
+                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 4f))
                 {
                     randomPos = GetRandomStartPosition();
                 }
@@ -230,6 +206,7 @@ public class LevelManager : Agent
             if (!entityTraining)
             {
                 StopRecording();
+                recording = false;
                 StartCoroutine(LoadMainMenu("Congratulations!"));
             }
             else
