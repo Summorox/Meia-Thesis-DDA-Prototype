@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Demonstrations;
@@ -33,6 +34,8 @@ public class LevelManager : Agent
 
     private int currentDifficultyValue=2;
     private int difficultyIncrease=2;
+
+    private bool recording = false;
 
     public int maxWaves;
 
@@ -114,10 +117,10 @@ public class LevelManager : Agent
             }
             metricsLogger = player.GetComponent<PerformanceMetricsLogger>();
             StartRecording();
+            recording = true;
         }
         currentDifficultyValue = 2;
         GenerateLevel();
-
 
     }
 
@@ -127,7 +130,7 @@ public class LevelManager : Agent
         ClearLevel();
         if (waveCounter <= maxWaves)
         {
-            initialPlayerHealth= player.GetComponent<Health>().currentHealth;
+            initialPlayerHealth = player.GetComponent<Health>().currentHealth;
             int totalDifficulty = 0;
             // Reset counts
             currentEnemies = 0;
@@ -138,11 +141,25 @@ public class LevelManager : Agent
             int mainEnemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
             int secundaryEnemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
 
+            List<Vector2> spawnPositions = new List<Vector2>();
 
-            // Generate hazards
-            while (totalDifficulty < currentDifficultyValue)
+            // Generate spawn positions
+            for (int i = 0; i < (maxHazards + maxEnemies) * 2; i++)
             {
                 Vector2 pos = GetRandomStartPosition();
+                if (!Physics2D.OverlapCircle(pos, 4f))
+                {
+                    spawnPositions.Add(pos);
+                }
+            }
+
+            int spawnIndex = 0;
+
+            // Generate hazards
+            while (totalDifficulty < currentDifficultyValue && spawnIndex < spawnPositions.Count)
+            {
+                Vector2 pos = spawnPositions[spawnIndex++];
+
                 if (totalDifficulty >= currentDifficultyValue)
                 {
                     break;
@@ -165,13 +182,13 @@ public class LevelManager : Agent
                         {
                             hazardIndex = secundaryHazardIndex;
                         }
-                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
+                        GameObject hazard = Instantiate(hazardPrefabs[hazardIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentHazards++;
                         totalDifficulty = totalDifficulty + hazard.GetComponent<EntityData>().difficultyValue;
                         hazard.GetComponent<Collider2D>().enabled = true;
                     }
-                     else if (placeEnemy)
-                     {
+                    else if (placeEnemy)
+                    {
                         float typeFocus = UnityEngine.Random.value;
                         int enemyIndex = 0;
                         if (typeFocus > 0.30 || currentEnemies <= 1)
@@ -182,7 +199,7 @@ public class LevelManager : Agent
                         {
                             enemyIndex = secundaryEnemyIndex;
                         }
-                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()),LevelParent);
+                        GameObject enemy = Instantiate(enemyPrefabs[enemyIndex], pos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                         currentEnemies++;
                         totalDifficulty = totalDifficulty + enemy.GetComponent<EntityData>().difficultyValue;
                         enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
@@ -196,12 +213,12 @@ public class LevelManager : Agent
             if (currentEnemies == 0)
             {
                 Vector2 randomPos = Vector2.zero;
-                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 5f))
+                while (randomPos == Vector2.zero || Physics2D.OverlapCircle(randomPos, 3.5f))
                 {
                     randomPos = GetRandomStartPosition();
                 }
                 int enemyIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
-                GameObject enemy=Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
+                GameObject enemy = Instantiate(enemyPrefabs[0], randomPos, Quaternion.Euler(0, 0, GetRandomStartRotation()), LevelParent);
                 enemy.GetComponent<Collider2D>().enabled = true;
                 enemy.GetComponent<Health>().OnEnemyDeath += HandleEnemyDeath;
 
@@ -251,7 +268,7 @@ public class LevelManager : Agent
             Debug.Log("Stopped Recording");
             recorder.Record = false;
         }
-        if (metricsLogger != null && !entityTraining)
+        if (metricsLogger != null && !entityTraining && recording)
         {
             Debug.Log("Save Metrics");
             DateTime now = DateTime.Now;
@@ -302,6 +319,7 @@ public class LevelManager : Agent
         {
             metricsLogger.WaveCompleted(waveCounter, currentDifficultyValue, initialPlayerHealth);
             StopRecording();
+            recording = false;
         }
         if (entityTraining)
         {
