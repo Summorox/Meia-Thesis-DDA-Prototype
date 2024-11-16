@@ -20,6 +20,6 @@ The repository also contains a **data collection branch**, featuring an initial 
 
 ## Technologies Used
 
-**Game Development Platform**: [Unity](https://unity.com/)
-**Languages**: C#
-**Main Technologies Used**: [ML-Agents Toolkit](https://github.com/Unity-Technologies/ml-agents)
+**Game Development Platform**: [Unity](https://unity.com/) 
+**Languages**: C# 
+**Main Technologies Used**: [ML-Agents Toolkit](https://github.com/Unity-Technologies/ml-agents) 
